@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.0.0-alpha.1] - 2024-06-08
+
+### ⚙️ Miscellaneous Tasks
+
+- Update git-cliff configurations for commit processing
+
 ## [1.0.0-alpha.0] - 2024-06-08
 
 ### 🚜 Refactor
