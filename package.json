@@ -1,6 +1,6 @@
 {
   "name": "lilnouns-mod",
-	"version": "1.0.0-alpha.1",
+  "version": "1.0.0-alpha.1",
   "private": true,
   "scripts": {
     "build": "wrangler deploy --dry-run --outdir dist",
@@ -26,5 +26,8 @@
     "vitest": "1.5.0",
     "wrangler": "3.60.0"
   },
-  "dependencies": {}
+  "dependencies": {
+    "graphql": "16.8.1",
+    "graphql-request": "7.0.1"
+  }
 }
