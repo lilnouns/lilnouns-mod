@@ -1,18 +1,20 @@
 {
   "name": "lilnouns-mod",
-	"version": "1.0.0-alpha.1",
+  "version": "1.0.0-alpha.2",
   "private": true,
+  "type": "module",
   "scripts": {
     "build": "wrangler deploy --dry-run --outdir dist",
     "deploy": "wrangler deploy",
     "dev": "wrangler dev --test-scheduled",
     "start": "wrangler dev --test-scheduled",
-    "test": "vitest",
+    "test": "vitest run",
     "cf-typegen": "wrangler types"
   },
   "devDependencies": {
-    "@cloudflare/vitest-pool-workers": "0.2.12",
+    "@cloudflare/vitest-pool-workers": "0.4.2",
     "@cloudflare/workers-types": "4.20240605.0",
+    "@types/node": "20.12.12",
     "@typescript-eslint/eslint-plugin": "7.12.0",
     "@typescript-eslint/parser": "7.12.0",
     "eslint": "8.57.0",
@@ -24,7 +26,10 @@
     "prettier-plugin-organize-imports": "3.2.4",
     "typescript": "5.4.5",
     "vitest": "1.5.0",
-    "wrangler": "3.59.0"
+    "wrangler": "3.60.0"
   },
-  "dependencies": {}
+  "dependencies": {
+    "graphql": "16.8.1",
+    "graphql-request": "6.1.0"
+  }
 }

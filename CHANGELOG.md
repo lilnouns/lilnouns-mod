@@ -2,10 +2,52 @@
 
 All notable changes to this project will be documented in this file.
 
-## [1.0.0-alpha.1] - 2024-06-08
+## [1.0.0-alpha.2] - 2024-06-09
+
+### 🚀 Features
+
+- Add fetch accounts functionality for lilnouns service
+
+### 🚜 Refactor
+
+- Update scheduled function and remove unnecessary comments
+- Update scheduled method to fetch accounts at specific interval
+- Reorder import statements in fetch accounts
+- Switch to `GraphQLClient` for improved error handling
+- Update account fetching conditions in lilnouns service
 
 ### ⚙️ Miscellaneous Tasks
 
+- Add module type in `package.json`
+- Adjust `moduleResolution` strategy in tsconfig
+- Enable kv namespace in worker configuration
+- Add directives, types, and inputs for GraphQL
+- Update cron job scheduling in `wrangler.toml`
+- Modify test script in `package.json`
+
+## [1.0.0-alpha.1] - 2024-06-08
+
+### 🚜 Refactor
+
+- Replace let with const in api fetch
+
+### 📚 Documentation
+
+- Enable custom issue templates and disable blank issues
+- Add funding information
+
+### 🎨 Styling
+
+- Improve code readability across multiple files
+
+### ⚙️ Miscellaneous Tasks
+
+- Add build script to `package.json`
+- Configure dependabot for project
+- Add stale issue handler configuration
+- Add build pipeline for continuous integration
+- Add deployment workflow for GitHub Actions
+- Add git flow workflow to GitHub actions
 - Update git-cliff configurations for commit processing
 
 ## [1.0.0-alpha.0] - 2024-06-08
