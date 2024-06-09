@@ -1,4 +1,4 @@
-import { gql, request } from 'graphql-request'
+import { gql, GraphQLClient } from 'graphql-request'
 
 type Noun = {
   id: string
@@ -47,10 +47,15 @@ export async function fetchAccounts(): Promise<Account[]> {
   let allAccounts: Account[] = []
   let shouldContinueFetching = true
 
+  const client = new GraphQLClient(nounSubgraphUrl, {
+    errorPolicy: 'all',
+    fetch,
+  })
+
   while (shouldContinueFetching) {
     try {
       const query = getAccountsQuery(skip, first)
-      const { accounts } = await request<Data>(nounSubgraphUrl, query)
+      const { accounts } = await client.request<Data>(query)
       shouldContinueFetching = accounts.length > 0
 
       if (shouldContinueFetching) {
