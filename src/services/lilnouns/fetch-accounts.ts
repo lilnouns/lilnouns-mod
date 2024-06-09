@@ -1,4 +1,4 @@
-import request, { gql } from 'graphql-request'
+import { gql, request } from 'graphql-request'
 
 type Noun = {
   id: string
