@@ -25,11 +25,17 @@ const getAccountsQuery = (skip: number, first: number) => gql`
       orderBy: tokenBalance
       orderDirection: desc
       where: {
-        tokenBalance_gt: 0
-        id_not_in: [
-          "0x0bc3807ec262cb779b38d65b38158acc3bfede10",
-          "0x0000000000000000000000000000000000000000",
-          "0x18222a762bf67024193de25e1cdc7aa6e614c695",
+        and: [
+          {
+            id_not_in: [
+              "0x0bc3807ec262cb779b38d65b38158acc3bfede10"
+              "0x0000000000000000000000000000000000000000"
+              "0x18222a762bf67024193de25e1cdc7aa6e614c695"
+            ]
+          }
+          {
+            or: [{ tokenBalance_gt: 0 }, { delegate_: { delegatedVotes_gt: 0 } }]
+          }
         ]
       }
     ) {
