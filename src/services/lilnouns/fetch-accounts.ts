@@ -34,7 +34,7 @@ const getAccountsQuery = (skip: number, first: number) => gql`
             ]
           }
           {
-            or: [{ tokenBalance_gt: 0 }, { delegate_: { delegatedVotes_gt: 0 } }]
+            or: [{ tokenBalance_gt: 0 }]
           }
         ]
       }
