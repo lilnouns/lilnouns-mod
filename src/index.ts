@@ -1,4 +1,4 @@
-import { fetchAccounts } from './services/lilnouns/fetch-accounts'
+import { fetchDelegates } from './services/lilnouns/fetch-delegates'
 
 export default {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -6,16 +6,16 @@ export default {
     const { KV } = env
 
     if (controller.cron === '30 * * * *') {
-      let accounts = await env.KV.get('lilnouns-accounts', { type: 'json' })
-      if (accounts === null) {
-        accounts = await fetchAccounts()
+      let delegates = await env.KV.get('lilnouns-delegates', { type: 'json' })
+      if (delegates === null) {
+        delegates = await fetchDelegates()
 
-        await KV.put('lilnouns-accounts', JSON.stringify(accounts), {
+        await KV.put('lilnouns-delegates', JSON.stringify(delegates), {
           expirationTtl: 60 * 60 * 24,
         })
       }
 
-      console.log(accounts)
+      console.log(JSON.stringify(delegates, undefined, 2))
     }
   },
 } satisfies ExportedHandler<Env>
