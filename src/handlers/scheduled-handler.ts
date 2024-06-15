@@ -1,4 +1,5 @@
 import { proposalHandler } from '@/handlers/proposal-handler'
+import { channelHandler } from '@/handlers/channel-handler'
 
 export async function scheduledHandler(
   env: Env,
@@ -6,5 +7,8 @@ export async function scheduledHandler(
 ) {
   if (controller.cron === '0 * * * *') {
     await proposalHandler(env)
+  }
+  if (controller.cron === '30 * * * *') {
+    await channelHandler(env)
   }
 }
