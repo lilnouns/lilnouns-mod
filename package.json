@@ -9,7 +9,8 @@
     "dev": "wrangler dev --test-scheduled",
     "start": "wrangler dev --test-scheduled",
     "test": "vitest run",
-    "cf-typegen": "wrangler types"
+    "cf-typegen": "wrangler types",
+    "prepare": "husky"
   },
   "devDependencies": {
     "@cloudflare/vitest-pool-workers": "0.4.2",
