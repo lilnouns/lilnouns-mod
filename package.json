@@ -35,6 +35,6 @@
     "prettier-plugin-toml": "2.0.1",
     "typescript": "5.4.5",
     "vitest": "1.5.0",
-    "wrangler": "3.60.0"
+    "wrangler": "3.60.3"
   }
 }
