@@ -1,6 +1,7 @@
 import { fetchFeedItems } from '@/services/warpcast/fetch-feed-items'
 
 export async function channelHandler(env: Env) {
+  // eslint-disable-next-line no-empty-pattern
   const {} = env
 
   const items = await fetchFeedItems({
@@ -9,6 +10,22 @@ export async function channelHandler(env: Env) {
     viewedCastHashes: '',
     updateState: true,
   })
+
+  for (const item of items) {
+    if (item.cast.author.username == 'lilnouns') {
+      console.log(item)
+    }
+
+    if (item.cast.author.username == 'nekofar.eth') {
+      console.log(item)
+    }
+
+    if (item.cast.reactions.count > 5) {
+      console.log(item)
+    }
+
+
+  }
 
   console.log(items)
 }
