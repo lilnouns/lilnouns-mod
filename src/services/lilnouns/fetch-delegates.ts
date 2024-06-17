@@ -1,15 +1,15 @@
 import { gql, GraphQLClient } from 'graphql-request'
 
-type Noun = {
+interface Noun {
   id: string
 }
 
-type Delegate = {
+interface Delegate {
   id: string
   nounsRepresented: Noun[]
 }
 
-type Data = {
+interface Data {
   delegates: Delegate[]
 }
 

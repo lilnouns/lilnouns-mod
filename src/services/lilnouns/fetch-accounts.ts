@@ -1,15 +1,15 @@
 import { gql, GraphQLClient } from 'graphql-request'
 
-type Noun = {
+interface Noun {
   id: string
 }
 
-type Account = {
+interface Account {
   id: string
   nouns: Noun[]
 }
 
-type Data = {
+interface Data {
   accounts: Account[]
 }
 
