@@ -19,7 +19,6 @@ interface FetchFeedItemsArgs {
   updateState: boolean
 }
 
-export async function fetchFeedItems(args: FetchFeedItemsArgs): Promise<Item[]> {
 /**
  * Fetches feed items from a specified URL using the provided arguments.
  * @async
@@ -27,6 +26,9 @@ export async function fetchFeedItems(args: FetchFeedItemsArgs): Promise<Item[]> 
  * @returns A promise that resolves to an array of feed items if the request is successful, otherwise an empty array.
  * @throws {Error} If an HTTP error occurs during the request.
  */
+export async function fetchFeedItems(
+  args: FetchFeedItemsArgs,
+): Promise<Item[]> {
   const url = 'https://client.warpcast.com/v2/feed-items'
   const headers = {
     Authorization: 'Bearer MK-',
@@ -43,7 +45,7 @@ export async function fetchFeedItems(args: FetchFeedItemsArgs): Promise<Item[]> 
   try {
     const response = await fetch(url, options)
     if (!response.ok) {
-      throw new Error(`HTTP error! Status: ${response.status}`)
+      throw new Error(`HTTP error! Status: ${response.status.toString()}`)
     }
     const data = await response.json<Response>()
 
