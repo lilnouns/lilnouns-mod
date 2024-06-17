@@ -8,6 +8,7 @@
     "cf-typegen": "wrangler types",
     "deploy": "wrangler deploy",
     "dev": "wrangler dev --test-scheduled",
+    "lint": "eslint",
     "prepare": "husky",
     "start": "wrangler dev --test-scheduled",
     "test": "vitest run"
