@@ -2,6 +2,7 @@ import eslint from '@eslint/js'
 import prettierConfig from 'eslint-config-prettier'
 import jsdoc from 'eslint-plugin-jsdoc'
 import prettier from 'eslint-plugin-prettier'
+import regexp from 'eslint-plugin-regexp'
 import unicorn from 'eslint-plugin-unicorn'
 import globals from 'globals'
 import tseslint from 'typescript-eslint'
@@ -21,7 +22,11 @@ export default tseslint.config(
   eslint.configs.recommended,
   ...tseslint.configs.strictTypeChecked,
   ...tseslint.configs.stylisticTypeChecked,
-  ...[prettierConfig, jsdoc.configs['flat/recommended-typescript-error']],
+  ...[
+    prettierConfig,
+    jsdoc.configs['flat/recommended-typescript-error'],
+    regexp.configs['flat/recommended'],
+  ],
 
   // base config
   {
