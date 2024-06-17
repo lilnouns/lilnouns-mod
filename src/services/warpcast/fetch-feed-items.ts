@@ -9,7 +9,7 @@ interface Response {
   }
 }
 
-type FetchFeedItemsArgs = {
+interface FetchFeedItemsArgs {
   feedKey: string
   feedType: string
   olderThan?: number
