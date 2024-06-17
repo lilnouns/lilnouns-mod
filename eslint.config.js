@@ -1,78 +1,60 @@
-import eslint from '@eslint/js'
-import prettierConfig from 'eslint-config-prettier'
-import jsdoc from 'eslint-plugin-jsdoc'
-import prettier from 'eslint-plugin-prettier'
-import regexp from 'eslint-plugin-regexp'
-import unicorn from 'eslint-plugin-unicorn'
-import vitest from 'eslint-plugin-vitest'
+import javascriptEslint from '@eslint/js'
+import eslintConfigPrettier from 'eslint-config-prettier'
+import eslintPluginJsdoc from 'eslint-plugin-jsdoc'
+import eslintPluginPrettier from 'eslint-plugin-prettier'
+import eslintPluginRegexp from 'eslint-plugin-regexp'
+import eslintPluginUnicorn from 'eslint-plugin-unicorn'
+import eslintPluginVitest from 'eslint-plugin-vitest'
 import globals from 'globals'
-import tseslint from 'typescript-eslint'
+import typescriptEslint from 'typescript-eslint'
 
-export default tseslint.config(
-  // config with just ignores is the replacement for `.eslintignore`
+export default typescriptEslint.config(
   {
-    ignores: [
-      '**/node_modules/**',
-      '**/dist/**',
-      '**/test/*',
-      '**/*.config.js',
-    ],
+    // config with just ignores is the replacement for `.eslintignore`
+    ignores: ['**/build/**', '**/dist/**', '**/.wrangler/**'],
   },
-
-  // extends ...
-  eslint.configs.recommended,
-  ...tseslint.configs.strictTypeChecked,
-  ...tseslint.configs.stylisticTypeChecked,
-  ...[
-    prettierConfig,
-    jsdoc.configs['flat/recommended-typescript-error'],
-    regexp.configs['flat/recommended'],
-  ],
-
-  {
-    plugins: {
-      unicorn,
-      prettier,
-    },
-    rules: {
-      ...unicorn.rules.recommended,
-    },
-  },
-
-  // base config
+  javascriptEslint.configs.recommended,
+  eslintPluginJsdoc.configs['flat/recommended-typescript-error'],
+  eslintPluginRegexp.configs['flat/recommended'],
+  ...typescriptEslint.configs.strictTypeChecked,
+  ...typescriptEslint.configs.stylisticTypeChecked,
   {
     languageOptions: {
       globals: {
-        ...globals.es2022,
+        ...globals.browser,
         ...globals.node,
       },
+    },
+  },
+  {
+    plugins: {
+      '@typescript-eslint': typescriptEslint.plugin,
+      unicorn: eslintPluginUnicorn,
+      prettier: eslintPluginPrettier,
+    },
+    languageOptions: {
+      parser: typescriptEslint.parser,
       parserOptions: {
         project: true,
         tsconfigRootDir: import.meta.dirname,
-        allowAutomaticSingleRunInference: true,
       },
     },
-    plugins: {
-      unicorn,
-      prettier,
-    },
     rules: {
-      ...unicorn.rules.recommended,
+      ...eslintPluginUnicorn.rules.recommended,
     },
   },
-
   {
     files: ['**/*.js'],
-    ...tseslint.configs.disableTypeChecked,
+    ...typescriptEslint.configs.disableTypeChecked,
   },
-
   {
-    files: ['**/*.spec.js', '**/*.test.js'],
+    // enable vitest rules on test files
+    files: ['**/*.spec.ts', '**/*.test.ts'],
     plugins: {
-      vitest,
+      vitest: eslintPluginVitest,
     },
     rules: {
-      ...vitest.configs.all.rules,
+      ...eslintPluginVitest.configs.recommended.rules,
     },
     settings: {
       vitest: {
@@ -81,8 +63,9 @@ export default tseslint.config(
     },
     languageOptions: {
       globals: {
-        ...vitest.environments.env.globals,
+        ...eslintPluginVitest.environments.env.globals,
       },
     },
   },
+  eslintConfigPrettier, // eslint-config-prettier last
 )
