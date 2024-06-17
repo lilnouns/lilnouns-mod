@@ -40,7 +40,7 @@ export async function fetchFeedItems(args: FetchFeedItemsArgs): Promise<Item[]> 
     }
     const data = await response.json<Response>()
 
-    return data.result.items as Item[]
+    return data.result.items
   } catch (error) {
     console.error('Error fetching feed items:', error)
     return []
