@@ -29,6 +29,9 @@ importers:
       '@types/node':
         specifier: 20.14.2
         version: 20.14.2
+      '@typescript-eslint/parser':
+        specifier: 8.0.0-alpha.30
+        version: 8.0.0-alpha.30(eslint@9.5.0)(typescript@5.4.5)
       eslint:
         specifier: 9.5.0
         version: 9.5.0
