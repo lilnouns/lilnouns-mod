@@ -47,6 +47,10 @@ const getAccountsQuery = (skip: number, first: number) => gql`
   }
 `
 
+/**
+ * Fetches accounts using a GraphQL client and returns all the accounts.
+ * @returns A promise that resolves to an array of accounts.
+ */
 export async function fetchAccounts(): Promise<Account[]> {
   const first = 1000
   let skip = 0

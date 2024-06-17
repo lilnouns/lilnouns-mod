@@ -20,6 +20,13 @@ interface FetchFeedItemsArgs {
 }
 
 export async function fetchFeedItems(args: FetchFeedItemsArgs): Promise<Item[]> {
+/**
+ * Fetches feed items from a specified URL using the provided arguments.
+ * @async
+ * @param args - The arguments to be sent in the request body.
+ * @returns A promise that resolves to an array of feed items if the request is successful, otherwise an empty array.
+ * @throws {Error} If an HTTP error occurs during the request.
+ */
   const url = 'https://client.warpcast.com/v2/feed-items'
   const headers = {
     Authorization: 'Bearer MK-',

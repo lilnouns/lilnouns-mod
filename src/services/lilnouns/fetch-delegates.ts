@@ -42,6 +42,10 @@ const getDelegatesQuery = (skip: number, first: number) => gql`
   }
 `
 
+/**
+ * Fetches delegates from a GraphQL API.
+ * @returns - A promise that resolves to an array of delegates.
+ */
 export async function fetchDelegates(): Promise<Delegate[]> {
   const first = 1000
   let skip = 0
