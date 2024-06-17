@@ -8,7 +8,7 @@ export default tseslint.config(
   eslint.configs.recommended,
   ...tseslint.configs.strict,
   ...tseslint.configs.stylistic,
-  prettierConfig,
+  ...[prettierConfig],
   {
     ignores: ['test/*', 'dist/*', '**/*.config.js'],
   },
