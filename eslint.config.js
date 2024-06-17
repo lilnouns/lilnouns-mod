@@ -10,6 +10,9 @@ export default tseslint.config(
   ...tseslint.configs.stylistic,
   prettierConfig,
   {
+    ignores: ['test/*', 'dist/*', '**/*.config.js'],
+  },
+  {
     plugins: {
       prettier,
     },
