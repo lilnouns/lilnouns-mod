@@ -4,6 +4,7 @@ import jsdoc from 'eslint-plugin-jsdoc'
 import prettier from 'eslint-plugin-prettier'
 import regexp from 'eslint-plugin-regexp'
 import unicorn from 'eslint-plugin-unicorn'
+import vitest from 'eslint-plugin-vitest'
 import globals from 'globals'
 import tseslint from 'typescript-eslint'
 
@@ -28,6 +29,16 @@ export default tseslint.config(
     regexp.configs['flat/recommended'],
   ],
 
+  {
+    plugins: {
+      unicorn,
+      prettier,
+    },
+    rules: {
+      ...unicorn.rules.recommended,
+    },
+  },
+
   // base config
   {
     languageOptions: {
@@ -47,13 +58,31 @@ export default tseslint.config(
     },
     rules: {
       ...unicorn.rules.recommended,
-      'unicorn/prevent-abbreviations': 'off',
-      '@typescript-eslint/no-empty-interface': 'off',
     },
   },
 
   {
     files: ['**/*.js'],
     ...tseslint.configs.disableTypeChecked,
+  },
+
+  {
+    files: ['**/*.spec.js', '**/*.test.js'],
+    plugins: {
+      vitest,
+    },
+    rules: {
+      ...vitest.configs.all.rules,
+    },
+    settings: {
+      vitest: {
+        typecheck: true,
+      },
+    },
+    languageOptions: {
+      globals: {
+        ...vitest.environments.env.globals,
+      },
+    },
   },
 )
