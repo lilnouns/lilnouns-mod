@@ -2,6 +2,63 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.0.0-alpha.3] - 2024-06-19
+
+### 🚀 Features
+
+- Add delegate fetching functionality to lilnouns service
+- *(handlers)* Extract delegate fetching to a separate function
+- *(warpcast)* Add multiple interfaces for warpcast service
+- *(warpcast)* Add `fetchFeedItems` function
+- *(handlers)* Add new `channelHandler` and integrate into `scheduledHandler`
+
+### 🚜 Refactor
+
+- Simplify condition in fetch accounts service
+- Replace `fetchAccounts` with `fetchDelegates` for data collection
+- *(index)* Extract scheduled function from default export
+- *(handlers)* Move `scheduledHandler` to new handlers module
+- *(handlers)* Add specific author and reaction count logging
+- Replace `type` with `interface` for data structures in lilnouns services
+- *(warpcast)* Change `FetchFeedItemsArgs` from type to interface
+- Update formatting of `scheduledHandler` call in index
+- *(warpcast)* Simplify return statement in `fetchFeedItems`
+- *(warpcast)* Convert response status to string in `fetchFeedItems` error message
+- Change `project` to `projectService` in eslint config
+
+### 📚 Documentation
+
+- Add `README.md` with project information and badges
+- Add missing function documentation comments
+
+### 🧪 Testing
+
+- Add eslint disable line for empty interface in module
+- Remove unnecessary eslint-disable comment in `cloudflare:test` module
+- Change interface to type in env module
+- Ignore `expect-expect` eslint rule for specific test
+
+### ⚙️ Miscellaneous Tasks
+
+- *(husky)* Add pre-commit hook to run tests
+- *(scripts)* Add `prepare` script with husky
+- *(husky)* Add lint-staged command to pre-commit hook
+- Add lint-staged configuration for auto-formatting
+- *(prettier)* Add `prettier-plugin-packagejson` to plugins
+- *(lint-staged)* Add toml files to prettier formatting
+- *(prettier)* Reorder and add prettier plugins
+- *(tsconfig)* Enable paths option for module import shortcuts
+- *(vitest)* Add resolve alias to vitest configuration
+- *(eslint)* Switch eslint configuration to flat config
+- *(eslint)* Add file and folder ignore patterns
+- *(eslint)* Spread prettierConfig in eslint configuration
+- *(scripts)* Add eslint to npm scripts
+- *(eslint)* Enhance configurations for better linting
+- *(eslint)* Add eslint-plugin-regexp to configuration
+- *(eslint)* Add vitest plugin configuration
+- *(eslint)* Simplify rule configurations and module imports
+- *(vitest)* Remove unnecessary type definition in vitest configuration
+
 ## [1.0.0-alpha.2] - 2024-06-09
 
 ### 🚀 Features
