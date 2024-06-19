@@ -1,15 +1,15 @@
 import { gql, GraphQLClient } from 'graphql-request'
 
-type Noun = {
+interface Noun {
   id: string
 }
 
-type Account = {
+interface Account {
   id: string
   nouns: Noun[]
 }
 
-type Data = {
+interface Data {
   accounts: Account[]
 }
 
@@ -34,7 +34,7 @@ const getAccountsQuery = (skip: number, first: number) => gql`
             ]
           }
           {
-            or: [{ tokenBalance_gt: 0 }, { delegate_: { delegatedVotes_gt: 0 } }]
+            or: [{ tokenBalance_gt: 0 }]
           }
         ]
       }
@@ -47,6 +47,10 @@ const getAccountsQuery = (skip: number, first: number) => gql`
   }
 `
 
+/**
+ * Fetches accounts using a GraphQL client and returns all the accounts.
+ * @returns A promise that resolves to an array of accounts.
+ */
 export async function fetchAccounts(): Promise<Account[]> {
   const first = 1000
   let skip = 0

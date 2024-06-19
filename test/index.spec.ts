@@ -8,6 +8,7 @@ import { it } from 'vitest'
 // Could import any other source file/function here
 import worker from '../src'
 
+// eslint-disable-next-line vitest/expect-expect
 it('calls scheduled handler', async () => {
   const ctrl = createScheduledController({
     scheduledTime: new Date(1000),
