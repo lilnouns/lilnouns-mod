@@ -24,7 +24,7 @@ export const likeCast = async (
     warpcastBaseUrl,
     warpcastAccessToken,
     HttpRequestMethod.PUT,
-    '/cast-likes',
+    '/v2/cast-likes',
     { json: body },
   )
 }
