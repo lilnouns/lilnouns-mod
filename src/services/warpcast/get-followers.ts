@@ -1,23 +1,39 @@
 import { fetchRequest, HttpRequestMethod } from '@/services/warpcast/index'
 import { User } from '@/services/warpcast/types'
+import { IntRange } from 'type-fest'
 
 interface Result {
   users: User[]
+  cursor?: string
 }
 
 interface Response {
-  result: Result
+  result: {
+    users: User[]
+  }
   next?: {
     cursor: string
   }
 }
 
-export const getFollowers = async (env: Env, fid: number): Promise<Result> => {
+/**
+ * Retrieves followers of a user.
+ * @param env - The environment variables containing access token and base URL.
+ * @param fid - The ID of the user for whom to retrieve followers.
+ * @param [cursor] - The cursor to paginate through the followers.
+ * @param [limit] - The maximum number of followers to retrieve (default: 25).
+ * @returns - A promise that resolves to an object containing the retrieved users and the current cursor.
+ */
+export const getFollowers = async (
+  env: Env,
+  fid: number,
+  cursor?: string,
+  limit: IntRange<1, 101> = 25,
+): Promise<Result> => {
   const { WARPCAST_ACCESS_TOKEN: accessToken, WARPCAST_BASE_URL: baseUrl } = env
 
   const users: User[] = []
-  let cursor: string | undefined = undefined
-  const limit = 100
+  let newCursor = cursor ?? ''
 
   while (true) {
     const response = await fetchRequest<Response>(
@@ -28,8 +44,8 @@ export const getFollowers = async (env: Env, fid: number): Promise<Result> => {
       {
         params: {
           fid: fid.toString(),
-          cursor: cursor ?? '',
-          limit: limit.toString(),
+          cursor: newCursor,
+          limit: String(limit),
         },
       },
     )
@@ -38,12 +54,12 @@ export const getFollowers = async (env: Env, fid: number): Promise<Result> => {
       users.push(...response.result.users)
     }
 
-    if (!response.next) {
+    if (!response.next || users.length > limit) {
       break
     }
 
-    cursor = response.next.cursor
+    newCursor = response.next.cursor
   }
 
-  return { users }
+  return { users: users.slice(0, limit), cursor: newCursor }
 }
