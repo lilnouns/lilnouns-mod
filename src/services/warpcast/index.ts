@@ -1,105 +1,60 @@
-export interface Pfp {
-  url: string
-  verified: boolean
+export { likeCast } from './like-cast'
+
+export enum HttpRequestMethod {
+  GET = 'GET',
+  POST = 'POST',
+  PUT = 'PUT',
+  DELETE = 'DELETE',
 }
 
-export interface Bio {
-  text: string
-  mentions: never[]
-  channelMentions: never[]
+export interface FetchOptions {
+  params?: Record<string, string>
+  json?: Record<string, unknown>
+  headers?: Record<string, string>
 }
 
-export interface Location {
-  placeId: string
-  description: string
+export interface FetchResponse {
+  errors?: string
+
+  [key: string]: any
 }
 
-export interface Profile {
-  bio: Bio
-  location: Location
-}
+/**
+ * Performs a HTTP request to the specified path using the provided method and options.
+ * @param baseUrl - The base URL to prepend to the path.
+ * @param accessToken - The access token to include in the request headers.
+ * @param method - The HTTP method to use for the request.
+ * @param path - The path to append to the base URL for the request.
+ * @param [options] - Additional options for the request.
+ * @returns - A promise that resolves with the response data.
+ */
+export async function fetchRequest<T>(
+  baseUrl: string,
+  accessToken: string | undefined,
+  method: HttpRequestMethod,
+  path: string,
+  options?: FetchOptions,
+): Promise<T> {
+  const url = new URL(path, baseUrl)
+  url.search = new URLSearchParams(options?.params ?? {}).toString()
 
-export interface ViewerContext {
-  following: boolean
-}
+  const response = await fetch(url.toString(), {
+    method,
+    headers: {
+      'Content-Type': 'application/json',
+      ...(accessToken && { Authorization: `Bearer ${accessToken}` }),
+      ...options?.headers,
+    },
+    body:
+      method !== HttpRequestMethod.GET
+        ? JSON.stringify(options?.json)
+        : undefined,
+  })
 
-export interface Author {
-  fid: number
-  username: string
-  displayName: string
-  pfp: Pfp
-  profile: Profile
-  followerCount: number
-  followingCount: number
-  activeOnFcNetwork: boolean
-  viewerContext: ViewerContext
-}
-
-export interface OpenGraph {
-  url: string
-  sourceUrl: string
-  title: string
-  domain: string
-  useLargeImage: boolean
-  frame: {
-    version: string
-    frameUrl: string
-    imageUrl: string
-    postUrl: string
-    buttons: {
-      index: number
-      title: string
-      type: string
-      target: string
-    }[]
-    imageAspectRatio: string
+  const data: FetchResponse = await response.json()
+  if (data.errors) {
+    throw new Error(data.errors)
   }
-}
 
-export interface Url {
-  type: string
-  openGraph: OpenGraph
-}
-
-export interface Embeds {
-  images: never[]
-  urls: Url[]
-  videos: never[]
-  unknowns: never[]
-  processedCastText: string
-}
-
-export interface Cast {
-  hash: string
-  threadHash: string
-  author: Author
-  text: string
-  timestamp: number
-  mentions: never[]
-  attachments: never
-  embeds: Embeds
-  replies: { count: number }
-  reactions: { count: number }
-  recasts: { count: number }
-  watches: { count: number }
-  tags: {
-    type: string
-    id: string
-    name: string
-    imageUrl: string
-  }[]
-  quoteCount: number
-  combinedRecastCount: number
-  viewerContext: {
-    reacted: boolean
-    recast: boolean
-    bookmarked: boolean
-  }
-}
-
-export interface Item {
-  id: string
-  timestamp: number
-  cast: Cast
-  otherParticipants: never[]
+  return data as T
 }

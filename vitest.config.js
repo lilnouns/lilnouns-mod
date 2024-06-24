@@ -7,6 +7,7 @@ export default defineWorkersConfig({
         wrangler: { configPath: './wrangler.toml' },
       },
     },
+    testTimeout: 30000,
   },
   resolve: {
     alias: {

@@ -14,3 +14,4 @@ insert_final_newline = true
 # Set default charset and space indentation
 [*.{js,ts,jsx,tsx}]
 indent_size = 2
+max_line_length = 80

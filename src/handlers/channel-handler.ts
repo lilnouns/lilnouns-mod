@@ -1,4 +1,6 @@
-import { fetchFeedItems } from '@/services/warpcast/fetch-feed-items'
+import { likeCast } from '@/services/warpcast'
+import { getCastLikes } from '@/services/warpcast/get-cast-likes'
+import { getFeedItems } from '@/services/warpcast/get-feed-items'
 
 /**
  * Handles the channel based on the given environment.
@@ -6,29 +8,27 @@ import { fetchFeedItems } from '@/services/warpcast/fetch-feed-items'
  * @returns - A Promise that resolves when the channel handler has completed execution.
  */
 export async function channelHandler(env: Env) {
-  // eslint-disable-next-line no-empty-pattern
-  const {} = env
-
-  const items = await fetchFeedItems({
-    feedKey: 'lilnouns',
-    feedType: 'unfiltered',
-    viewedCastHashes: '',
-    updateState: true,
-  })
+  const owner = 'nekofar.eth'
+  const {
+    result: { items },
+  } = await getFeedItems(env, 'lilnouns', 'unfiltered')
 
   for (const item of items) {
-    if (item.cast.author.username == 'lilnouns') {
-      console.log(item)
-    }
+    if (item.cast.author.username == owner) {
+      await likeCast(env, item.cast.hash)
+    } else if (item.cast.reactions.count > 5) {
+      await likeCast(env, item.cast.hash)
+    } else if (item.cast.reactions.count > 0) {
+      const {
+        result: { likes },
+      } = await getCastLikes(env, item.cast.hash)
 
-    if (item.cast.author.username == 'nekofar.eth') {
-      console.log(item)
-    }
-
-    if (item.cast.reactions.count > 5) {
-      console.log(item)
+      for (const like of likes) {
+        if (like.reactor.username != owner) {
+          continue
+        }
+        await likeCast(env, item.cast.hash)
+      }
     }
   }
-
-  console.log(items)
 }
