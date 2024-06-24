@@ -29,7 +29,7 @@ jobs:
     name: Build & Test
     runs-on: ubuntu-latest # The type of machine to run the job on.
 
-    needs: [ guard ]
+    needs: [guard]
 
     steps: # The sequence of tasks that make up a job.
       - name: Checking out repository code
@@ -69,7 +69,7 @@ jobs:
         run: pnpm run build
 
       # Runs unit tests for the application using Jest.
-      - name: Execute tests using Jest
+      - name: Execute tests using Vitest
         run: pnpm run test
 
   release:
@@ -77,7 +77,7 @@ jobs:
     # Specify the type of the runner the job will run on
     runs-on: ubuntu-latest
 
-    needs: [ build ]
+    needs: [build]
 
     if: ${{ github.ref_name == 'master' }}
 
