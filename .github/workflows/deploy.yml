@@ -1,10 +1,9 @@
 name: Deploy & Publish
 on:
   release:
-    types: [ published ]
+    types: [published]
 
 jobs:
-
   # Prepare and publish
   deploy:
     name: Deploy to Workers
@@ -14,7 +13,6 @@ jobs:
       contents: write
       pull-requests: write
     steps:
-
       # Check out current repository
       - name: Fetch Sources
         uses: actions/checkout@v4.1.7
@@ -54,8 +52,10 @@ jobs:
           # environment: ${{ github.event.release.prerelease && 'dev' || '' }}
           preCommands: pnpm run build
           command: deploy
-#          secrets: |
-#        env:
+          secrets: |
+            WARPCAST_ACCESS_TOKEN
+        env:
+          WARPCAST_ACCESS_TOKEN: ${{ secrets.WARPCAST_ACCESS_TOKEN }}
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
