@@ -7,9 +7,6 @@ import { fetchFeedItems } from '@/services/warpcast/fetch-feed-items'
  * @returns - A Promise that resolves when the channel handler has completed execution.
  */
 export async function channelHandler(env: Env) {
-  // eslint-disable-next-line no-empty-pattern
-  const {} = env
-
   const items = await fetchFeedItems({
     feedKey: 'lilnouns',
     feedType: 'unfiltered',
@@ -19,11 +16,11 @@ export async function channelHandler(env: Env) {
 
   for (const item of items) {
     if (item.cast.author.username == 'nekofar.eth') {
-      await likeCast(item.cast.hash)
+      await likeCast(env, item.cast.hash)
     }
 
     if (item.cast.reactions.count > 5) {
-      await likeCast(item.cast.hash)
+      await likeCast(env, item.cast.hash)
     }
   }
 }
