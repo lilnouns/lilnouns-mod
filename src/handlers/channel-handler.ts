@@ -1,6 +1,6 @@
 import { likeCast } from '@/services/warpcast'
-import { fetchFeedItems } from '@/services/warpcast/fetch-feed-items'
 import { getCastLikes } from '@/services/warpcast/get-cast-likes'
+import { getFeedItems } from '@/services/warpcast/get-feed-items'
 
 /**
  * Handles the channel based on the given environment.
@@ -9,12 +9,9 @@ import { getCastLikes } from '@/services/warpcast/get-cast-likes'
  */
 export async function channelHandler(env: Env) {
   const owner = 'nekofar.eth'
-  const items = await fetchFeedItems({
-    feedKey: 'lilnouns',
-    feedType: 'unfiltered',
-    viewedCastHashes: '',
-    updateState: true,
-  })
+  const {
+    result: { items },
+  } = await getFeedItems(env, 'lilnouns', 'unfiltered')
 
   for (const item of items) {
     if (item.cast.author.username == owner) {
