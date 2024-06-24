@@ -9,6 +9,15 @@ interface Response {
   }
 }
 
+/**
+ * Retrieves the likes for a given cast.
+ * @async
+ * @param env - The environment configuration object.
+ * @param castHash - The hash of the cast.
+ * @param [cursor] - The cursor for pagination.
+ * @param [limit] - The limit of results per page.
+ * @returns - A promise that resolves to the response of the request.
+ */
 export const getCastLikes = async (
   env: Env,
   castHash: string,
