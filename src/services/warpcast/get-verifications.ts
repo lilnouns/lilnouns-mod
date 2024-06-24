@@ -2,10 +2,12 @@ import { fetchRequest, HttpRequestMethod } from '@/services/warpcast/index'
 import { Verification } from '@/services/warpcast/types'
 import { NonNegative } from 'type-fest'
 
+interface Result {
+  verifications: Verification[]
+}
+
 interface Response {
-  result: {
-    verifications: Verification[]
-  }
+  result: Result
 }
 
 export const getVerifications = async (
@@ -13,10 +15,10 @@ export const getVerifications = async (
   fid: number,
   cursor?: string,
   limit: NonNegative<number> = 25,
-): Promise<Response> => {
+): Promise<Result> => {
   const { WARPCAST_ACCESS_TOKEN: accessToken, WARPCAST_BASE_URL: baseUrl } = env
 
-  return await fetchRequest<Response>(
+  const { result } = await fetchRequest<Response>(
     baseUrl,
     accessToken,
     HttpRequestMethod.GET,
@@ -29,4 +31,6 @@ export const getVerifications = async (
       },
     },
   )
+
+  return result
 }
