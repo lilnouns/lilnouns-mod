@@ -1,1 +1,59 @@
 export { likeCast } from './like-cast'
+
+export enum HttpRequestMethod {
+  GET = 'GET',
+  POST = 'POST',
+  PUT = 'PUT',
+  DELETE = 'DELETE',
+}
+
+export interface FetchOptions {
+  params?: Record<string, string>
+  json?: Record<string, unknown>
+  headers?: Record<string, string>
+}
+
+export interface FetchResponse {
+  errors?: string
+
+  [key: string]: any
+}
+
+/**
+ *
+ * @param baseUrl
+ * @param accessToken
+ * @param method
+ * @param path
+ * @param options
+ */
+export async function fetchRequest<T>(
+  baseUrl: string,
+  accessToken: string | undefined,
+  method: HttpRequestMethod,
+  path: string,
+  options?: FetchOptions,
+): Promise<T> {
+  const url = new URL(path, baseUrl)
+  url.search = new URLSearchParams(options?.params || {}).toString()
+
+  const response = await fetch(url.toString(), {
+    method,
+    headers: {
+      'Content-Type': 'application/json',
+      ...(accessToken && { Authorization: `Bearer ${accessToken}` }),
+      ...options?.headers,
+    },
+    body:
+      method !== HttpRequestMethod.GET
+        ? JSON.stringify(options?.json)
+        : undefined,
+  })
+
+  const data: FetchResponse = await response.json()
+  if (data.errors) {
+    throw new Error(data.errors)
+  }
+
+  return data as T
+}
