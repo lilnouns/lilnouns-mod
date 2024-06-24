@@ -36,7 +36,7 @@ export async function fetchRequest<T>(
   options?: FetchOptions,
 ): Promise<T> {
   const url = new URL(path, baseUrl)
-  url.search = new URLSearchParams(options?.params || {}).toString()
+  url.search = new URLSearchParams(options?.params ?? {}).toString()
 
   const response = await fetch(url.toString(), {
     method,
