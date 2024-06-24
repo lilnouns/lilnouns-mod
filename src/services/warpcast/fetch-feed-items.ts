@@ -1,4 +1,4 @@
-import { Item } from './index'
+import { Item } from './types'
 
 interface Response {
   result: {
