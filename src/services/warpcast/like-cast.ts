@@ -12,7 +12,6 @@ export const likeCast = async (
   env: Env,
   castHash: string,
 ): Promise<Response> => {
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
   const { warpcastAccessToken, warpcastBaseUrl } = configs(env)
   const body = { castHash }
   return await fetchRequest<Response>(
