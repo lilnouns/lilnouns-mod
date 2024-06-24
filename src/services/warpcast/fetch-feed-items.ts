@@ -30,11 +30,11 @@ export async function fetchFeedItems(
   args: FetchFeedItemsArgs,
 ): Promise<Item[]> {
   const url = 'https://client.warpcast.com/v2/feed-items'
+  const body = JSON.stringify(args)
   const headers = {
-    Authorization: 'Bearer MK-',
+    Authorization: `Bearer `,
     'Content-Type': 'application/json; charset=utf-8',
   }
-  const body = JSON.stringify(args)
 
   const options: RequestInit = {
     method: 'POST',
