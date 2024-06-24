@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.0.0-alpha.5] - 2024-06-24
+
+### 🧪 Testing
+
+- Adjust cron timing in scheduling tests
+
+### ⚙️ Miscellaneous Tasks
+
+- *(deploy)* Enable warpcast access token in deployment workflows
+
 ## [1.0.0-alpha.4] - 2024-06-24
 
 ### 🚀 Features
