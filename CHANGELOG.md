@@ -2,6 +2,46 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.0.0-alpha.4] - 2024-06-24
+
+### 🚀 Features
+
+- *(warpcast)* Add support for liking a cast
+- *(worker-config)* Add warpcast config variables
+- *(warpcast)* Add `fetchRequest` function and related types
+- *(warpcast)* Add `getCastLikes` function
+- *(channel-handler)* Add conditions for liking content
+
+### 🚜 Refactor
+
+- Change import path for `scheduledHandler`
+- *(handlers)* Use switch statement for cron schedule
+- Move warpcast service types to separate file
+- *(warpcast)* Reorder variables in `fetchFeedItems`
+- *(channel-handler)* Use likeCast function instead of console log
+- *(warpcast)* Simplify `likeCast` function
+- Pass environment to `likeCast` function
+- *(warpcast)* Remove unnecessary eslint disable comment
+- *(warpcast)* Remove unnecessary eslint disable comment
+- Use nullish coalescing in warpcast service
+- *(warpcast)* Update API endpoint for like cast
+- Remove `configs` module and access env vars directly
+- Replace `fetchFeedItems` function with `getFeedItems`
+- Change `getFeedItems` to arrow function in warpcast service
+
+### 📚 Documentation
+
+- *(warpcast)* Enhance the fetchRequest function documentation
+- *(warpcast)* Add docs for method to fetch warpcast likes
+
+### 🎨 Styling
+
+- Set maximum line length
+
+### ⚙️ Miscellaneous Tasks
+
+- *(vitest)* Increase test timeout
+
 ## [1.0.0-alpha.3] - 2024-06-19
 
 ### 🚀 Features
