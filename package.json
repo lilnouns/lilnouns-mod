@@ -15,7 +15,8 @@
   },
   "dependencies": {
     "graphql": "16.8.2",
-    "graphql-request": "6.1.0"
+    "graphql-request": "6.1.0",
+    "type-fest": "4.20.1"
   },
   "devDependencies": {
     "@cloudflare/vitest-pool-workers": "0.4.6",
