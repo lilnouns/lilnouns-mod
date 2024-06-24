@@ -20,12 +20,13 @@ export interface FetchResponse {
 }
 
 /**
- *
- * @param baseUrl
- * @param accessToken
- * @param method
- * @param path
- * @param options
+ * Performs a HTTP request to the specified path using the provided method and options.
+ * @param baseUrl - The base URL to prepend to the path.
+ * @param accessToken - The access token to include in the request headers.
+ * @param method - The HTTP method to use for the request.
+ * @param path - The path to append to the base URL for the request.
+ * @param [options] - Additional options for the request.
+ * @returns - A promise that resolves with the response data.
  */
 export async function fetchRequest<T>(
   baseUrl: string,
