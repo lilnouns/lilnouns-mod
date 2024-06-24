@@ -1,4 +1,3 @@
-import { configs } from '@/configs'
 import { fetchRequest, HttpRequestMethod } from '@/services/warpcast/index'
 import { Like } from '@/services/warpcast/types'
 
@@ -18,11 +17,12 @@ export const likeCast = async (
   env: Env,
   castHash: string,
 ): Promise<Response> => {
-  const { warpcastAccessToken, warpcastBaseUrl } = configs(env)
+  const { WARPCAST_ACCESS_TOKEN: accessToken, WARPCAST_BASE_URL: baseUrl } = env
+
   const body = { castHash }
   return await fetchRequest<Response>(
-    warpcastBaseUrl,
-    warpcastAccessToken,
+    baseUrl,
+    accessToken,
     HttpRequestMethod.PUT,
     '/v2/cast-likes',
     { json: body },
