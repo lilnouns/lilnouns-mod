@@ -8,6 +8,12 @@ interface Response {
   }
 }
 
+/**
+ * Sends a like cast request to the warpcast server.
+ * @param env - The environment configuration.
+ * @param castHash - The hash of the cast.
+ * @returns - A promise that resolves to a Response object from the server.
+ */
 export const likeCast = async (
   env: Env,
   castHash: string,
