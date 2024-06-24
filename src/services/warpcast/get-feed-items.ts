@@ -19,11 +19,11 @@ interface Response {
  * @returns - A promise that resolves to an array of feed items if the request is successful, otherwise an empty array.
  * @throws {Error} If an HTTP error occurs during the request.
  */
-export async function getFeedItems(
+export const getFeedItems = async (
   env: Env,
   feedKey: string,
   feedType: string,
-): Promise<Response> {
+): Promise<Response> => {
   const { WARPCAST_ACCESS_TOKEN: accessToken, WARPCAST_BASE_URL: baseUrl } = env
 
   return await fetchRequest<Response>(
