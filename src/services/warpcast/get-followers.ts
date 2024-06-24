@@ -31,35 +31,28 @@ export const getFollowers = async (
   limit: IntRange<1, 101> = 25,
 ): Promise<Result> => {
   const { WARPCAST_ACCESS_TOKEN: accessToken, WARPCAST_BASE_URL: baseUrl } = env
-
-  const users: User[] = []
   let newCursor = cursor ?? ''
+  let users: User[] = []
+  let response: Response
 
-  while (true) {
-    const response = await fetchRequest<Response>(
+  do {
+    const params = {
+      fid: fid.toString(),
+      cursor: newCursor,
+      limit: String(limit),
+    }
+    response = await fetchRequest<Response>(
       baseUrl,
       accessToken,
       HttpRequestMethod.GET,
       '/v2/followers',
       {
-        params: {
-          fid: fid.toString(),
-          cursor: newCursor,
-          limit: String(limit),
-        },
+        params,
       },
     )
-
-    if (response.result.users) {
-      users.push(...response.result.users)
-    }
-
-    if (!response.next || users.length > limit) {
-      break
-    }
-
-    newCursor = response.next.cursor
-  }
+    users = [...users, ...response.result.users]
+    newCursor = response.next ? response.next.cursor : ''
+  } while (response.next && users.length < limit)
 
   return { users: users.slice(0, limit), cursor: newCursor }
 }
