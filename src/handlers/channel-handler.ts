@@ -1,3 +1,4 @@
+import { likeCast } from '@/services/warpcast'
 import { fetchFeedItems } from '@/services/warpcast/fetch-feed-items'
 
 /**
@@ -17,18 +18,12 @@ export async function channelHandler(env: Env) {
   })
 
   for (const item of items) {
-    if (item.cast.author.username == 'lilnouns') {
-      console.log(item)
-    }
-
     if (item.cast.author.username == 'nekofar.eth') {
-      console.log(item)
+      await likeCast(item.cast.hash)
     }
 
     if (item.cast.reactions.count > 5) {
-      console.log(item)
+      await likeCast(item.cast.hash)
     }
   }
-
-  console.log(items)
 }
