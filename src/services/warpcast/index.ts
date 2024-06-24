@@ -58,3 +58,4 @@ export async function fetchRequest<T>(
 
   return data as T
 }
+
