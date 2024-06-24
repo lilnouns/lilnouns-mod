@@ -1,3 +1,11 @@
+export interface Like {
+  type: string
+  hash: string
+  reactor: User
+  timestamp: number
+  castHash: string
+}
+
 export interface Pfp {
   url: string
   verified: boolean
