@@ -9,9 +9,7 @@ import { getFeedItems } from '@/services/warpcast/get-feed-items'
  */
 export async function channelHandler(env: Env) {
   const owner = 'nekofar.eth'
-  const {
-    result: { items },
-  } = await getFeedItems(env, 'lilnouns', 'unfiltered')
+  const { items } = await getFeedItems(env, 'lilnouns', 'unfiltered')
 
   for (const item of items) {
     if (item.cast.author.username == owner) {
@@ -19,9 +17,7 @@ export async function channelHandler(env: Env) {
     } else if (item.cast.reactions.count > 5) {
       await likeCast(env, item.cast.hash)
     } else if (item.cast.reactions.count > 0) {
-      const {
-        result: { likes },
-      } = await getCastLikes(env, item.cast.hash)
+      const { likes } = await getCastLikes(env, item.cast.hash)
 
       for (const like of likes) {
         if (like.reactor.username != owner) {

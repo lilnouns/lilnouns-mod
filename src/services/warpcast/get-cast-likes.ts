@@ -2,11 +2,13 @@ import { fetchRequest, HttpRequestMethod } from '@/services/warpcast/index'
 import { Like } from '@/services/warpcast/types'
 import type { NonNegative } from 'type-fest'
 
+interface Result {
+  likes: Like[]
+  cursor?: string
+}
+
 interface Response {
-  result: {
-    likes: Like[]
-    cursor?: string
-  }
+  result: Result
 }
 
 /**
@@ -23,16 +25,20 @@ export const getCastLikes = async (
   castHash: string,
   cursor?: string,
   limit: NonNegative<number> = 25,
-): Promise<Response> => {
+): Promise<Result> => {
   const { WARPCAST_ACCESS_TOKEN: accessToken, WARPCAST_BASE_URL: baseUrl } = env
 
-  return await fetchRequest<Response>(
+  const params = { castHash, cursor: cursor ?? '', limit: limit.toString() }
+
+  const { result } = await fetchRequest<Response>(
     baseUrl,
     accessToken,
     HttpRequestMethod.GET,
     '/v2/cast-likes',
     {
-      params: { castHash, cursor: cursor ?? '', limit: limit.toString() },
+      params: params,
     },
   )
+
+  return result
 }

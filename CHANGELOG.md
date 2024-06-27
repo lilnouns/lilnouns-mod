@@ -2,6 +2,30 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.0.0-alpha.6] - 2024-06-27
+
+### 🚀 Features
+
+- *(warpcast)* Add verification type and fetching function
+- *(warpcast)* Add `getFollowers` function
+- *(warpcast)* Enhance `getFollowers` function with pagination and limit args
+- *(warpcast)* Add new function to fetch user following
+- *(warpcast)* Add `getMe` function to retrieve user info
+- *(warpcast)* Add `getUserByUsername` function
+- *(warpcast)* Add `getUserByVerification` method
+- *(warpcast)* Add `getCollectionOwners` function
+- *(warpcast)* Add collection interface and user collection retrieval function
+
+### 🚜 Refactor
+
+- *(warpcast)* Change `fetchResponse` key type to unknown
+- *(warpcast)* Simplify response handling
+- *(warpcast)* Optimize fetch followers loop
+
+### ⚙️ Miscellaneous Tasks
+
+- *(build)* Replace Jest with Vitest for executing tests
+
 ## [1.0.0-alpha.5] - 2024-06-24
 
 ### 🧪 Testing

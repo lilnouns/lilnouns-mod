@@ -1,13 +1,15 @@
 import { fetchRequest, HttpRequestMethod } from '@/services/warpcast/index'
 import { Item } from './types'
 
+interface Result {
+  items: Item[]
+  latestMainCastTimestamp: number
+  feedTopSeenAtTimestamp: number
+  replaceFeed: boolean
+}
+
 interface Response {
-  result: {
-    items: Item[]
-    latestMainCastTimestamp: number
-    feedTopSeenAtTimestamp: number
-    replaceFeed: boolean
-  }
+  result: Result
 }
 
 /**
@@ -23,16 +25,20 @@ export const getFeedItems = async (
   env: Env,
   feedKey: string,
   feedType: string,
-): Promise<Response> => {
+): Promise<Result> => {
   const { WARPCAST_ACCESS_TOKEN: accessToken, WARPCAST_BASE_URL: baseUrl } = env
 
-  return await fetchRequest<Response>(
+  const body = { feedKey, feedType }
+
+  const { result } = await fetchRequest<Response>(
     baseUrl,
     accessToken,
     HttpRequestMethod.POST,
     '/v2/feed-items',
     {
-      json: { feedKey, feedType },
+      json: { ...body },
     },
   )
+
+  return result
 }

@@ -1,3 +1,5 @@
+import { NonNegative } from 'type-fest'
+
 export interface Like {
   type: string
   hash: string
@@ -110,4 +112,28 @@ export interface Item {
   timestamp: number
   cast: Cast
   otherParticipants: never[]
+}
+
+export interface Verification {
+  fid: NonNegative<number>
+  address: string
+  timestamp: NonNegative<number>,
+  version: string,
+  protocol: string
+}
+
+export interface Collection {
+  id: string;
+  name: string;
+  description?: string;
+  itemCount: number;
+  ownerCount: number;
+  farcasterOwnerCount: number;
+  imageUrl: string;
+  floorPrice?: string;
+  volumeTraded: string;
+  externalUrl?: string;
+  openSeaUrl: string;
+  twitterUsername?: string;
+  schemaName?: string;
 }

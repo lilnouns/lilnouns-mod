@@ -16,7 +16,7 @@ export interface FetchOptions {
 export interface FetchResponse {
   errors?: string
 
-  [key: string]: any
+  [key: string]: unknown
 }
 
 /**
@@ -58,3 +58,4 @@ export async function fetchRequest<T>(
 
   return data as T
 }
+
