@@ -121,3 +121,19 @@ export interface Verification {
   version: string,
   protocol: string
 }
+
+export interface Collection {
+  id: string;
+  name: string;
+  description?: string;
+  itemCount: number;
+  ownerCount: number;
+  farcasterOwnerCount: number;
+  imageUrl: string;
+  floorPrice?: string;
+  volumeTraded: string;
+  externalUrl?: string;
+  openSeaUrl: string;
+  twitterUsername?: string;
+  schemaName?: string;
+}
