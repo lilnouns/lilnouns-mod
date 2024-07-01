@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.0.0-alpha.7] - 2024-07-01
+
+### 🚀 Features
+
+- *(warpcast)* Implement recast function for warpcast service
+- *(channel-handler)* Add recast functionality for feed items
+
+### 🚜 Refactor
+
+- *(channel-handler)* Improve readability of conditionals
+
 ## [1.0.0-alpha.6] - 2024-06-27
 
 ### 🚀 Features
