@@ -16,7 +16,7 @@
   "dependencies": {
     "graphql": "16.9.0",
     "graphql-request": "6.1.0",
-    "type-fest": "4.20.1"
+    "type-fest": "4.21.0"
   },
   "devDependencies": {
     "@cloudflare/vitest-pool-workers": "0.4.7",
