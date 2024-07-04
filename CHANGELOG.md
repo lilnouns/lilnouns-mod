@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.0.0-alpha.9] - 2024-07-04
+
+### ⚙️ Miscellaneous Tasks
+
+- Update cron job schedule in wrangler configuration
+
 ## [1.0.0-alpha.8] - 2024-07-04
 
 ### 🚀 Features
