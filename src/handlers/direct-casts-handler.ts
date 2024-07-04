@@ -1,8 +1,9 @@
 import { getDirectCastConversations } from '@/services/warpcast/get-direct-cast-conversations'
 
 /**
- *
- * @param env
+ * Updates the subscriber list by adding any new participants from direct cast conversations.
+ * @param env - The environment object containing the KV store.
+ * @returns - A promise that resolves after the update is completed.
  */
 export async function directCastsHandler(env: Env) {
   const { KV: kv } = env
