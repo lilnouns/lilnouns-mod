@@ -8,8 +8,9 @@ import {
  */
 export async function directCastsHandler(env: Env) {
   const { KV: kv } = env
+  const { conversations } = await getDirectCastConversations(env, 100)
 
-  const conversations = await getDirectCastConversations(env)
-
-  console.log(conversations)
+  for (const conversation of conversations) {
+    console.log(conversation)
+  }
 }
