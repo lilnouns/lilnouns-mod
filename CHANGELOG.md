@@ -2,6 +2,28 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.0.0-alpha.8] - 2024-07-04
+
+### 🚀 Features
+
+- *(warpcast)* Add conversation interface and direct cast conversations retrieval
+- *(direct-casts-handler)* Add new handler for direct casts
+- *(scheduled-handler)* Add `directCastsHandler` to cron schedules
+- *(warpcast)* Add message interface
+
+### 🚜 Refactor
+
+- *(warpcast)* Change order and optional status of parameters in `getDirectCastConversations`
+- Update data logging in `directCastsHandler`
+- *(direct-casts-handler)* Simplify import and update subscribers data
+- *(direct-casts-handler)* Destructure participants from conversation
+- *(scheduled-handler)* Update cron schedule calls
+
+### 📚 Documentation
+
+- Update `README` description and motivation
+- *(direct-casts-handler)* Update comment for `directCastsHandler` function
+
 ## [1.0.0-alpha.7] - 2024-07-01
 
 ### 🚀 Features
