@@ -137,3 +137,26 @@ export interface Collection {
   twitterUsername?: string;
   schemaName?: string;
 }
+
+export interface Conversation {
+  conversationId: string
+  name: string
+  photoUrl: string
+  adminFids: number[]
+  removedFids: number[]
+  participants: User[]
+  lastReadTime: number
+  selfLastReadTime: number
+  lastMessage: Message
+  pinnedMessages: never[]
+  hasPinnedMessages: boolean
+  isGroup: boolean
+  isCollectionTokenGated: boolean
+  unreadCount: number
+  muted: boolean
+  hasMention: boolean
+  groupPreferences: {
+    membersCanInvite: boolean
+  }
+  viewerContext: ViewerContext
+}
