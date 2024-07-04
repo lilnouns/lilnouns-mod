@@ -1,6 +1,7 @@
 import { channelHandler } from '@/handlers/channel-handler'
+import { directCastsHandler } from '@/handlers/direct-casts-handler'
 import { proposalHandler } from '@/handlers/proposal-handler'
-
+import { CronTime } from 'cron-time-generator'
 /**
  * Executes scheduled tasks based on the provided cron schedule.
  * @param env - The environment object containing necessary configuration.
@@ -12,11 +13,14 @@ export async function scheduledHandler(
   controller: ScheduledController,
 ) {
   switch (controller.cron) {
-    case '0 * * * *':
+    case CronTime.everyHour():
       await proposalHandler(env)
       break
-    case '30 * * * *':
+    case CronTime.every(10).minutes():
       await channelHandler(env)
+      break
+    case CronTime.every(12).hours():
+      await directCastsHandler(env)
       break
     default:
       console.log(`No handler for the cron schedule: ${controller.cron}`)

@@ -27,10 +27,10 @@ interface Response {
  */
 export const getDirectCastConversations = async (
   env: Env,
-  cursor?: string,
   limit: IntRange<1, 101> = 15,
   category = 'default',
-  filter = 'unread',
+  filter?: string,
+  cursor?: string,
 ): Promise<Result> => {
   const { WARPCAST_ACCESS_TOKEN: accessToken, WARPCAST_BASE_URL: baseUrl } = env
   let newCursor = cursor ?? ''
@@ -42,7 +42,7 @@ export const getDirectCastConversations = async (
       cursor: newCursor,
       limit: String(limit),
       category,
-      filter,
+        ...filter && { filter },
     }
     response = await fetchRequest<Response>(
       baseUrl,
