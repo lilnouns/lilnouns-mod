@@ -14,7 +14,8 @@ export async function directCastsHandler(env: Env) {
   const { conversations } = await getDirectCastConversations(env, 100)
 
   for (const conversation of conversations) {
-    for (const participant of conversation.participants) {
+    const { participants } = conversation
+    for (const participant of participants) {
       subscribers = [...new Set([...subscribers, participant.fid])]
     }
   }
