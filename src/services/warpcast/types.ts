@@ -138,6 +138,19 @@ export interface Collection {
   schemaName?: string;
 }
 
+export interface Message {
+  conversationId: string
+  senderFid: number
+  messageId: string
+  serverTimestamp: number
+  type: string
+  message: string
+  hasMention: boolean
+  reactions: never[]
+  isPinned: boolean
+  isDeleted: boolean
+}
+
 export interface Conversation {
   conversationId: string
   name: string
