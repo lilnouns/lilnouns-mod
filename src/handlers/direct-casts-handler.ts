@@ -8,15 +8,23 @@ import { getDirectCastConversations } from '@/services/warpcast/get-direct-cast-
 export async function directCastsHandler(env: Env) {
   const { KV: kv } = env
 
+  const categories = ['default', 'request']
+
   let subscribers: number[] =
     (await kv.get('lilnouns-subscribers', { type: 'json' })) ?? []
 
-  const { conversations } = await getDirectCastConversations(env, 100)
+  for (const category of categories) {
+    const { conversations } = await getDirectCastConversations(
+      env,
+      100,
+      category,
+    )
 
-  for (const conversation of conversations) {
-    const { participants } = conversation
-    for (const participant of participants) {
-      subscribers = [...new Set([...subscribers, participant.fid])]
+    for (const conversation of conversations) {
+      const { participants } = conversation
+      for (const participant of participants) {
+        subscribers = [...new Set([...subscribers, participant.fid])]
+      }
     }
   }
 
