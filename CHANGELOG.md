@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.0.0-alpha.11] - 2024-07-07
+
+### 🚀 Features
+
+- *(handlers)* Add `cacheHandler` to scheduled tasks
+- *(channel-handler)* Add `nounsChannelHandler` function
+
+### 🚜 Refactor
+
+- *(channel-handler)* Replace main handler with `lilnounsChannelHandler`
+- *(proposal-handler)* Simplify by removing unused code
+
 ## [1.0.0-alpha.10] - 2024-07-07
 
 ### 🚀 Features
