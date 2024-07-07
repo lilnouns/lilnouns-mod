@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.0.0-alpha.10] - 2024-07-07
+
+### 🚀 Features
+
+- *(direct-casts-handler)* Add categories to `directCastsHandler`
+
 ## [1.0.0-alpha.9] - 2024-07-04
 
 ### ⚙️ Miscellaneous Tasks
