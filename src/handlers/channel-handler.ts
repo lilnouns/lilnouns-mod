@@ -4,11 +4,11 @@ import { getFeedItems } from '@/services/warpcast/get-feed-items'
 import { recast } from '@/services/warpcast/recast'
 
 /**
- * Handles the channel based on the given environment.
- * @param env - The environment object containing channel details.
- * @returns - A Promise that resolves when the channel handler has completed execution.
+ * Handles the lilnouns channel by recasting and liking items based on certain conditions.
+ * @param env - The environment object containing the necessary configurations.
+ * @returns - A promise that resolves once all the items have been processed.
  */
-export async function channelHandler(env: Env) {
+async function lilnounsChannelHandler(env: Env) {
   const owner = 'nekofar.eth'
   const { items } = await getFeedItems(env, 'lilnouns', 'unfiltered')
 
@@ -40,4 +40,13 @@ export async function channelHandler(env: Env) {
       }
     }
   }
+}
+
+/**
+ * Handles the channel based on the given environment.
+ * @param env - The environment object containing channel details.
+ * @returns A Promise that resolves when the channel handler has completed execution.
+ */
+export async function channelHandler(env: Env) {
+  await lilnounsChannelHandler(env)
 }
