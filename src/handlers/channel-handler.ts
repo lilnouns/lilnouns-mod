@@ -4,11 +4,40 @@ import { getFeedItems } from '@/services/warpcast/get-feed-items'
 import { recast } from '@/services/warpcast/recast'
 
 /**
- * Handles the channel based on the given environment.
- * @param env - The environment object containing channel details.
- * @returns - A Promise that resolves when the channel handler has completed execution.
+ * Handles the nouns channel in the given environment.
+ * @param env - The environment object.
+ * @returns - A promise that resolves with no value.
  */
-export async function channelHandler(env: Env) {
+export async function nounsChannelHandler(env: Env) {
+  const users: { fid: number }[] | null = await env.KV.get(
+    'lilnouns-farcaster-users',
+    {
+      type: 'json',
+    },
+  )
+
+  if (users === null) {
+    return
+  }
+
+  const lilnouners = users.map((user) => user.fid)
+  const { items } = await getFeedItems(env, 'nouns', 'unfiltered')
+
+  for (const item of items) {
+    if (!lilnouners.includes(item.cast.author.fid)) {
+      continue
+    }
+
+    await likeCast(env, item.cast.hash)
+  }
+}
+
+/**
+ * Handles the lilnouns channel by recasting and liking items based on certain conditions.
+ * @param env - The environment object containing the necessary configurations.
+ * @returns - A promise that resolves once all the items have been processed.
+ */
+async function lilnounsChannelHandler(env: Env) {
   const owner = 'nekofar.eth'
   const { items } = await getFeedItems(env, 'lilnouns', 'unfiltered')
 
@@ -40,4 +69,14 @@ export async function channelHandler(env: Env) {
       }
     }
   }
+}
+
+/**
+ * Handles the channel based on the given environment.
+ * @param env - The environment object containing channel details.
+ * @returns A Promise that resolves when the channel handler has completed execution.
+ */
+export async function channelHandler(env: Env) {
+  await nounsChannelHandler(env)
+  await lilnounsChannelHandler(env)
 }
