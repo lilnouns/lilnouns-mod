@@ -13,10 +13,6 @@ interface Data {
   delegates: Delegate[]
 }
 
-const nounSubgraphUrl =
-  'https://api.goldsky.com/api/public' +
-  '/project_cldjvjgtylso13swq3dre13sf/subgraphs/lil-nouns-subgraph/1.0.4/gn'
-
 const getDelegatesQuery = (skip: number, first: number) => gql`
   query{
     delegates(
@@ -44,15 +40,18 @@ const getDelegatesQuery = (skip: number, first: number) => gql`
 
 /**
  * Fetches delegates from a GraphQL API.
+ * @param env
  * @returns - A promise that resolves to an array of delegates.
  */
-export async function fetchDelegates(): Promise<Delegate[]> {
+export async function fetchDelegates(env: Env): Promise<Delegate[]> {
+  const { LILNOUNS_SUBGRAPH_URL: subgraphUrl } = env
+
   const first = 1000
   let skip = 0
   let allDelegates: Delegate[] = []
   let shouldContinueFetching = true
 
-  const client = new GraphQLClient(nounSubgraphUrl, {
+  const client = new GraphQLClient(subgraphUrl, {
     errorPolicy: 'all',
     fetch,
   })

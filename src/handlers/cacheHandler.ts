@@ -15,7 +15,7 @@ export async function cacheHandler(env: Env) {
     { type: 'json' },
   )
   if (accounts === null) {
-    accounts = await fetchAccounts()
+    accounts = await fetchAccounts(env)
 
     await kv.put('lilnouns-accounts', JSON.stringify(accounts), {
       expirationTtl: 60 * 60 * 24,
@@ -27,7 +27,7 @@ export async function cacheHandler(env: Env) {
     { type: 'json' },
   )
   if (delegates === null) {
-    delegates = await fetchDelegates()
+    delegates = await fetchDelegates(env)
 
     await kv.put('lilnouns-delegates', JSON.stringify(delegates), {
       expirationTtl: 60 * 60 * 24,
