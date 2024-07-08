@@ -15,11 +15,13 @@ export async function cacheHandler(env: Env) {
     { type: 'json' },
   )
   if (accounts === null) {
-    accounts = await fetchAccounts(env)
+    const { accounts: newAccounts } = await fetchAccounts(env)
 
-    await kv.put('lilnouns-accounts', JSON.stringify(accounts), {
+    await kv.put('lilnouns-accounts', JSON.stringify(newAccounts), {
       expirationTtl: 60 * 60 * 24,
     })
+
+    accounts = newAccounts
   }
 
   let delegates: { id: string }[] | null = await env.KV.get(
@@ -27,11 +29,13 @@ export async function cacheHandler(env: Env) {
     { type: 'json' },
   )
   if (delegates === null) {
-    delegates = await fetchDelegates(env)
+    const { delegates: newDelegates } = await fetchDelegates(env)
 
-    await kv.put('lilnouns-delegates', JSON.stringify(delegates), {
+    await kv.put('lilnouns-delegates', JSON.stringify(newDelegates), {
       expirationTtl: 60 * 60 * 24,
     })
+
+    delegates = newDelegates
   }
 
   let users: { fid: number }[] | null = await env.KV.get(

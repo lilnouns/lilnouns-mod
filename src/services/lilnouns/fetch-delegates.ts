@@ -13,6 +13,10 @@ interface Data {
   delegates: Delegate[]
 }
 
+interface Result {
+  delegates: Delegate[]
+}
+
 /**
  * Query to fetch delegates with pagination and sorting options.
  * @param skip - Number of items to skip.
@@ -49,7 +53,7 @@ const getDelegatesQuery = (skip: number, first: number) => gql`
  * @param env - The environment object containing the API URL.
  * @returns - A promise that resolves to an array of delegates.
  */
-export async function fetchDelegates(env: Env): Promise<Delegate[]> {
+export async function fetchDelegates(env: Env): Promise<Result> {
   const { LILNOUNS_SUBGRAPH_URL: subgraphUrl } = env
 
   const first = 1000
@@ -78,5 +82,5 @@ export async function fetchDelegates(env: Env): Promise<Delegate[]> {
     }
   }
 
-  return allDelegates
+  return { delegates: allDelegates }
 }
