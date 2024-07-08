@@ -13,6 +13,12 @@ interface Data {
   accounts: Account[]
 }
 
+/**
+ * Represents a GraphQL query to retrieve a list of accounts.
+ * @param skip - The number of items to skip in the query results.
+ * @param first - The maximum number of items to return in the query results.
+ * @returns - The GraphQL query string.
+ */
 const getAccountsQuery = (skip: number, first: number) => gql`
   query{
     accounts(
@@ -45,8 +51,8 @@ const getAccountsQuery = (skip: number, first: number) => gql`
 
 /**
  * Fetches accounts using a GraphQL client and returns all the accounts.
- * @param env
- * @returns A promise that resolves to an array of accounts.
+ * @param env - The environment object.
+ * @returns - A promise that resolves to an array of accounts.
  */
 export async function fetchAccounts(env: Env): Promise<Account[]> {
   const { LILNOUNS_SUBGRAPH_URL: subgraphUrl } = env

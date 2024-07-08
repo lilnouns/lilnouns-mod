@@ -13,6 +13,12 @@ interface Data {
   delegates: Delegate[]
 }
 
+/**
+ * Query to fetch delegates with pagination and sorting options.
+ * @param skip - Number of items to skip.
+ * @param first - Number of items to fetch.
+ * @returns - Apollo GraphQL query document node.
+ */
 const getDelegatesQuery = (skip: number, first: number) => gql`
   query{
     delegates(
@@ -40,7 +46,7 @@ const getDelegatesQuery = (skip: number, first: number) => gql`
 
 /**
  * Fetches delegates from a GraphQL API.
- * @param env
+ * @param env - The environment object containing the API URL.
  * @returns - A promise that resolves to an array of delegates.
  */
 export async function fetchDelegates(env: Env): Promise<Delegate[]> {
