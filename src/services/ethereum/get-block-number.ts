@@ -5,5 +5,5 @@ import { publicClient } from '@/services/ethereum/index'
  * @returns A promise that resolves to the current block number.
  */
 export async function getBlockNumber() {
-  return  await publicClient.getBlockNumber()
+  return Number(await publicClient.getBlockNumber())
 }
