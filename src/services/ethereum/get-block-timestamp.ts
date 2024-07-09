@@ -1,13 +1,16 @@
-import { publicClient } from '@/services/ethereum/index'
+import { createClient } from '@/services/ethereum/index'
 
 /**
  * Retrieves the timestamp of a specific block.
+ * @param env
  * @param blockNumber - The number of the block to retrieve the timestamp for.
  * @returns - The timestamp of the block in number format.
  */
-export async function getBlockTimestamp(blockNumber: bigint) {
+export async function getBlockTimestamp(env: Env, blockNumber: number) {
+  const publicClient = createClient(env)
+
   const block = await publicClient.getBlock({
-    blockNumber,
+    blockNumber: BigInt(blockNumber),
   })
 
   return Number(block.timestamp)
