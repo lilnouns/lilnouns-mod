@@ -17,7 +17,8 @@
     "cron-time-generator": "2.0.3",
     "graphql": "16.9.0",
     "graphql-request": "6.1.0",
-    "type-fest": "4.21.0"
+    "type-fest": "4.21.0",
+    "viem": "2.17.2"
   },
   "devDependencies": {
     "@cloudflare/vitest-pool-workers": "0.4.9",
