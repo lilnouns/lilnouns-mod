@@ -54,8 +54,12 @@ jobs:
           command: deploy
           secrets: |
             WARPCAST_ACCESS_TOKEN
+            WARPCAST_API_KEY
+            ALCHEMY_API_KEY
         env:
           WARPCAST_ACCESS_TOKEN: ${{ secrets.WARPCAST_ACCESS_TOKEN }}
+          WARPCAST_API_KEY: ${{ secrets.WARPCAST_API_KEY }}
+          ALCHEMY_API_KEY: ${{ secrets.ALCHEMY_API_KEY }}
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
