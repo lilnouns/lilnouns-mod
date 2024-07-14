@@ -8,7 +8,7 @@ compatibility_flags = ["nodejs_compat"]
 # Docs: https://developers.cloudflare.com/workers/platform/triggers/cron-triggers/
 # Configuration: https://developers.cloudflare.com/workers/wrangler/configuration/#triggers
 [triggers]
-crons = ["0 * * * *", "*/10 * * * *", "0 */12 * * *"]
+crons = ["0 * * * *", "*/5 * * * *", "*/30 * * * *", "0 */12 * * *"]
 
 # Automatically place your workloads in an optimal location to minimize latency.
 # If you are running back-end logic in a Worker, running it closer to your back-end infrastructure
@@ -24,6 +24,7 @@ crons = ["0 * * * *", "*/10 * * * *", "0 */12 * * *"]
 # - https://developers.cloudflare.com/workers/configuration/secrets/
 [vars]
 WARPCAST_BASE_URL = "https://client.warpcast.com"
+LILNOUNS_SUBGRAPH_URL = "https://api.goldsky.com/api/public/project_cldjvjgtylso13swq3dre13sf/subgraphs/lil-nouns-subgraph/1.0.4/gn"
 
 # Bind the Workers AI model catalog. Run machine learning models, powered by serverless GPUs, on Cloudflare’s global network
 # Docs: https://developers.cloudflare.com/workers/wrangler/configuration/#workers-ai

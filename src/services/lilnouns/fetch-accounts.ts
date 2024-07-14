@@ -13,10 +13,16 @@ interface Data {
   accounts: Account[]
 }
 
-const nounSubgraphUrl =
-  'https://api.goldsky.com/api/public' +
-  '/project_cldjvjgtylso13swq3dre13sf/subgraphs/lil-nouns-subgraph/1.0.4/gn'
+interface Result {
+  accounts: Account[]
+}
 
+/**
+ * Represents a GraphQL query to retrieve a list of accounts.
+ * @param skip - The number of items to skip in the query results.
+ * @param first - The maximum number of items to return in the query results.
+ * @returns - The GraphQL query string.
+ */
 const getAccountsQuery = (skip: number, first: number) => gql`
   query{
     accounts(
@@ -49,15 +55,18 @@ const getAccountsQuery = (skip: number, first: number) => gql`
 
 /**
  * Fetches accounts using a GraphQL client and returns all the accounts.
- * @returns A promise that resolves to an array of accounts.
+ * @param env - The environment object.
+ * @returns - A promise that resolves to an array of accounts.
  */
-export async function fetchAccounts(): Promise<Account[]> {
+export async function fetchAccounts(env: Env): Promise<Result> {
+  const { LILNOUNS_SUBGRAPH_URL: subgraphUrl } = env
+
   const first = 1000
   let skip = 0
   let allAccounts: Account[] = []
   let shouldContinueFetching = true
 
-  const client = new GraphQLClient(nounSubgraphUrl, {
+  const client = new GraphQLClient(subgraphUrl, {
     errorPolicy: 'all',
     fetch,
   })
@@ -78,5 +87,5 @@ export async function fetchAccounts(): Promise<Account[]> {
     }
   }
 
-  return allAccounts
+  return { accounts: allAccounts }
 }

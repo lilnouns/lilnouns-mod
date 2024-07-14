@@ -20,7 +20,7 @@ jobs:
           ref: ${{ github.event.release.tag_name }}
 
       - name: Setup Node.js Environment
-        uses: actions/setup-node@v4.0.2 # Action for setting up Node environment.
+        uses: actions/setup-node@v4.0.3 # Action for setting up Node environment.
         with:
           node-version: latest
 
@@ -54,8 +54,12 @@ jobs:
           command: deploy
           secrets: |
             WARPCAST_ACCESS_TOKEN
+            WARPCAST_API_KEY
+            ALCHEMY_API_KEY
         env:
           WARPCAST_ACCESS_TOKEN: ${{ secrets.WARPCAST_ACCESS_TOKEN }}
+          WARPCAST_API_KEY: ${{ secrets.WARPCAST_API_KEY }}
+          ALCHEMY_API_KEY: ${{ secrets.ALCHEMY_API_KEY }}
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
