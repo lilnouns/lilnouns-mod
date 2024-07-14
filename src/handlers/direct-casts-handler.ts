@@ -10,7 +10,7 @@ export async function directCastsHandler(env: Env) {
 
   const categories = ['default', 'request']
 
-  let subscribers: number[] =
+  let subscribers: { fid: number }[] =
     (await kv.get('lilnouns-subscribers', { type: 'json' })) ?? []
 
   for (const category of categories) {
@@ -23,7 +23,7 @@ export async function directCastsHandler(env: Env) {
     for (const conversation of conversations) {
       const { participants } = conversation
       for (const participant of participants) {
-        subscribers = [...new Set([...subscribers, participant.fid])]
+        subscribers = [...new Set([...subscribers, participant])]
       }
     }
   }
