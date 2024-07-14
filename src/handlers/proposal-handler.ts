@@ -6,6 +6,7 @@ import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
 import { createHash } from 'node:crypto'
 import { delay } from 'unicorn-magic'
+import { sendDirectCast } from '@/services/warpcast/send-direct-cast'
 
 dayjs.extend(relativeTime)
 
@@ -70,14 +71,7 @@ export async function proposalHandler(env: Env) {
         continue
       }
 
-      console.log(
-        JSON.stringify({
-          subscriber,
-          message,
-          idempotencyKey,
-        }),
-      )
-      //await sendDirectCast(env, subscriber.fid, message, idempotencyKey)
+      await sendDirectCast(env, subscriber.fid, message, idempotencyKey)
       await delay({ seconds: 10 })
     }
   }
