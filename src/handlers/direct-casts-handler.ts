@@ -23,10 +23,17 @@ export async function directCastsHandler(env: Env) {
     for (const conversation of conversations) {
       const { participants } = conversation
       for (const participant of participants) {
-        subscribers = [...new Set([...subscribers, participant])]
+        subscribers = [...subscribers, participant]
       }
     }
   }
+
+  // Filters out duplicate subscribers based on 'fid',
+  // retaining only the first occurrence
+  subscribers = subscribers.filter((subscriber, index, self) => {
+    const ids = self.map((i) => i.fid)
+    return ids.indexOf(subscriber.fid) === index
+  })
 
   await kv.put('lilnouns-subscribers', JSON.stringify(subscribers))
 }
