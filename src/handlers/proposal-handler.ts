@@ -2,7 +2,6 @@ import { getBlockNumber } from '@/services/ethereum/get-block-number'
 import { getBlockTimestamp } from '@/services/ethereum/get-block-timestamp'
 import { getProposals } from '@/services/lilnouns/get-proposals'
 import { getUserByVerification } from '@/services/warpcast/get-user-by-verification'
-import { sendDirectCast } from '@/services/warpcast/send-direct-cast'
 import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
 import { createHash } from 'node:crypto'
@@ -18,11 +17,15 @@ dayjs.extend(relativeTime)
 export async function proposalHandler(env: Env) {
   const { KV: kv } = env
 
-  const blockNumber = await getBlockNumber(env)
-  let { proposals } = await getProposals(env)
+  const users: { fid: number }[] =
+    (await env.KV.get('lilnouns-farcaster-users', { type: 'json' })) ?? []
+  const lilnouners = users.map((user) => user.fid)
 
   const subscribers: { fid: number }[] =
     (await kv.get('lilnouns-subscribers', { type: 'json' })) ?? []
+
+  const blockNumber = await getBlockNumber(env)
+  let { proposals } = await getProposals(env)
 
   proposals = proposals.filter((proposal) => {
     return (
@@ -60,11 +63,21 @@ export async function proposalHandler(env: Env) {
     const idempotencyKey = createHash('sha256').update(message).digest('hex')
 
     for (const subscriber of subscribers) {
-      if (voters.includes(subscriber.fid)) {
+      if (
+        voters.includes(subscriber.fid) ||
+        !lilnouners.includes(subscriber.fid)
+      ) {
         continue
       }
 
-      await sendDirectCast(env, subscriber.fid, message, idempotencyKey)
+      console.log(
+        JSON.stringify({
+          subscriber,
+          message,
+          idempotencyKey,
+        }),
+      )
+      //await sendDirectCast(env, subscriber.fid, message, idempotencyKey)
       await delay({ seconds: 10 })
     }
   }
