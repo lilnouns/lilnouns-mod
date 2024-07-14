@@ -19,8 +19,8 @@ export async function scheduledHandler(
       await cacheHandler(env)
       await proposalHandler(env)
       break
-    case CronTime.every(10).minutes():
-      await channelHandler(env)
+    case CronTime.every(5).minutes():
+      await proposalHandler(env)
       break
     case CronTime.every(30).minutes():
       await channelHandler(env)
