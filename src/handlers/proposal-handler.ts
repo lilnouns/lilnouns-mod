@@ -2,8 +2,10 @@ import { getBlockNumber } from '@/services/ethereum/get-block-number'
 import { getBlockTimestamp } from '@/services/ethereum/get-block-timestamp'
 import { getProposals } from '@/services/lilnouns/get-proposals'
 import { getUserByVerification } from '@/services/warpcast/get-user-by-verification'
+import { sendDirectCast } from '@/services/warpcast/send-direct-cast'
 import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
+import { createHash } from 'node:crypto'
 
 dayjs.extend(relativeTime)
 
@@ -15,11 +17,13 @@ dayjs.extend(relativeTime)
 export async function proposalHandler(env: Env) {
   const { KV: kv } = env
 
+  const admin = { fid: 17838 }
   const blockNumber = await getBlockNumber(env)
   let { proposals } = await getProposals(env)
 
-  const subscribers: { fid: number }[] =
-    (await kv.get('lilnouns-subscribers', { type: 'json' })) ?? []
+  const subscribers: { fid: number }[] = (await kv.get('lilnouns-subscribers', {
+    type: 'json',
+  })) ?? [admin]
 
   proposals = proposals.filter((proposal) => {
     return (
@@ -51,17 +55,17 @@ export async function proposalHandler(env: Env) {
     }
 
     const message =
-      `Hi there! ` +
-      `It’s voting time for proposal number ${id.toString()}. ` +
-      `Voting started ${proposalStart} ago and finishes in ${proposalEnd}. ` +
-      `Make sure to vote!`
+      `🗳️ It's voting time, Lil Nouns fam! Proposal #${id.toString()} is live and ready for your voice. ` +
+      `Voting started ${proposalStart} ago and wraps up in ${proposalEnd}. ` +
+      `You received this message because you haven't voted yet. Don't miss out, cast your vote now! 🌟`
+    const idempotencyKey = createHash('sha256').update(message).digest('hex')
 
     for (const subscriber of subscribers) {
-      if (voters.includes(subscriber.fid)) {
+      if (subscriber.fid !== admin.fid && voters.includes(subscriber.fid)) {
         continue
       }
 
-      console.log(message)
+      await sendDirectCast(env, subscriber.fid, message, idempotencyKey)
     }
   }
 }
