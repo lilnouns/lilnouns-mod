@@ -17,13 +17,11 @@ dayjs.extend(relativeTime)
 export async function proposalHandler(env: Env) {
   const { KV: kv } = env
 
-  const admin = { fid: 17838 }
   const blockNumber = await getBlockNumber(env)
   let { proposals } = await getProposals(env)
 
-  const subscribers: { fid: number }[] = (await kv.get('lilnouns-subscribers', {
-    type: 'json',
-  })) ?? [admin]
+  const subscribers: { fid: number }[] =
+    (await kv.get('lilnouns-subscribers', { type: 'json' })) ?? []
 
   proposals = proposals.filter((proposal) => {
     return (
@@ -61,7 +59,7 @@ export async function proposalHandler(env: Env) {
     const idempotencyKey = createHash('sha256').update(message).digest('hex')
 
     for (const subscriber of subscribers) {
-      if (subscriber.fid !== admin.fid && voters.includes(subscriber.fid)) {
+      if (voters.includes(subscriber.fid)) {
         continue
       }
 
