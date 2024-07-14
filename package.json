@@ -15,6 +15,7 @@
   },
   "dependencies": {
     "cron-time-generator": "2.0.3",
+    "dayjs": "1.11.11",
     "graphql": "16.9.0",
     "graphql-request": "6.1.0",
     "type-fest": "4.21.0",
