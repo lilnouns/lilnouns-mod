@@ -2,6 +2,54 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.0.0-alpha.12] - 2024-07-14
+
+### 🚀 Features
+
+- *(lilnouns)* Add function to fetch votes by proposal
+- *(ethereum)* Add `publicClient` and `getBlockTimestamp` function
+- *(ethereum)* Add function to get current block number
+- *(lilnouns)* Add function to fetch proposals from GraphQL
+- *(ethereum)* Update `getBlockTimestamp` to handle latest block
+- *(proposal-handler)* Implement proposal handling logic
+- *(warpcast)* Add direct cast sending function
+- *(proposal-handler)* Add direct cast message sending functionality
+- *(scheduled-handler)* Add support for 30-minute intervals
+- *(proposal-handler)* Add delay function from unicorn-magic
+- *(proposal-handler)* Implement `sendDirectCast` call
+- *(proposal-handler)* Add user verification and casting
+
+### 🚜 Refactor
+
+- Replace hardcoded api url with environment variable
+- *(lilnouns)* Wrap `fetchDelegates` and `fetchAccounts` results in objects
+- *(ethereum)* Parse block number to number type
+- *(ethereum)* Replace global public client with a function
+- *(direct-casts-handler)* Change subscribers type to object array
+- *(scheduled-handler)* Add import for `cacheHandler`
+- *(direct-casts-handler)* Filter out duplicate subscribers efficiently
+- Reorder imports in scheduled-handler
+- Update scheduled-handler to run `proposalHandler` every 5 minutes
+- Update cron scheduling and handlers
+- *(proposal-handler)* Remove admin specific logic
+- *(proposal-handler)* Update proposal filter logic and remove direct cast
+
+### 📚 Documentation
+
+- Enhance jsdocs for `fetchDelegates` and `fetchAccounts` functions
+
+### 🧪 Testing
+
+- Update cron schedule in index spec
+- Update cron expression in scheduled controller test
+
+### ⚙️ Miscellaneous Tasks
+
+- *(worker)* Add Alchemy API key to environment interface
+- Ignore minor version updates for vitest
+- *(deploy)* Add warpcast and alchemy API keys
+- *(wrangler)* Update cron triggers schedule
+
 ## [1.0.0-alpha.11] - 2024-07-07
 
 ### 🚀 Features
