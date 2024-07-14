@@ -1,8 +1,8 @@
+import { cacheHandler } from '@/handlers/cacheHandler'
 import { channelHandler } from '@/handlers/channel-handler'
 import { directCastsHandler } from '@/handlers/direct-casts-handler'
 import { proposalHandler } from '@/handlers/proposal-handler'
 import { CronTime } from 'cron-time-generator'
-import { cacheHandler } from '@/handlers/cacheHandler'
 
 /**
  * Executes scheduled tasks based on the provided cron schedule.
