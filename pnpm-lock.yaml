@@ -22,6 +22,9 @@ importers:
       type-fest:
         specifier: 4.21.0
         version: 4.21.0
+      unicorn-magic:
+        specifier: 0.2.0
+        version: 0.2.0
       viem:
         specifier: 2.17.3
         version: 2.17.3(typescript@5.5.3)(zod@3.23.8)
@@ -3515,6 +3518,13 @@ packages:
         integrity: sha512-u3TfBX02WzbHTpaEfWEKwDijDSFAHcgXkayUZ+MVDrjhLFvgAJzFGTSTmwlEhwWi2exyRQey23ah9wELMM6etg==,
       }
 
+  unicorn-magic@0.2.0:
+    resolution:
+      {
+        integrity: sha512-q83y+/QtXrbKX1jYY+bdQROAbZj6EeSP+Plv0cYZBMPfirSaEvnnhMwRk2WH4n5XkNCQHygAiwTVNpvw3I1dCg==,
+      }
+    engines: { node: '>=18' }
+
   unist-util-stringify-position@4.0.0:
     resolution:
       {
@@ -5703,6 +5713,8 @@ snapshots:
       node-fetch-native: 1.6.4
       pathe: 1.1.2
       ufo: 1.5.3
+
+  unicorn-magic@0.2.0: {}
 
   unist-util-stringify-position@4.0.0:
     dependencies:
