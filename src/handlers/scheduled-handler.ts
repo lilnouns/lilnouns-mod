@@ -17,16 +17,13 @@ export async function scheduledHandler(
   switch (controller.cron) {
     case CronTime.everyHour():
       await cacheHandler(env)
-      await proposalHandler(env)
-      break
-    case CronTime.every(5).minutes():
-      await proposalHandler(env)
       break
     case CronTime.every(30).minutes():
       await channelHandler(env)
       break
     case CronTime.every(12).hours():
       await directCastsHandler(env)
+      await proposalHandler(env)
       break
     default:
       console.log(`No handler for the cron schedule: ${controller.cron}`)
