@@ -1,12 +1,13 @@
 import { getBlockNumber } from '@/services/ethereum/get-block-number'
 import { getBlockTimestamp } from '@/services/ethereum/get-block-timestamp'
 import { getProposals } from '@/services/lilnouns/get-proposals'
+import { getMe } from '@/services/warpcast/get-me'
 import { getUserByVerification } from '@/services/warpcast/get-user-by-verification'
+import { sendDirectCast } from '@/services/warpcast/send-direct-cast'
 import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
 import { createHash } from 'node:crypto'
 import { delay } from 'unicorn-magic'
-import { sendDirectCast } from '@/services/warpcast/send-direct-cast'
 
 dayjs.extend(relativeTime)
 
@@ -17,6 +18,8 @@ dayjs.extend(relativeTime)
  */
 export async function proposalHandler(env: Env) {
   const { KV: kv } = env
+
+  const { user } = await getMe(env)
 
   const users: { fid: number }[] =
     (await env.KV.get('lilnouns-farcaster-users', { type: 'json' })) ?? []
@@ -65,6 +68,7 @@ export async function proposalHandler(env: Env) {
 
     for (const subscriber of subscribers) {
       if (
+        subscriber.fid === user.fid ||
         voters.includes(subscriber.fid) ||
         !lilnouners.includes(subscriber.fid)
       ) {
