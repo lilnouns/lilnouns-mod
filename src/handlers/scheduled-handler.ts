@@ -22,6 +22,9 @@ export async function scheduledHandler(
     case CronTime.every(10).minutes():
       await channelHandler(env)
       break
+    case CronTime.every(30).minutes():
+      await channelHandler(env)
+      break
     case CronTime.every(12).hours():
       await directCastsHandler(env)
       break
