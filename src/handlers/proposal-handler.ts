@@ -1,15 +1,12 @@
+import { dayjs } from '@/libs/dayjs'
 import { getBlockNumber } from '@/services/ethereum/get-block-number'
 import { getBlockTimestamp } from '@/services/ethereum/get-block-timestamp'
 import { getProposals } from '@/services/lilnouns/get-proposals'
 import { getMe } from '@/services/warpcast/get-me'
 import { getUserByVerification } from '@/services/warpcast/get-user-by-verification'
 import { sendDirectCast } from '@/services/warpcast/send-direct-cast'
-import dayjs from 'dayjs'
-import relativeTime from 'dayjs/plugin/relativeTime'
 import { createHash } from 'node:crypto'
 import { delay } from 'unicorn-magic'
-
-dayjs.extend(relativeTime)
 
 /**
  * Handles the proposal by retrieving or fetching delegates from KV store and logging them.
