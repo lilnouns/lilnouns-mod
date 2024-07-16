@@ -2,6 +2,24 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.0.0-alpha.13] - 2024-07-16
+
+### 🐛 Bug Fixes
+
+- *(cache-handler)* Remove unnecessary console.log
+
+### 🚜 Refactor
+
+- Centralize dayjs configuration in separate module
+- Update import statement to match renamed file
+- Update `getDirectCastConversations` function comments
+- *(warpcast)* Update error handling in `fetchResponse`
+- *(cache-handler)* Simplify data fetching and storage
+- *(channel-handler)* Simplify retrieval and use of `farcasterUsers`
+- *(proposal-handler)* Simplify user and subscriber fetching
+- *(handlers)* Improve direct casts subscriber handling
+- *(channel-handler)* Simplify `farcasterUsers` variable assignment
+
 ## [1.0.0-alpha.12] - 2024-07-14
 
 ### 🚀 Features
