@@ -17,13 +17,14 @@ interface Response {
 }
 
 /**
- * Retrieves the list of direct cast conversations.
- * @param env - The environment variables containing access token and base URL.
- * @param [cursor] - The cursor to paginate through the conversations.
- * @param [limit] - The maximum number of conversations to retrieve (default: 15).
- * @param [category] - The category of conversations to filter (default: 'default').
- * @param [filter] - The filter to apply to the conversations (default: 'group').
- * @returns - A promise that resolves to an object containing the retrieved conversations and the current cursor.
+ * Retrieves direct cast conversations from the server.
+ * @async
+ * @param env - The environment variables.
+ * @param [limit] - The maximum number of conversations to retrieve.
+ * @param [category] - The category of conversations to retrieve.
+ * @param [filter] - The filter to apply to conversations.
+ * @param [cursor] - The cursor for pagination.
+ * @returns - A promise that resolves to the retrieved conversations and cursor.
  */
 export const getDirectCastConversations = async (
   env: Env,

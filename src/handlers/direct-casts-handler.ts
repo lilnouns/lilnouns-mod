@@ -1,17 +1,18 @@
 import { getDirectCastConversations } from '@/services/warpcast/get-direct-cast-conversations'
 
 /**
- * Updates the subscriber list by adding any new participants from direct cast conversations.
- * @param env - The environment object containing the KV store.
- * @returns - A promise that resolves after the update is completed.
+ * Handles the subscribers by retrieving conversations and participants,
+ * filtering out duplicates, and storing the subscribers in KV.
+ * @param env - The environment object containing required dependencies.
+ * @returns - A Promise that resolves once the subscribers are handled.
  */
-export async function directCastsHandler(env: Env) {
+async function subscribersHandler(env: Env) {
   const { KV: kv } = env
 
   const categories = ['default', 'request']
 
-  let subscribers: { fid: number }[] =
-    (await kv.get('lilnouns-subscribers', { type: 'json' })) ?? []
+  let farcasterSubscribers: number[] =
+    (await kv.get('lilnouns-farcaster-subscribers', { type: 'json' })) ?? []
 
   for (const category of categories) {
     const { conversations } = await getDirectCastConversations(
@@ -23,17 +24,23 @@ export async function directCastsHandler(env: Env) {
     for (const conversation of conversations) {
       const { participants } = conversation
       for (const participant of participants) {
-        subscribers = [...subscribers, participant]
+        farcasterSubscribers = [
+          ...new Set([...farcasterSubscribers, participant.fid]),
+        ]
       }
     }
   }
 
-  // Filters out duplicate subscribers based on 'fid',
-  // retaining only the first occurrence
-  subscribers = subscribers.filter((subscriber, index, self) => {
-    const ids = self.map((i) => i.fid)
-    return ids.indexOf(subscriber.fid) === index
-  })
+  const sortedFarcasterSubscribers = farcasterSubscribers.sort((a, b) => a - b)
+  const serializedSubscribers = JSON.stringify(sortedFarcasterSubscribers)
+  await kv.put('lilnouns-farcaster-subscribers', serializedSubscribers)
+}
 
-  await kv.put('lilnouns-subscribers', JSON.stringify(subscribers))
+/**
+ * Updates the subscriber list by adding any new participants from direct cast conversations.
+ * @param env - The environment object containing the KV store.
+ * @returns - A promise that resolves after the update is completed.
+ */
+export async function directCastsHandler(env: Env) {
+  await subscribersHandler(env)
 }
