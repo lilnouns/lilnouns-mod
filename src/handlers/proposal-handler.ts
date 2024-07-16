@@ -18,12 +18,11 @@ export async function proposalHandler(env: Env) {
 
   const { user } = await getMe(env)
 
-  const users: { fid: number }[] =
-    (await env.KV.get('lilnouns-farcaster-users', { type: 'json' })) ?? []
-  const lilnouners = users.map((user) => user.fid)
+  const farcasterUsers: number[] =
+    (await kv.get('lilnouns-farcaster-users', { type: 'json' })) ?? []
 
-  const subscribers: { fid: number }[] =
-    (await kv.get('lilnouns-subscribers', { type: 'json' })) ?? []
+  const farcasterSubscribers: number[] =
+    (await kv.get('lilnouns-farcaster-subscribers', { type: 'json' })) ?? []
 
   const blockNumber = await getBlockNumber(env)
   let { proposals } = await getProposals(env)
@@ -51,9 +50,12 @@ export async function proposalHandler(env: Env) {
           vote.voter.id.toLowerCase(),
         )
         voters = [...voters, user.fid]
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
       } catch (error) {
-        /* empty */
+        if (error instanceof Error) {
+          if (!error.message.startsWith('No FID has connected')) {
+            console.error(`An error occurred: ${error.message}`)
+          }
+        }
       }
     }
 
@@ -63,16 +65,16 @@ export async function proposalHandler(env: Env) {
       `You received this message because you haven't voted yet. Don't miss out, cast your vote now! 🌟`
     const idempotencyKey = createHash('sha256').update(message).digest('hex')
 
-    for (const subscriber of subscribers) {
+    for (const subscriber of farcasterSubscribers) {
       if (
-        subscriber.fid === user.fid ||
-        voters.includes(subscriber.fid) ||
-        !lilnouners.includes(subscriber.fid)
+        subscriber === user.fid ||
+        voters.includes(subscriber) ||
+        !farcasterUsers.includes(subscriber)
       ) {
         continue
       }
 
-      await sendDirectCast(env, subscriber.fid, message, idempotencyKey)
+      await sendDirectCast(env, subscriber, message, idempotencyKey)
       await delay({ seconds: 10 })
     }
   }
