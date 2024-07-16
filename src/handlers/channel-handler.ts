@@ -11,10 +11,8 @@ import { recast } from '@/services/warpcast/recast'
 export async function nounsChannelHandler(env: Env) {
   const { KV: kv } = env
 
-  const farcasterUsers: number[] | null =
-    (await kv.get('lilnouns-farcaster-users', {
-      type: 'json',
-    })) ?? []
+  const farcasterUsers: number[] =
+    (await kv.get('lilnouns-farcaster-users', { type: 'json' })) ?? []
 
   if (farcasterUsers.length === 0) {
     return
