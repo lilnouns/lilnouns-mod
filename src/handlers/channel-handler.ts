@@ -9,22 +9,21 @@ import { recast } from '@/services/warpcast/recast'
  * @returns - A promise that resolves with no value.
  */
 export async function nounsChannelHandler(env: Env) {
-  const users: { fid: number }[] | null = await env.KV.get(
-    'lilnouns-farcaster-users',
-    {
-      type: 'json',
-    },
-  )
+  const { KV: kv } = env
 
-  if (users === null) {
+  const farcasterUsers: number[] | null =
+    (await kv.get('lilnouns-farcaster-users', {
+      type: 'json',
+    })) ?? []
+
+  if (farcasterUsers.length === 0) {
     return
   }
 
-  const lilnouners = users.map((user) => user.fid)
   const { items } = await getFeedItems(env, 'nouns', 'unfiltered')
 
   for (const item of items) {
-    if (!lilnouners.includes(item.cast.author.fid)) {
+    if (!farcasterUsers.includes(item.cast.author.fid)) {
       continue
     }
 
