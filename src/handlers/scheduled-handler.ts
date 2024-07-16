@@ -1,4 +1,4 @@
-import { cacheHandler } from '@/handlers/cacheHandler'
+import { cacheHandler } from '@/handlers/cache-handler'
 import { channelHandler } from '@/handlers/channel-handler'
 import { directCastsHandler } from '@/handlers/direct-casts-handler'
 import { proposalHandler } from '@/handlers/proposal-handler'
