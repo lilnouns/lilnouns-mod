@@ -56,5 +56,4 @@ export async function cacheHandler(env: Env) {
       expirationTtl,
     })
   }
-  console.log(farcasterUsers)
 }
