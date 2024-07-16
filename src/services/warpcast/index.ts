@@ -14,7 +14,7 @@ export interface FetchOptions {
 }
 
 export interface FetchResponse {
-  errors?: string
+  errors?: { message: string }[]
 
   [key: string]: unknown
 }
@@ -52,10 +52,9 @@ export async function fetchRequest<T>(
   })
 
   const data: FetchResponse = await response.json()
-  if (data.errors) {
-    throw new Error(data.errors)
+  if (data.errors && data.errors.length > 0) {
+    throw new Error(data.errors[0].message)
   }
 
   return data as T
 }
-
