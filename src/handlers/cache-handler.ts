@@ -9,61 +9,52 @@ import { getUserByVerification } from '@/services/warpcast/get-user-by-verificat
  */
 export async function cacheHandler(env: Env) {
   const { KV: kv } = env
+  const expirationTtl = 60 * 60 * 24
 
-  let accounts: { id: string }[] | null = await env.KV.get(
-    'lilnouns-accounts',
-    { type: 'json' },
-  )
-  if (accounts === null) {
-    const { accounts: newAccounts } = await fetchAccounts(env)
-
-    await kv.put('lilnouns-accounts', JSON.stringify(newAccounts), {
-      expirationTtl: 60 * 60 * 24,
+  let holdersAddresses: string[] =
+    (await kv.get('lilnouns-holders-addresses', { type: 'json' })) ?? []
+  if (holdersAddresses.length === 0) {
+    const { accounts } = await fetchAccounts(env)
+    holdersAddresses = accounts.map((account) => account.id)
+    const serializedHoldersAddresses = JSON.stringify(holdersAddresses)
+    await kv.put('lilnouns-holders-addresses', serializedHoldersAddresses, {
+      expirationTtl,
     })
-
-    accounts = newAccounts
   }
 
-  let delegates: { id: string }[] | null = await env.KV.get(
-    'lilnouns-delegates',
-    { type: 'json' },
-  )
-  if (delegates === null) {
-    const { delegates: newDelegates } = await fetchDelegates(env)
-
-    await kv.put('lilnouns-delegates', JSON.stringify(newDelegates), {
-      expirationTtl: 60 * 60 * 24,
+  let delegatesAddresses: string[] =
+    (await kv.get('lilnouns-delegates-addresses', { type: 'json' })) ?? []
+  if (delegatesAddresses.length === 0) {
+    const { delegates } = await fetchDelegates(env)
+    delegatesAddresses = delegates.map((account) => account.id)
+    const serializedDelegatesAddresses = JSON.stringify(delegatesAddresses)
+    await kv.put('lilnouns-delegates-addresses', serializedDelegatesAddresses, {
+      expirationTtl,
     })
-
-    delegates = newDelegates
   }
 
-  let users: { fid: number }[] | null = await env.KV.get(
-    'lilnouns-farcaster-users',
-    {
-      type: 'json',
-    },
-  )
-  if (users === null) {
-    users = []
-    const addresses = [
-      ...new Set([
-        ...accounts.map((account) => account.id),
-        ...delegates.map((account) => account.id),
-      ]),
-    ]
+  let farcasterUsers: number[] =
+    (await kv.get('lilnouns-farcaster-users', { type: 'json' })) ?? []
+  if (farcasterUsers.length === 0) {
+    const addresses = [...new Set([...holdersAddresses, ...delegatesAddresses])]
     for (const address of addresses) {
       try {
         const { user } = await getUserByVerification(env, address)
-        users = [...new Set([...users, user])]
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      } catch (_) {
-        /* empty */
+        farcasterUsers = [...new Set([...farcasterUsers, user.fid])]
+      } catch (error) {
+        if (error instanceof Error) {
+          if (!error.message.startsWith('No FID has connected')) {
+            console.error(`An error occurred: ${error.message}`)
+          }
+        }
       }
     }
 
-    await kv.put('lilnouns-farcaster-users', JSON.stringify(users), {
-      expirationTtl: 60 * 60 * 24,
+    const sortedFarcasterUsers = farcasterUsers.sort((a, b) => a - b)
+    const serializedFarcasterUsers = JSON.stringify(sortedFarcasterUsers)
+    await kv.put('lilnouns-farcaster-users', serializedFarcasterUsers, {
+      expirationTtl,
     })
   }
+  console.log(farcasterUsers)
 }
