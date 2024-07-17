@@ -1,19 +1,19 @@
-import { fetchRequest, HttpRequestMethod } from '@/services/warpcast/index';
-import { Collection } from '@/services/warpcast/types';
-import { IntRange } from 'type-fest';
+import { fetchRequest, HttpRequestMethod } from '@/services/warpcast/index'
+import { Collection } from '@/services/warpcast/types'
+import { IntRange } from 'type-fest'
 
 interface Result {
-  collections: Collection[];
-  cursor?: string;
+  collections: Collection[]
+  cursor?: string
 }
 
 interface Response {
   result: {
-    collections: Collection[];
-  };
+    collections: Collection[]
+  }
   next?: {
-    cursor: string;
-  };
+    cursor: string
+  }
 }
 
 /**
@@ -28,19 +28,19 @@ export const getUserCollections = async (
   env: Env,
   ownerFid: number,
   cursor?: string,
-  limit: IntRange<1, 101> = 25
+  limit: IntRange<1, 101> = 25,
 ): Promise<Result> => {
-  const { WARPCAST_ACCESS_TOKEN: accessToken, WARPCAST_BASE_URL: baseUrl } = env;
-  let newCursor = cursor ?? '';
-  let collections: Collection[] = [];
-  let response: Response;
+  const { WARPCAST_ACCESS_TOKEN: accessToken, WARPCAST_BASE_URL: baseUrl } = env
+  let newCursor = cursor ?? ''
+  let collections: Collection[] = []
+  let response: Response
 
   do {
     const params = {
       ownerFid: ownerFid.toString(),
       cursor: newCursor,
       limit: String(limit),
-    };
+    }
     response = await fetchRequest<Response>(
       baseUrl,
       accessToken,
@@ -49,10 +49,10 @@ export const getUserCollections = async (
       {
         params,
       },
-    );
-    collections = [...collections, ...response.result.collections];
-    newCursor = response.next ? response.next.cursor : '';
-  } while (response.next && collections.length < limit);
+    )
+    collections = [...collections, ...response.result.collections]
+    newCursor = response.next ? response.next.cursor : ''
+  } while (response.next && collections.length < limit)
 
-  return { collections: collections.slice(0, limit), cursor: newCursor };
-};
+  return { collections: collections.slice(0, limit), cursor: newCursor }
+}

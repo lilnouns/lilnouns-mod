@@ -1,16 +1,19 @@
-import { fetchRequest, HttpRequestMethod } from '@/services/warpcast/index';
-import { User } from '@/services/warpcast/types';
+import { fetchRequest, HttpRequestMethod } from '@/services/warpcast/index'
+import { User } from '@/services/warpcast/types'
 
 interface Result {
-  user: User;
+  user: User
 }
 
 interface Response {
-  result: Result;
+  result: Result
 }
 
-export const getUserByVerification = async (env: Env, address: string): Promise<Result> => {
-  const { WARPCAST_ACCESS_TOKEN: accessToken, WARPCAST_BASE_URL: baseUrl } = env;
+export const getUserByVerification = async (
+  env: Env,
+  address: string,
+): Promise<Result> => {
+  const { WARPCAST_ACCESS_TOKEN: accessToken, WARPCAST_BASE_URL: baseUrl } = env
 
   const { result } = await fetchRequest<Response>(
     baseUrl,
@@ -18,9 +21,9 @@ export const getUserByVerification = async (env: Env, address: string): Promise<
     HttpRequestMethod.GET,
     '/v2/user-by-verification',
     {
-      params: { address }
-    }
-  );
+      params: { address },
+    },
+  )
 
-  return result;
-};
+  return result
+}

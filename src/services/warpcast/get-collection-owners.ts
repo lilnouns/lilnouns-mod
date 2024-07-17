@@ -1,19 +1,19 @@
-import { fetchRequest, HttpRequestMethod } from '@/services/warpcast/index';
-import { User } from '@/services/warpcast/types';
-import { IntRange } from 'type-fest';
+import { fetchRequest, HttpRequestMethod } from '@/services/warpcast/index'
+import { User } from '@/services/warpcast/types'
+import { IntRange } from 'type-fest'
 
 interface Result {
-  users: User[];
-  cursor?: string;
+  users: User[]
+  cursor?: string
 }
 
 interface Response {
   result: {
-    users: User[];
-  };
+    users: User[]
+  }
   next?: {
-    cursor: string;
-  };
+    cursor: string
+  }
 }
 
 /**
@@ -28,19 +28,19 @@ export const getCollectionOwners = async (
   env: Env,
   collectionId: string,
   cursor?: string,
-  limit: IntRange<1, 101> = 25
+  limit: IntRange<1, 101> = 25,
 ): Promise<Result> => {
-  const { WARPCAST_ACCESS_TOKEN: accessToken, WARPCAST_BASE_URL: baseUrl } = env;
-  let newCursor = cursor ?? '';
-  let users: User[] = [];
-  let response: Response;
+  const { WARPCAST_ACCESS_TOKEN: accessToken, WARPCAST_BASE_URL: baseUrl } = env
+  let newCursor = cursor ?? ''
+  let users: User[] = []
+  let response: Response
 
   do {
     const params = {
       collectionId,
       cursor: newCursor,
       limit: String(limit),
-    };
+    }
     response = await fetchRequest<Response>(
       baseUrl,
       accessToken,
@@ -49,10 +49,10 @@ export const getCollectionOwners = async (
       {
         params,
       },
-    );
-    users = [...users, ...response.result.users];
-    newCursor = response.next ? response.next.cursor : '';
-  } while (response.next && users.length < limit);
+    )
+    users = [...users, ...response.result.users]
+    newCursor = response.next ? response.next.cursor : ''
+  } while (response.next && users.length < limit)
 
-  return { users: users.slice(0, limit), cursor: newCursor };
-};
+  return { users: users.slice(0, limit), cursor: newCursor }
+}
