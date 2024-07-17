@@ -43,7 +43,7 @@ export const getDirectCastConversations = async (
       cursor: newCursor,
       limit: String(limit),
       category,
-        ...filter && { filter },
+      ...(filter && { filter }),
     }
     response = await fetchRequest<Response>(
       baseUrl,

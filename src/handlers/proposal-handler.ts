@@ -1,10 +1,10 @@
-import { dayjs } from '@/libs/dayjs'
 import { getBlockNumber } from '@/services/ethereum/get-block-number'
 import { getBlockTimestamp } from '@/services/ethereum/get-block-timestamp'
 import { getProposals } from '@/services/lilnouns/get-proposals'
 import { getMe } from '@/services/warpcast/get-me'
 import { getUserByVerification } from '@/services/warpcast/get-user-by-verification'
 import { sendDirectCast } from '@/services/warpcast/send-direct-cast'
+import { DateTime } from 'luxon'
 import { createHash } from 'node:crypto'
 import { filter, isTruthy } from 'remeda'
 import { delay } from 'unicorn-magic'
@@ -42,8 +42,14 @@ export async function proposalHandler(env: Env) {
       getBlockTimestamp(env, Number(endBlock)),
     ])
 
-    const proposalStart = dayjs.unix(startBlockTimestamp).fromNow(true)
-    const proposalEnd = dayjs.unix(endBlockTimestamp).toNow(true)
+    const proposalStart = DateTime.fromSeconds(startBlockTimestamp).toRelative({
+      style: 'long',
+      unit: ['hours', 'minutes'],
+    })
+    const proposalEnd = DateTime.fromSeconds(endBlockTimestamp).toRelative({
+      style: 'long',
+      unit: ['hours', 'minutes'],
+    })
 
     const voters = await Promise.all(
       votes.map(async (vote) => {
@@ -67,7 +73,7 @@ export async function proposalHandler(env: Env) {
 
     const message =
       `🗳️ It's voting time, Lil Nouns fam! Proposal #${id.toString()} is live and ready for your voice. ` +
-      `Voting started ${proposalStart} ago and wraps up in ${proposalEnd}. ` +
+      `Voting started ${proposalStart} and wraps up ${proposalEnd}. ` +
       `You received this message because you haven't voted yet. Don't miss out, cast your vote now! 🌟`
     const idempotencyKey = createHash('sha256').update(message).digest('hex')
 
