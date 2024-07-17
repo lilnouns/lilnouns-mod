@@ -1,4 +1,5 @@
 import { getDirectCastConversations } from '@/services/warpcast/get-direct-cast-conversations'
+import { flat, pipe, sort, unique } from 'remeda'
 
 /**
  * Handles the subscribers by retrieving conversations and participants,
@@ -11,29 +12,32 @@ async function subscribersHandler(env: Env) {
 
   const categories = ['default', 'request']
 
-  let farcasterSubscribers: number[] =
+  const subscribers: number[] =
     (await kv.get('lilnouns-farcaster-subscribers', { type: 'json' })) ?? []
 
-  for (const category of categories) {
-    const { conversations } = await getDirectCastConversations(
-      env,
-      100,
-      category,
-    )
+  const newSubscribers = await Promise.all(
+    categories.map(async (category) => {
+      const { conversations } = await getDirectCastConversations(
+        env,
+        100,
+        category,
+      )
+      return conversations.flatMap(({ participants }) =>
+        participants.map(({ fid }) => fid),
+      )
+    }),
+  )
 
-    for (const conversation of conversations) {
-      const { participants } = conversation
-      for (const participant of participants) {
-        farcasterSubscribers = [
-          ...new Set([...farcasterSubscribers, participant.fid]),
-        ]
-      }
-    }
-  }
+  const updatedSubscribers = pipe(
+    [...subscribers, ...flat(newSubscribers)],
+    unique(),
+    sort((a, b) => a - b),
+  )
 
-  const sortedFarcasterSubscribers = farcasterSubscribers.sort((a, b) => a - b)
-  const serializedSubscribers = JSON.stringify(sortedFarcasterSubscribers)
-  await kv.put('lilnouns-farcaster-subscribers', serializedSubscribers)
+  await kv.put(
+    'lilnouns-farcaster-subscribers',
+    JSON.stringify(updatedSubscribers),
+  )
 }
 
 /**

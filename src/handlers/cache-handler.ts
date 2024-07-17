@@ -1,6 +1,7 @@
 import { fetchAccounts } from '@/services/lilnouns/fetch-accounts'
 import { fetchDelegates } from '@/services/lilnouns/fetch-delegates'
 import { getUserByVerification } from '@/services/warpcast/get-user-by-verification'
+import { map, pipe, sortBy, unique } from 'remeda'
 
 /**
  * Handles caching of data for LilNouns application.
@@ -15,45 +16,65 @@ export async function cacheHandler(env: Env) {
     (await kv.get('lilnouns-holders-addresses', { type: 'json' })) ?? []
   if (holdersAddresses.length === 0) {
     const { accounts } = await fetchAccounts(env)
-    holdersAddresses = accounts.map((account) => account.id)
-    const serializedHoldersAddresses = JSON.stringify(holdersAddresses)
-    await kv.put('lilnouns-holders-addresses', serializedHoldersAddresses, {
-      expirationTtl,
-    })
+    holdersAddresses = pipe(
+      accounts,
+      map((account) => account.id),
+    )
+    await kv.put(
+      'lilnouns-holders-addresses',
+      JSON.stringify(holdersAddresses),
+      {
+        expirationTtl,
+      },
+    )
   }
 
   let delegatesAddresses: string[] =
     (await kv.get('lilnouns-delegates-addresses', { type: 'json' })) ?? []
   if (delegatesAddresses.length === 0) {
     const { delegates } = await fetchDelegates(env)
-    delegatesAddresses = delegates.map((account) => account.id)
-    const serializedDelegatesAddresses = JSON.stringify(delegatesAddresses)
-    await kv.put('lilnouns-delegates-addresses', serializedDelegatesAddresses, {
-      expirationTtl,
-    })
+    delegatesAddresses = pipe(
+      delegates,
+      map((account) => account.id),
+    )
+    await kv.put(
+      'lilnouns-delegates-addresses',
+      JSON.stringify(delegatesAddresses),
+      {
+        expirationTtl,
+      },
+    )
   }
 
   let farcasterUsers: number[] =
     (await kv.get('lilnouns-farcaster-users', { type: 'json' })) ?? []
   if (farcasterUsers.length === 0) {
-    const addresses = [...new Set([...holdersAddresses, ...delegatesAddresses])]
+    const addresses = pipe(
+      [...holdersAddresses, ...delegatesAddresses],
+      unique(),
+    )
+
     for (const address of addresses) {
       try {
         const { user } = await getUserByVerification(env, address)
-        farcasterUsers = [...new Set([...farcasterUsers, user.fid])]
+        farcasterUsers = pipe(
+          [...farcasterUsers, user.fid],
+          unique(),
+          sortBy((fid) => fid),
+        )
       } catch (error) {
-        if (error instanceof Error) {
-          if (!error.message.startsWith('No FID has connected')) {
-            console.error(`An error occurred: ${error.message}`)
-          }
+        if (
+          error instanceof Error &&
+          !error.message.startsWith('No FID has connected')
+        ) {
+          console.error(`An error occurred: ${error.message}`)
         }
       }
     }
 
-    const sortedFarcasterUsers = farcasterUsers.sort((a, b) => a - b)
-    const serializedFarcasterUsers = JSON.stringify(sortedFarcasterUsers)
-    await kv.put('lilnouns-farcaster-users', serializedFarcasterUsers, {
+    await kv.put('lilnouns-farcaster-users', JSON.stringify(farcasterUsers), {
       expirationTtl,
     })
   }
+  console.log(farcasterUsers)
 }

@@ -6,6 +6,7 @@ import { getMe } from '@/services/warpcast/get-me'
 import { getUserByVerification } from '@/services/warpcast/get-user-by-verification'
 import { sendDirectCast } from '@/services/warpcast/send-direct-cast'
 import { createHash } from 'node:crypto'
+import { filter, isTruthy } from 'remeda'
 import { delay } from 'unicorn-magic'
 
 /**
@@ -27,37 +28,42 @@ export async function proposalHandler(env: Env) {
   const blockNumber = await getBlockNumber(env)
   let { proposals } = await getProposals(env)
 
-  proposals = proposals.filter((proposal) => {
-    return (
-      proposal.status === 'ACTIVE' && Number(proposal.endBlock) > blockNumber
-    )
-  })
+  proposals = filter(
+    proposals,
+    (proposal) =>
+      proposal.status === 'ACTIVE' && Number(proposal.endBlock) > blockNumber,
+  )
 
   for (const proposal of proposals) {
     const { votes, endBlock, startBlock, id } = proposal
-    let voters: number[] = []
 
-    const startBlockTimestamp = await getBlockTimestamp(env, Number(startBlock))
-    const endBlockTimestamp = await getBlockTimestamp(env, Number(endBlock))
+    const [startBlockTimestamp, endBlockTimestamp] = await Promise.all([
+      getBlockTimestamp(env, Number(startBlock)),
+      getBlockTimestamp(env, Number(endBlock)),
+    ])
 
     const proposalStart = dayjs.unix(startBlockTimestamp).fromNow(true)
     const proposalEnd = dayjs.unix(endBlockTimestamp).toNow(true)
 
-    for (const vote of votes) {
-      try {
-        const { user } = await getUserByVerification(
-          env,
-          vote.voter.id.toLowerCase(),
-        )
-        voters = [...voters, user.fid]
-      } catch (error) {
-        if (error instanceof Error) {
-          if (!error.message.startsWith('No FID has connected')) {
+    const voters = await Promise.all(
+      votes.map(async (vote) => {
+        try {
+          const { user } = await getUserByVerification(
+            env,
+            vote.voter.id.toLowerCase(),
+          )
+          return user.fid
+        } catch (error) {
+          if (
+            error instanceof Error &&
+            !error.message.startsWith('No FID has connected')
+          ) {
             console.error(`An error occurred: ${error.message}`)
           }
+          return null
         }
-      }
-    }
+      }),
+    ).then((results) => filter(results, isTruthy))
 
     const message =
       `🗳️ It's voting time, Lil Nouns fam! Proposal #${id.toString()} is live and ready for your voice. ` +
