@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.0.0-alpha.14] - 2024-07-17
+
+### 🚜 Refactor
+
+- *(warpcast)* Use `first` from remeda to access error message
+- *(cache-handler)* Optimize data handling with remeda methods
+- *(cache-handler)* Streamline user data retrieval from farcaster
+- *(direct-casts-handler)* Streamline subscribers update logic
+- *(proposal-handler)* Optimize proposal and voter processing
+
 ## [1.0.0-alpha.13] - 2024-07-16
 
 ### 🐛 Bug Fixes
