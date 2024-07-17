@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.0.0-alpha.15] - 2024-07-17
+
+### 🚜 Refactor
+
+- *(proposal-handler)* Replace `dayjs` with `luxon` for time relative calculations
+
+### 🎨 Styling
+
+- *(warpcast)* Remove trailing commas and semicolons
+
 ## [1.0.0-alpha.14] - 2024-07-17
 
 ### 🚜 Refactor
