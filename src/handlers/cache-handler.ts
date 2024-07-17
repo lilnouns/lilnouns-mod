@@ -58,8 +58,8 @@ export async function cacheHandler(env: Env) {
       try {
         const { user } = await getUserByVerification(env, address)
         farcasterUsers = pipe(
-          farcasterUsers,
-          (users) => unique([...users, user.fid]),
+          [...farcasterUsers, user.fid],
+          unique(),
           sortBy((fid) => fid),
         )
       } catch (error) {
@@ -76,4 +76,5 @@ export async function cacheHandler(env: Env) {
       expirationTtl,
     })
   }
+  console.log(farcasterUsers)
 }
