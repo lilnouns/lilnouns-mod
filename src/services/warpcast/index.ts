@@ -1,3 +1,5 @@
+import { first } from 'remeda'
+
 export { likeCast } from './like-cast'
 
 export enum HttpRequestMethod {
@@ -53,7 +55,7 @@ export async function fetchRequest<T>(
 
   const data: FetchResponse = await response.json()
   if (data.errors && data.errors.length > 0) {
-    throw new Error(data.errors[0].message)
+    throw new Error(first(data.errors)?.message)
   }
 
   return data as T
