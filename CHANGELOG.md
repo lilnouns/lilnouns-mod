@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.0.0-alpha.17] - 2024-07-27
+
+### 🚜 Refactor
+
+- *(dayjs)* Remove `dayjs` library from codebase
+
 ## [1.0.0-alpha.16] - 2024-07-22
 
 ### 🐛 Bug Fixes
