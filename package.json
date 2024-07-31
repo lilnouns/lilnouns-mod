@@ -47,7 +47,7 @@
     "prettier-plugin-packagejson": "2.5.1",
     "prettier-plugin-toml": "2.0.1",
     "typescript": "5.5.4",
-    "typescript-eslint": "8.0.0-alpha.54",
+    "typescript-eslint": "8.0.0-alpha.60",
     "vitest": "1.5.3",
     "wrangler": "3.67.0"
   }
