@@ -59,4 +59,6 @@ updates:
     # List of packages to ignore for specific update types
     ignore:
       - dependency-name: 'vitest'
-        update-types: ['version-update:semver-minor']
+        update-types:
+          - version-update:semver-major
+          - version-update:semver-minor
