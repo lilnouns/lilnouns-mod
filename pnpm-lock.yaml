@@ -18,8 +18,8 @@ importers:
         specifier: 6.1.0
         version: 6.1.0(graphql@16.9.0)
       luxon:
-        specifier: 3.4.4
-        version: 3.4.4
+        specifier: 3.5.0
+        version: 3.5.0
       remeda:
         specifier: 2.7.0
         version: 2.7.0
@@ -1487,8 +1487,8 @@ packages:
   loupe@2.3.7:
     resolution: {integrity: sha512-zSMINGVYkdpYSOBmLi0D1Uo7JU9nVdQKrHxC8eYlV+9YKK9WePqAlL7lSlorG/U2Fw1w0hTBmaa/jrQ3UbPHtA==}
 
-  luxon@3.4.4:
-    resolution: {integrity: sha512-zobTr7akeGHnv7eBOXcRgMeCP6+uyYsczwmeRCauvpvaAltgNyTbLH/+VaEAPUeWBT+1GuNmz4wC/6jtQzbbVA==}
+  luxon@3.5.0:
+    resolution: {integrity: sha512-rh+Zjr6DNfUYR3bPwJEnuwDdqMbxZW7LOQfUN4B54+Cl+0o5zaU9RJ6bcidfDtC1cWCZXQ+nvX8bf6bAji37QQ==}
     engines: {node: '>=12'}
 
   magic-string@0.25.9:
@@ -3563,7 +3563,7 @@ snapshots:
     dependencies:
       get-func-name: 2.0.2
 
-  luxon@3.4.4: {}
+  luxon@3.5.0: {}
 
   magic-string@0.25.9:
     dependencies:
