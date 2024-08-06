@@ -17,7 +17,7 @@
     "cron-time-generator": "2.0.3",
     "graphql": "16.9.0",
     "graphql-request": "6.1.0",
-    "luxon": "3.4.4",
+    "luxon": "3.5.0",
     "remeda": "2.7.0",
     "type-fest": "4.23.0",
     "unicorn-magic": "0.3.0",
