@@ -109,8 +109,8 @@ importers:
         specifier: 1.5.3
         version: 1.5.3(@types/node@22.1.0)
       wrangler:
-        specifier: 3.68.0
-        version: 3.68.0(@cloudflare/workers-types@4.20240806.0)
+        specifier: 3.69.1
+        version: 3.69.1(@cloudflare/workers-types@4.20240806.0)
 
 packages:
 
