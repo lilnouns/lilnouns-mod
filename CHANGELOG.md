@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.0.0-alpha.24] - 2024-08-28
+
+### ⚙️ Miscellaneous Tasks
+
+- *(docs)* Update badge URLs in `README.md`
+
 ## [1.0.0-alpha.23] - 2024-08-28
 
 ### 🚀 Features
