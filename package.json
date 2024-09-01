@@ -1,6 +1,6 @@
 {
   "name": "lilnouns-mod",
-  "version": "1.0.0-alpha.24",
+  "version": "1.0.0-alpha.25",
   "private": true,
   "type": "module",
   "scripts": {
@@ -19,19 +19,19 @@
     "graphql-request": "6.1.0",
     "luxon": "3.5.0",
     "remeda": "2.11.0",
-    "type-fest": "4.25.0",
+    "type-fest": "4.26.0",
     "unicorn-magic": "0.3.0",
-    "viem": "2.20.1"
+    "viem": "2.21.0"
   },
   "devDependencies": {
     "@cloudflare/vitest-pool-workers": "0.4.26",
-    "@cloudflare/workers-types": "4.20240806.0",
+    "@cloudflare/workers-types": "4.20240821.1",
     "@eslint/js": "9.9.1",
     "@types/eslint__js": "8.42.3",
     "@types/luxon": "3.4.2",
-    "@types/node": "22.3.0",
-    "@typescript-eslint/parser": "8.1.0",
-    "eslint": "9.9.0",
+    "@types/node": "22.5.1",
+    "@typescript-eslint/parser": "8.3.0",
+    "eslint": "9.9.1",
     "eslint-config-prettier": "9.1.0",
     "eslint-plugin-jsdoc": "50.2.2",
     "eslint-plugin-prettier": "5.2.1",
@@ -49,6 +49,6 @@
     "typescript": "5.5.4",
     "typescript-eslint": "8.3.0",
     "vitest": "1.5.3",
-    "wrangler": "3.72.1"
+    "wrangler": "3.72.3"
   }
 }
