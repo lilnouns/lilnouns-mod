@@ -25,6 +25,8 @@ export async function scheduledHandler(
       break
     case CronTime.every(12).hours():
       await directCastsHandler(env)
+      break
+    case CronTime.everyDayAt(14, 0):
       await proposalHandler(env)
       break
     default:
