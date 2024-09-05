@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.0.0-alpha.29] - 2024-09-05
+
+### 🚜 Refactor
+
+- *(handlers)* Use `try/await` syntax for `sendDirectCast`
+
 ## [1.0.0-alpha.28] - 2024-09-05
 
 ### 🚀 Features
