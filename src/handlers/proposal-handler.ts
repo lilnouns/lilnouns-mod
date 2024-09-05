@@ -7,7 +7,6 @@ import { sendDirectCast } from '@/services/warpcast/send-direct-cast'
 import { DateTime } from 'luxon'
 import { createHash } from 'node:crypto'
 import { filter, isTruthy } from 'remeda'
-import { delay } from 'unicorn-magic'
 
 /**
  * Converts a given timestamp to a relative time string.
@@ -92,8 +91,13 @@ export async function proposalHandler(env: Env) {
         continue
       }
 
-      await sendDirectCast(env, subscriber, message, idempotencyKey)
-      await delay({ seconds: 10 })
+      sendDirectCast(env, subscriber, message, idempotencyKey)
+        .then((result) => {
+          console.log('Direct cast sent successfully:', result)
+        })
+        .catch((error: unknown) => {
+          console.error('Error sending direct cast:', error)
+        })
     }
   }
 }
