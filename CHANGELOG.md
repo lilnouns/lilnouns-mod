@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.0.0-alpha.27] - 2024-09-05
+
+### 🚀 Features
+
+- *(proposal-handler)* Add reminder for close to deadline
+
+### 🚜 Refactor
+
+- *(handlers)* Extract `toRelativeTime` function
+- *(proposal-handler)* Replace `await` with `then` for `sendDirectCast`
+
 ## [1.0.0-alpha.26] - 2024-09-05
 
 ### 🐛 Bug Fixes

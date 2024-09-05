@@ -9,15 +9,19 @@ import { createHash } from 'node:crypto'
 import { filter, isTruthy } from 'remeda'
 
 /**
- * Converts a given timestamp to a relative time string.
- * @param timestamp - The timestamp to be converted.
- * @returns A relative time string.
+ * Calculate the number of hours left until a given timestamp.
+ * @param timestamp - The target time in milliseconds since the Unix epoch.
+ * @returns The number of hours left until the given timestamp. Returns 0 if the timestamp is in the past.
  */
-function toRelativeTime(timestamp: number): string {
-  return DateTime.fromSeconds(timestamp).toRelative({
-    style: 'long',
-    unit: ['hours', 'minutes'],
-  })
+function hoursLeftUntil(timestamp: number): number {
+  const targetTime = DateTime.fromMillis(timestamp)
+  const now = DateTime.now()
+
+  // Calculate the difference in hours
+  const diff = targetTime.diff(now, 'hours').hours
+
+  // Return the difference, ensuring it's not negative
+  return diff > 0 ? diff : 0
 }
 
 /**
@@ -25,16 +29,13 @@ function toRelativeTime(timestamp: number): string {
  * @param env - The environment object.
  * @returns - A promise that resolves once the proposal is handled.
  */
-export async function proposalHandler(env: Env) {
+export async function reminderHandler(env: Env) {
   const { KV: kv } = env
 
   const { user } = await getMe(env)
 
-  const farcasterUsers: number[] =
-    (await kv.get('lilnouns-farcaster-users', { type: 'json' })) ?? []
-
-  const farcasterSubscribers: number[] =
-    (await kv.get('lilnouns-farcaster-subscribers', { type: 'json' })) ?? []
+  const farcasterDelegates: number[] =
+    (await kv.get('lilnouns-farcaster-delegates', { type: 'json' })) ?? []
 
   const blockNumber = await getBlockNumber(env)
   let { proposals } = await getProposals(env)
@@ -46,15 +47,13 @@ export async function proposalHandler(env: Env) {
   )
 
   for (const proposal of proposals) {
-    const { votes, endBlock, startBlock, id } = proposal
+    const { votes, endBlock, id } = proposal
 
-    const [startBlockTimestamp, endBlockTimestamp] = await Promise.all([
-      getBlockTimestamp(env, Number(startBlock)),
-      getBlockTimestamp(env, Number(endBlock)),
-    ])
+    const endBlockTimestamp = await getBlockTimestamp(env, Number(endBlock))
 
-    const proposalStart = toRelativeTime(startBlockTimestamp)
-    const proposalEnd = toRelativeTime(endBlockTimestamp)
+    if (hoursLeftUntil(endBlockTimestamp) > 2) {
+      continue
+    }
 
     const voters = await Promise.all(
       votes.map(async (vote) => {
@@ -77,21 +76,16 @@ export async function proposalHandler(env: Env) {
     ).then((results) => filter(results, isTruthy))
 
     const message =
-      `🗳️ It's voting time, Lil Nouns fam! Proposal #${id.toString()} is live and ready for your voice. ` +
-      `Voting started ${proposalStart} and wraps up ${proposalEnd}. ` +
-      `You received this message because you haven't voted yet. Don't miss out, cast your vote now! 🌟`
+      `Hey mate, quick reminder fa ya, voting on proposal #${id.toString()} wraps up in under two hours ⏳` +
+      ` Would appreciate if you could take a sec and cast your vote! 🙌`
     const idempotencyKey = createHash('sha256').update(message).digest('hex')
 
-    for (const subscriber of farcasterSubscribers) {
-      if (
-        subscriber === user.fid ||
-        voters.includes(subscriber) ||
-        !farcasterUsers.includes(subscriber)
-      ) {
+    for (const delegate of farcasterDelegates) {
+      if (delegate === user.fid || voters.includes(delegate)) {
         continue
       }
 
-      sendDirectCast(env, subscriber, message, idempotencyKey)
+      sendDirectCast(env, delegate, message, idempotencyKey)
         .then((result) => {
           console.log('Direct cast sent successfully:', result)
         })
