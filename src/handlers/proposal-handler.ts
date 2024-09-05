@@ -10,6 +10,18 @@ import { filter, isTruthy } from 'remeda'
 import { delay } from 'unicorn-magic'
 
 /**
+ * Converts a given timestamp to a relative time string.
+ * @param timestamp - The timestamp to be converted.
+ * @returns A relative time string.
+ */
+function toRelativeTime(timestamp: number): string {
+  return DateTime.fromSeconds(timestamp).toRelative({
+    style: 'long',
+    unit: ['hours', 'minutes'],
+  })
+}
+
+/**
  * Handles the proposal by retrieving or fetching delegates from KV store and logging them.
  * @param env - The environment object.
  * @returns - A promise that resolves once the proposal is handled.
@@ -42,14 +54,8 @@ export async function proposalHandler(env: Env) {
       getBlockTimestamp(env, Number(endBlock)),
     ])
 
-    const proposalStart = DateTime.fromSeconds(startBlockTimestamp).toRelative({
-      style: 'long',
-      unit: ['hours', 'minutes'],
-    })
-    const proposalEnd = DateTime.fromSeconds(endBlockTimestamp).toRelative({
-      style: 'long',
-      unit: ['hours', 'minutes'],
-    })
+    const proposalStart = toRelativeTime(startBlockTimestamp)
+    const proposalEnd = toRelativeTime(endBlockTimestamp)
 
     const voters = await Promise.all(
       votes.map(async (vote) => {
