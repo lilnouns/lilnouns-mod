@@ -91,13 +91,17 @@ export async function proposalHandler(env: Env) {
         continue
       }
 
-      sendDirectCast(env, subscriber, message, idempotencyKey)
-        .then((result) => {
-          console.log('Direct cast sent successfully:', result)
-        })
-        .catch((error: unknown) => {
-          console.error('Error sending direct cast:', error)
-        })
+      try {
+        const result = await sendDirectCast(
+          env,
+          subscriber,
+          message,
+          idempotencyKey,
+        )
+        console.log('Direct cast sent successfully:', result)
+      } catch (error: unknown) {
+        console.error('Error sending direct cast:', error)
+      }
     }
   }
 }

@@ -85,13 +85,17 @@ export async function reminderHandler(env: Env) {
         continue
       }
 
-      sendDirectCast(env, delegate, message, idempotencyKey)
-        .then((result) => {
-          console.log('Direct cast sent successfully:', result)
-        })
-        .catch((error: unknown) => {
-          console.error('Error sending direct cast:', error)
-        })
+      try {
+        const result = await sendDirectCast(
+          env,
+          delegate,
+          message,
+          idempotencyKey,
+        )
+        console.log('Direct cast sent successfully:', result)
+      } catch (error: unknown) {
+        console.error('Error sending direct cast:', error)
+      }
     }
   }
 }
