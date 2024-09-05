@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.0.0-alpha.28] - 2024-09-05
+
+### 🚀 Features
+
+- *(scheduled-handler)* Add new daily 14:00 cron job
+
 ## [1.0.0-alpha.27] - 2024-09-05
 
 ### 🚀 Features
