@@ -10,6 +10,19 @@ interface DirectCastBody {
 }
 
 /**
+ * A function to calculate the exponential backoff delay.
+ * @param attempts - The number of attempts or retries that have been made.
+ * @param baseDelaySeconds - The base delay in seconds for the initial attempt.
+ * @returns The calculated delay in seconds based on the number of attempts.
+ */
+const calculateExponentialBackoff = (
+  attempts: number,
+  baseDelaySeconds: number,
+) => {
+  return baseDelaySeconds ** attempts
+}
+
+/**
  * Handles the task of sending a direct cast message.
  * @param env - The environment configuration object.
  * @param data - The data for the direct cast message, including recipient ID, message content, and idempotency key.
@@ -82,7 +95,9 @@ export async function queueHandler(
       console.error('Error processing message, will retry:', error)
 
       // Retry the message in case of failure
-      message.retry({ delaySeconds: 300 })
+      message.retry({
+        delaySeconds: calculateExponentialBackoff(message.attempts, 30),
+      })
     }
   }
 }
