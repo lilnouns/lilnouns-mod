@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.0.0-alpha.31] - 2024-09-11
+
+### 🚀 Features
+
+- *(reminder-handler)* Batch process direct cast messages
+
+### 🎨 Styling
+
+- *(proposal-handler)* Fix object formatting inconsistencies
+
 ## [1.0.0-alpha.30] - 2024-09-11
 
 ### 🚀 Features
