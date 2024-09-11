@@ -1,6 +1,7 @@
 import { cacheHandler } from '@/handlers/cache-handler'
 import { channelHandler } from '@/handlers/channel-handler'
 import { directCastsHandler } from '@/handlers/direct-casts-handler'
+import { eventsHandler } from '@/handlers/events-handler'
 import { proposalHandler } from '@/handlers/proposal-handler'
 import { reminderHandler } from '@/handlers/reminder-handler'
 import { CronTime } from 'cron-time-generator'
@@ -18,6 +19,7 @@ export async function scheduledHandler(
   switch (controller.cron) {
     case CronTime.everyHour():
       await cacheHandler(env)
+      await eventsHandler(env)
       await reminderHandler(env)
       break
     case CronTime.every(30).minutes():
