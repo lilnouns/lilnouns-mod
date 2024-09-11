@@ -30,6 +30,7 @@ const calculateExponentialBackoff = (
  */
 async function handleDirectCastTask(env: Env, data: DirectCastBody['data']) {
   const { recipientFid, message: castMessage, idempotencyKey } = data
+
   try {
     const result = await sendDirectCast(
       env,
@@ -37,6 +38,11 @@ async function handleDirectCastTask(env: Env, data: DirectCastBody['data']) {
       castMessage,
       idempotencyKey,
     )
+
+    if (!result.success) {
+      throw new Error(`Non-successful result: ${JSON.stringify(result)}`)
+    }
+
     console.log(
       `Direct cast sent successfully to recipientFid ${recipientFid.toString()}:`,
       result,
