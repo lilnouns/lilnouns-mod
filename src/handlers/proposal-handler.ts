@@ -3,17 +3,17 @@ import { getBlockTimestamp } from '@/services/ethereum/get-block-timestamp'
 import { getProposals } from '@/services/lilnouns/get-proposals'
 import { getMe } from '@/services/warpcast/get-me'
 import { getUserByVerification } from '@/services/warpcast/get-user-by-verification'
-import { createHash } from 'crypto'
 import { DateTime } from 'luxon'
+import { createHash } from 'node:crypto'
 import { filter, isTruthy } from 'remeda'
 
 interface DirectCastBody {
-  type: 'direct-cast';
+  type: 'direct-cast'
   data: {
-    recipientFid: number;
-    message: string;
-    idempotencyKey: string;
-  };
+    recipientFid: number
+    message: string
+    idempotencyKey: string
+  }
 }
 
 /**
@@ -109,7 +109,7 @@ export async function proposalHandler(env: Env) {
             message,
             idempotencyKey,
           },
-        }
+        },
       }
 
       batch.push(task)

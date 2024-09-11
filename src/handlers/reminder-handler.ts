@@ -3,11 +3,18 @@ import { getBlockTimestamp } from '@/services/ethereum/get-block-timestamp'
 import { getProposals } from '@/services/lilnouns/get-proposals'
 import { getMe } from '@/services/warpcast/get-me'
 import { getUserByVerification } from '@/services/warpcast/get-user-by-verification'
-import { sendDirectCast } from '@/services/warpcast/send-direct-cast'
 import { DateTime } from 'luxon'
 import { createHash } from 'node:crypto'
 import { filter, isTruthy } from 'remeda'
 
+interface DirectCastBody {
+  type: 'direct-cast'
+  data: {
+    recipientFid: number
+    message: string
+    idempotencyKey: string
+  }
+}
 /**
  * Calculate the number of hours left until a given timestamp.
  * @param timestamp - The target time in milliseconds since the Unix epoch.
@@ -30,7 +37,7 @@ function hoursLeftUntil(timestamp: number): number {
  * @returns - A promise that resolves once the proposal is handled.
  */
 export async function reminderHandler(env: Env) {
-  const { KV: kv } = env
+  const { KV: kv, QUEUE: queue } = env
 
   const { user } = await getMe(env)
 
@@ -45,6 +52,8 @@ export async function reminderHandler(env: Env) {
     (proposal) =>
       proposal.status === 'ACTIVE' && Number(proposal.endBlock) > blockNumber,
   )
+
+  const batch: MessageSendRequest<DirectCastBody>[] = []
 
   for (const proposal of proposals) {
     const { votes, endBlock, id } = proposal
@@ -80,22 +89,32 @@ export async function reminderHandler(env: Env) {
       ` Would appreciate if you could take a sec and cast your vote! 🙌`
     const idempotencyKey = createHash('sha256').update(message).digest('hex')
 
-    for (const delegate of farcasterDelegates) {
-      if (delegate === user.fid || voters.includes(delegate)) {
+    for (const recipientFid of farcasterDelegates) {
+      if (recipientFid === user.fid || voters.includes(recipientFid)) {
         continue
       }
 
-      try {
-        const result = await sendDirectCast(
-          env,
-          delegate,
-          message,
-          idempotencyKey,
-        )
-        console.log('Direct cast sent successfully:', result)
-      } catch (error: unknown) {
-        console.error('Error sending direct cast:', error)
+      const task: MessageSendRequest<DirectCastBody> = {
+        body: {
+          type: 'direct-cast',
+          data: {
+            recipientFid,
+            message,
+            idempotencyKey,
+          },
+        },
       }
+
+      batch.push(task)
+    }
+  }
+
+  if (batch.length > 0) {
+    try {
+      await queue.sendBatch(batch)
+      console.log('Batch enqueued successfully:', batch)
+    } catch (error) {
+      console.error('Error enqueuing batch:', error)
     }
   }
 }
