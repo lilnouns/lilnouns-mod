@@ -96,7 +96,7 @@ export async function queueHandler(
 
       // Retry the message in case of failure
       message.retry({
-        delaySeconds: calculateExponentialBackoff(message.attempts, 30),
+        delaySeconds: calculateExponentialBackoff(message.attempts, 10),
       })
     }
   }
