@@ -2,6 +2,22 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.0.0-alpha.30] - 2024-09-11
+
+### 🚀 Features
+
+- *(handlers)* Add `queueHandler` to process queue messages
+- *(handlers)* Add direct cast task processing
+
+### 🎨 Styling
+
+- *(lint-staged)* Reorder `prettier` and `eslint` tasks
+
+### ⚙️ Miscellaneous Tasks
+
+- *(queue)* Enable `lilnouns-mod` producer and consumer
+- *(workers)* Add `QUEUE` to `Env` interface
+
 ## [1.0.0-alpha.29] - 2024-09-05
 
 ### 🚜 Refactor
