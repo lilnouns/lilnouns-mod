@@ -1,12 +1,12 @@
 import { sendDirectCast } from '@/services/warpcast/send-direct-cast'
 
 interface DirectCastBody {
-  type: 'direct-cast';
+  type: 'direct-cast'
   data: {
-    recipientFid: number;
-    message: string;
-    idempotencyKey: string;
-  };
+    recipientFid: number
+    message: string
+    idempotencyKey: string
+  }
 }
 
 /**
@@ -18,10 +18,21 @@ interface DirectCastBody {
 async function handleDirectCastTask(env: Env, data: DirectCastBody['data']) {
   const { recipientFid, message: castMessage, idempotencyKey } = data
   try {
-    const result = await sendDirectCast(env, recipientFid, castMessage, idempotencyKey)
-    console.log(`Direct cast sent successfully to recipientFid ${recipientFid.toString()}:`, result)
+    const result = await sendDirectCast(
+      env,
+      recipientFid,
+      castMessage,
+      idempotencyKey,
+    )
+    console.log(
+      `Direct cast sent successfully to recipientFid ${recipientFid.toString()}:`,
+      result,
+    )
   } catch (error) {
-    console.error(`Failed to send direct cast to recipientFid ${recipientFid.toString()}:`, error)
+    console.error(
+      `Failed to send direct cast to recipientFid ${recipientFid.toString()}:`,
+      error,
+    )
     throw error
   }
 }
@@ -71,7 +82,7 @@ export async function queueHandler(
       console.error('Error processing message, will retry:', error)
 
       // Retry the message in case of failure
-      message.retry()
+      message.retry({ delaySeconds: 300 })
     }
   }
 }
