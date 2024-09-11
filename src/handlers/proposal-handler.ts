@@ -3,10 +3,18 @@ import { getBlockTimestamp } from '@/services/ethereum/get-block-timestamp'
 import { getProposals } from '@/services/lilnouns/get-proposals'
 import { getMe } from '@/services/warpcast/get-me'
 import { getUserByVerification } from '@/services/warpcast/get-user-by-verification'
-import { sendDirectCast } from '@/services/warpcast/send-direct-cast'
+import { createHash } from 'crypto'
 import { DateTime } from 'luxon'
-import { createHash } from 'node:crypto'
 import { filter, isTruthy } from 'remeda'
+
+interface DirectCastBody {
+  type: 'direct-cast';
+  data: {
+    recipientFid: number;
+    message: string;
+    idempotencyKey: string;
+  };
+}
 
 /**
  * Converts a given timestamp to a relative time string.
@@ -26,7 +34,7 @@ function toRelativeTime(timestamp: number): string {
  * @returns - A promise that resolves once the proposal is handled.
  */
 export async function proposalHandler(env: Env) {
-  const { KV: kv } = env
+  const { KV: kv, QUEUE: queue } = env
 
   const { user } = await getMe(env)
 
@@ -44,6 +52,8 @@ export async function proposalHandler(env: Env) {
     (proposal) =>
       proposal.status === 'ACTIVE' && Number(proposal.endBlock) > blockNumber,
   )
+
+  const batch: MessageSendRequest<DirectCastBody>[] = []
 
   for (const proposal of proposals) {
     const { votes, endBlock, startBlock, id } = proposal
@@ -82,26 +92,36 @@ export async function proposalHandler(env: Env) {
       `You received this message because you haven't voted yet. Don't miss out, cast your vote now! 🌟`
     const idempotencyKey = createHash('sha256').update(message).digest('hex')
 
-    for (const subscriber of farcasterSubscribers) {
+    for (const recipientFid of farcasterSubscribers) {
       if (
-        subscriber === user.fid ||
-        voters.includes(subscriber) ||
-        !farcasterUsers.includes(subscriber)
+        recipientFid === user.fid ||
+        voters.includes(recipientFid) ||
+        !farcasterUsers.includes(recipientFid)
       ) {
         continue
       }
 
-      try {
-        const result = await sendDirectCast(
-          env,
-          subscriber,
-          message,
-          idempotencyKey,
-        )
-        console.log('Direct cast sent successfully:', result)
-      } catch (error: unknown) {
-        console.error('Error sending direct cast:', error)
+      const task: MessageSendRequest<DirectCastBody> = {
+        body: {
+          type: 'direct-cast',
+          data: {
+            recipientFid,
+            message,
+            idempotencyKey,
+          },
+        }
       }
+
+      batch.push(task)
+    }
+  }
+
+  if (batch.length > 0) {
+    try {
+      await queue.sendBatch(batch)
+      console.log('Batch enqueued successfully:', batch)
+    } catch (error) {
+      console.error('Error enqueuing batch:', error)
     }
   }
 }
