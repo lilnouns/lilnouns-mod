@@ -1,12 +1,25 @@
 import { sendDirectCast } from '@/services/warpcast/send-direct-cast'
 
 interface DirectCastBody {
-  type: 'direct-cast';
+  type: 'direct-cast'
   data: {
-    recipientFid: number;
-    message: string;
-    idempotencyKey: string;
-  };
+    recipientFid: number
+    message: string
+    idempotencyKey: string
+  }
+}
+
+/**
+ * A function to calculate the exponential backoff delay.
+ * @param attempts - The number of attempts or retries that have been made.
+ * @param baseDelaySeconds - The base delay in seconds for the initial attempt.
+ * @returns The calculated delay in seconds based on the number of attempts.
+ */
+const calculateExponentialBackoff = (
+  attempts: number,
+  baseDelaySeconds: number,
+) => {
+  return baseDelaySeconds ** attempts
 }
 
 /**
@@ -17,11 +30,28 @@ interface DirectCastBody {
  */
 async function handleDirectCastTask(env: Env, data: DirectCastBody['data']) {
   const { recipientFid, message: castMessage, idempotencyKey } = data
+
   try {
-    const result = await sendDirectCast(env, recipientFid, castMessage, idempotencyKey)
-    console.log(`Direct cast sent successfully to recipientFid ${recipientFid.toString()}:`, result)
+    const result = await sendDirectCast(
+      env,
+      recipientFid,
+      castMessage,
+      idempotencyKey,
+    )
+
+    if (!result.success) {
+      throw new Error(`Non-successful result: ${JSON.stringify(result)}`)
+    }
+
+    console.log(
+      `Direct cast sent successfully to recipientFid ${recipientFid.toString()}:`,
+      result,
+    )
   } catch (error) {
-    console.error(`Failed to send direct cast to recipientFid ${recipientFid.toString()}:`, error)
+    console.error(
+      `Failed to send direct cast to recipientFid ${recipientFid.toString()}:`,
+      error,
+    )
     throw error
   }
 }
@@ -71,7 +101,9 @@ export async function queueHandler(
       console.error('Error processing message, will retry:', error)
 
       // Retry the message in case of failure
-      message.retry()
+      message.retry({
+        delaySeconds: calculateExponentialBackoff(message.attempts, 10),
+      })
     }
   }
 }

@@ -41,8 +41,8 @@ export async function reminderHandler(env: Env) {
 
   const { user } = await getMe(env)
 
-  const farcasterDelegates: number[] =
-    (await kv.get('lilnouns-farcaster-delegates', { type: 'json' })) ?? []
+  const farcasterVoters: number[] =
+    (await kv.get('lilnouns-farcaster-voters', { type: 'json' })) ?? []
 
   const blockNumber = await getBlockNumber(env)
   let { proposals } = await getProposals(env)
@@ -89,7 +89,7 @@ export async function reminderHandler(env: Env) {
       ` Would appreciate if you could take a sec and cast your vote! 🙌`
     const idempotencyKey = createHash('sha256').update(message).digest('hex')
 
-    for (const recipientFid of farcasterDelegates) {
+    for (const recipientFid of farcasterVoters) {
       if (recipientFid === user.fid || voters.includes(recipientFid)) {
         continue
       }
