@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.0.0-alpha.33] - 2024-09-14
+
+### ⚙️ Miscellaneous Tasks
+
+- *(config)* Comment out `smart` mode in `placement`
+
 ## [1.0.0-alpha.32] - 2024-09-14
 
 ### 🚀 Features
