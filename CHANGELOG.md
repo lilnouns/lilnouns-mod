@@ -2,6 +2,31 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.0.0-alpha.32] - 2024-09-14
+
+### 🚀 Features
+
+- *(queue-handler)* Add exponential backoff for retries
+- *(handlers)* Add events handler for scheduled notifications
+- *(lilnouns)* Add `fetchVoters` function to retrieve voters
+- *(cache)* Integrate Farcaster voters caching
+
+### 🐛 Bug Fixes
+
+- *(queue-handler)* Adjust retry backoff delay
+- *(queue-handler)* Add error handling for failed casts
+- *(cache-handler)* Remove debug `console.log` statement
+- *(cache-handler)* Update `startBlock` calculation
+
+### 🚜 Refactor
+
+- *(queue-handler)* Improve code readability and formatting
+- *(reminder-handler)* Rename `farcasterDelegates` to `farcasterVoters`
+
+### ⚙️ Miscellaneous Tasks
+
+- *(config)* Enable smart placement in `wrangler.toml`
+
 ## [1.0.0-alpha.31] - 2024-09-11
 
 ### 🚀 Features
