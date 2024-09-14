@@ -83,7 +83,7 @@ export async function cacheHandler(env: Env) {
   let farcasterVoters: number[] =
     (await kv.get('lilnouns-farcaster-voters', { type: 'json' })) ?? []
   if (farcasterVoters.length === 0) {
-    const startBlock = (await getBlockNumber(env)) - 216_000
+    const startBlock = (await getBlockNumber(env)) - 432_000
     const { voters } = await fetchVoters(env, startBlock)
     votersAddresses = pipe(
       voters,
