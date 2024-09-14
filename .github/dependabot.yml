@@ -58,7 +58,3 @@ updates:
           - '@typescript-eslint/parser'
     # List of packages to ignore for specific update types
     ignore:
-      - dependency-name: 'vitest'
-        update-types:
-          - version-update:semver-major
-          - version-update:semver-minor
