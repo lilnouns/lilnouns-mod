@@ -1,5 +1,7 @@
+import { getBlockNumber } from '@/services/ethereum/get-block-number'
 import { fetchAccounts } from '@/services/lilnouns/fetch-accounts'
 import { fetchDelegates } from '@/services/lilnouns/fetch-delegates'
+import { fetchVoters } from '@/services/lilnouns/fetch-voters'
 import { getUserByVerification } from '@/services/warpcast/get-user-by-verification'
 import { map, pipe, sortBy, unique } from 'remeda'
 
@@ -73,6 +75,40 @@ export async function cacheHandler(env: Env) {
     }
 
     await kv.put('lilnouns-farcaster-users', JSON.stringify(farcasterUsers), {
+      expirationTtl,
+    })
+  }
+
+  let votersAddresses: string[]
+  let farcasterVoters: number[] =
+    (await kv.get('lilnouns-farcaster-voters', { type: 'json' })) ?? []
+  if (farcasterVoters.length === 0) {
+    const startBlock = (await getBlockNumber(env)) - 432_000
+    const { voters } = await fetchVoters(env, startBlock)
+    votersAddresses = pipe(
+      voters,
+      map((voter) => voter.id),
+    )
+
+    for (const address of votersAddresses) {
+      try {
+        const { user } = await getUserByVerification(env, address)
+        farcasterVoters = pipe(
+          [...farcasterVoters, user.fid],
+          unique(),
+          sortBy((fid) => fid),
+        )
+      } catch (error) {
+        if (
+          error instanceof Error &&
+          !error.message.startsWith('No FID has connected')
+        ) {
+          console.error(`An error occurred: ${error.message}`)
+        }
+      }
+    }
+
+    await kv.put('lilnouns-farcaster-voters', JSON.stringify(farcasterVoters), {
       expirationTtl,
     })
   }
