@@ -15,6 +15,7 @@ it('calls scheduled handler', async () => {
     cron: '* * * * *',
   })
   const ctx = createExecutionContext()
+  // @ts-expect-error: TypeScript error ignored for testing purposes
   await worker.scheduled(ctrl, env, ctx)
   await waitOnExecutionContext(ctx)
 })
