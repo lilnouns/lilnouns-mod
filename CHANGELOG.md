@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.0.0-alpha.34] - 2024-09-15
+
+### 🧪 Testing
+
+- *(index)* Add `@ts-expect-error` for testing purposes
+
+### ⚙️ Miscellaneous Tasks
+
+- *(cache-handler)* Import `luxon` and update `startBlock`
+- *(vitest)* Rename config file to TypeScript
+
 ## [1.0.0-alpha.33] - 2024-09-14
 
 ### ⚙️ Miscellaneous Tasks
