@@ -3,6 +3,7 @@ import { fetchAccounts } from '@/services/lilnouns/fetch-accounts'
 import { fetchDelegates } from '@/services/lilnouns/fetch-delegates'
 import { fetchVoters } from '@/services/lilnouns/fetch-voters'
 import { getUserByVerification } from '@/services/warpcast/get-user-by-verification'
+import { DateTime } from 'luxon'
 import { map, pipe, sortBy, unique } from 'remeda'
 
 /**
@@ -83,7 +84,13 @@ export async function cacheHandler(env: Env) {
   let farcasterVoters: number[] =
     (await kv.get('lilnouns-farcaster-voters', { type: 'json' })) ?? []
   if (farcasterVoters.length === 0) {
-    const startBlock = (await getBlockNumber(env)) - 432_000
+    const now = DateTime.now()
+    const blockTimeInSeconds = 12
+    const threeMonthsAgo = now.minus({ months: 3 })
+    const secondsInThreeMonths = now.diff(threeMonthsAgo, 'seconds').seconds
+    const blocksInThreeMonths = secondsInThreeMonths / blockTimeInSeconds
+
+    const startBlock = (await getBlockNumber(env)) - blocksInThreeMonths
     const { voters } = await fetchVoters(env, startBlock)
     votersAddresses = pipe(
       voters,
