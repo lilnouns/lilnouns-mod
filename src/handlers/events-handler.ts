@@ -28,10 +28,10 @@ export async function eventsHandler(env: Env) {
 
   const { user } = await getMe(env)
 
-  const farcasterUsers: number[] =
-    (await kv.get('lilnouns-farcaster-users', { type: 'json' })) ?? []
+  const farcasterVoters: number[] =
+    (await kv.get('lilnouns-farcaster-voters', { type: 'json' })) ?? []
 
-  if (farcasterUsers.length === 0) {
+  if (farcasterVoters.length === 0) {
     return
   }
 
@@ -75,7 +75,7 @@ export async function eventsHandler(env: Env) {
       const message = `${target.eventMessage}\nYou can join here: ${target.eventLink}`
       const idempotencyKey = createHash('sha256').update(message).digest('hex')
 
-      for (const recipientFid of farcasterUsers) {
+      for (const recipientFid of farcasterVoters) {
         if (recipientFid === user.fid) {
           continue
         }
