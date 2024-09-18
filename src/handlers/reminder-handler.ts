@@ -21,7 +21,7 @@ interface DirectCastBody {
  * @returns The number of hours left until the given timestamp. Returns 0 if the timestamp is in the past.
  */
 function hoursLeftUntil(timestamp: number): number {
-  const targetTime = DateTime.fromMillis(timestamp)
+  const targetTime = DateTime.fromSeconds(timestamp)
   const now = DateTime.now()
 
   // Calculate the difference in hours

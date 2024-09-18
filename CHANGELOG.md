@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.0.0-alpha.36] - 2024-09-18
+
+### 🚀 Features
+
+- *(scheduled-handler)* Add `channelHandler` to cron jobs
+
+### 🐛 Bug Fixes
+
+- *(reminder-handler)* Correct timestamp conversion
+
+### 🚜 Refactor
+
+- *(scheduled-handler)* Remove 30-min cron job
+
 ## [1.0.0-alpha.35] - 2024-09-18
 
 ### 🐛 Bug Fixes

@@ -20,10 +20,8 @@ export async function scheduledHandler(
     case CronTime.everyHour():
       await cacheHandler(env)
       await eventsHandler(env)
-      await reminderHandler(env)
-      break
-    case CronTime.every(30).minutes():
       await channelHandler(env)
+      await reminderHandler(env)
       break
     case CronTime.every(12).hours():
       await directCastsHandler(env)
