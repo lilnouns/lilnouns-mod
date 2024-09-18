@@ -22,9 +22,6 @@ export async function scheduledHandler(
       await eventsHandler(env)
       await reminderHandler(env)
       break
-    case CronTime.every(30).minutes():
-      await channelHandler(env)
-      break
     case CronTime.every(12).hours():
       await directCastsHandler(env)
       break
