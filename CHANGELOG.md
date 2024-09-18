@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.0.0-alpha.35] - 2024-09-18
+
+### 🐛 Bug Fixes
+
+- *(reminder-handler)* Handle undefined `endBlockTimestamp`
+
+### 🚜 Refactor
+
+- *(events-handler)* Rename `farcasterUsers` to `farcasterVoters`
+
 ## [1.0.0-alpha.34] - 2024-09-15
 
 ### 🧪 Testing
