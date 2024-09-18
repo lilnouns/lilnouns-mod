@@ -21,7 +21,7 @@
     "remeda": "2.12.1",
     "type-fest": "4.26.1",
     "unicorn-magic": "0.3.0",
-    "viem": "2.21.8"
+    "viem": "2.21.9"
   },
   "devDependencies": {
     "@cloudflare/vitest-pool-workers": "0.5.3",
