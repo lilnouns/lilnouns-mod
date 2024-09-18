@@ -60,7 +60,7 @@ export async function reminderHandler(env: Env) {
 
     const endBlockTimestamp = await getBlockTimestamp(env, Number(endBlock))
 
-    if (hoursLeftUntil(endBlockTimestamp) > 2) {
+    if (endBlockTimestamp && hoursLeftUntil(endBlockTimestamp) > 2) {
       continue
     }
 
