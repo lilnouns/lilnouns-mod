@@ -29,7 +29,7 @@ interface Response {
 export const getDirectCastConversations = async (
   env: Env,
   limit: IntRange<1, 101> = 15,
-  category = 'default',
+  category: 'default' | 'request' = 'default',
   filter?: 'unread' | 'group',
   cursor?: string,
 ): Promise<Result> => {
