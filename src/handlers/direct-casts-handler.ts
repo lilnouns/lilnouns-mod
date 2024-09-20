@@ -7,7 +7,7 @@ import { flat, pipe, sort, unique } from 'remeda'
  * @param env - The environment object containing required dependencies.
  * @returns - A Promise that resolves once the subscribers are handled.
  */
-async function subscribersHandler(env: Env) {
+async function handleSubscribers(env: Env) {
   const { KV: kv } = env
 
   const categories = ['default', 'request']
@@ -46,5 +46,5 @@ async function subscribersHandler(env: Env) {
  * @returns - A promise that resolves after the update is completed.
  */
 export async function directCastsHandler(env: Env) {
-  await subscribersHandler(env)
+  await handleSubscribers(env)
 }
