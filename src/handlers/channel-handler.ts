@@ -8,7 +8,7 @@ import { recast } from '@/services/warpcast/recast'
  * @param env - The environment object.
  * @returns - A promise that resolves with no value.
  */
-export async function nounsChannelHandler(env: Env) {
+export async function handleNounsChannel(env: Env) {
   const { KV: kv } = env
 
   const farcasterUsers: number[] =
@@ -34,7 +34,7 @@ export async function nounsChannelHandler(env: Env) {
  * @param env - The environment object containing the necessary configurations.
  * @returns - A promise that resolves once all the items have been processed.
  */
-async function lilnounsChannelHandler(env: Env) {
+async function handleLilNounsChannel(env: Env) {
   const owner = 'nekofar.eth'
   const { items } = await getFeedItems(env, 'lilnouns', 'unfiltered')
 
@@ -74,6 +74,6 @@ async function lilnounsChannelHandler(env: Env) {
  * @returns A Promise that resolves when the channel handler has completed execution.
  */
 export async function channelHandler(env: Env) {
-  await nounsChannelHandler(env)
-  await lilnounsChannelHandler(env)
+  await handleNounsChannel(env)
+  await handleLilNounsChannel(env)
 }
