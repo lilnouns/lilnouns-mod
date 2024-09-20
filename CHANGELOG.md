@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.0.0-alpha.37] - 2024-09-20
+
+### 🚀 Features
+
+- *(warpcast)* Enhance `filter` with new options
+- *(warpcast)* Expand category types in `getDirectCastConversations`
+- *(handlers)* Add message handling to `directCastsHandler`
+
+### 🚜 Refactor
+
+- *(handlers)* Rename `subscribersHandler` to `handleSubscribers`
+- *(channel-handler)* Rename channel handler functions
+
 ## [1.0.0-alpha.36] - 2024-09-18
 
 ### 🚀 Features
