@@ -29,8 +29,8 @@ interface Response {
 export const getDirectCastConversations = async (
   env: Env,
   limit: IntRange<1, 101> = 15,
-  category = 'default',
-  filter?: string,
+  category: 'default' | 'request' = 'default',
+  filter?: 'unread' | 'group',
   cursor?: string,
 ): Promise<Result> => {
   const { WARPCAST_ACCESS_TOKEN: accessToken, WARPCAST_BASE_URL: baseUrl } = env
