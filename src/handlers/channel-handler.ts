@@ -3,6 +3,7 @@ import { getCastLikes } from '@/services/warpcast/get-cast-likes'
 import { getFeedItems } from '@/services/warpcast/get-feed-items'
 import { recast } from '@/services/warpcast/recast'
 import { map, pipe } from 'remeda'
+import { getMe } from '@/services/warpcast/get-me'
 
 // eslint-disable-next-line jsdoc/require-returns-check
 /**
@@ -73,6 +74,10 @@ export async function handleNounsChannel(env: Env) {
   logDebug('Handling nouns channel')
   const { KV: kv } = env
 
+  // Fetch the current user
+  logDebug('Fetching current user')
+  const { user } = await getMe(env)
+
   const farcasterUsers: number[] =
     (await kv.get('lilnouns-farcaster-users', { type: 'json' })) ?? []
 
@@ -87,6 +92,21 @@ export async function handleNounsChannel(env: Env) {
 
   for (const item of items) {
     logDebug('Processing item:', item)
+
+    // Fetch likes for the cast item
+    logDebug('Fetching likes for item:', item.cast.hash)
+    const { likes } = await getCastLikes(env, item.cast.hash)
+    const likerIds = pipe(
+      likes,
+      map((like) => like.reactor.fid),
+    )
+
+    // Skip if the current user already liked the item
+    if (likerIds.includes(user.fid)) {
+      logDebug('Current user already liked the item:', item.cast.hash)
+      continue
+    }
+
     if (!farcasterUsers.includes(item.cast.author.fid)) {
       logDebug('Item author not in farcaster users:', item.cast.author.fid)
       continue
@@ -107,8 +127,26 @@ async function handleLilNounsChannel(env: Env) {
   const owner = 'nekofar.eth'
   const { items } = await getRecentFeedItems(env, 'lilnouns', 'default')
 
+  // Fetch the current user
+  logDebug('Fetching current user')
+  const { user } = await getMe(env)
+
   for (const item of items) {
     logDebug('Processing item:', item)
+
+    // Fetch likes for the cast item
+    logDebug('Fetching likes for item:', item.cast.hash)
+    const { likes } = await getCastLikes(env, item.cast.hash)
+    const likerIds = pipe(
+      likes,
+      map((like) => like.reactor.fid),
+    )
+
+    // Skip if the current user already liked the item
+    if (likerIds.includes(user.fid)) {
+      logDebug('Current user already liked the item:', item.cast.hash)
+      continue
+    }
 
     // If the item's cast author is the owner
     if (item.cast.author.username == owner) {
@@ -128,9 +166,6 @@ async function handleLilNounsChannel(env: Env) {
 
     // If the item's cast has at least one reaction
     else if (item.cast.reactions.count > 0) {
-      const { likes } = await getCastLikes(env, item.cast.hash)
-      logDebug('Fetched likes for cast:', item.cast.hash, likes)
-
       for (const like of likes) {
         // If the user who reacted is not the owner
         if (like.reactor.username != owner) {
