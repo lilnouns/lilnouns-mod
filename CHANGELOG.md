@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.0.0-alpha.39] - 2024-09-28
+
+### 🚀 Features
+
+- *(services)* Add timestamp filter for `getFeedItems`
+- *(channel-handler)* Add `getRecentFeedItems` function
+- *(channel-handler)* Add debug logging
+- *(channel-handler)* Add user like check before recasting
+
+### 🚜 Refactor
+
+- *(warpcast)* Rename optional param in `getFeedItems`
+
 ## [1.0.0-alpha.38] - 2024-09-27
 
 ### 🐛 Bug Fixes
