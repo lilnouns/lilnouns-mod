@@ -2,6 +2,67 @@ import { likeCast } from '@/services/warpcast'
 import { getCastLikes } from '@/services/warpcast/get-cast-likes'
 import { getFeedItems } from '@/services/warpcast/get-feed-items'
 import { recast } from '@/services/warpcast/recast'
+import { map, pipe } from 'remeda'
+
+// eslint-disable-next-line jsdoc/require-returns-check
+/**
+ * Logs a debug message to the console with optional additional arguments.
+ * @param message - The debug message to log.
+ * @param args - Additional arguments to include in the log.
+ * @returns This function does not return a value.
+ */
+function logDebug(message: string, ...args: unknown[]): void {
+  console.log(`[DEBUG] ${message}`, ...args)
+}
+
+/**
+ * Fetches recent feed items for a given feed key and type.
+ * @param env - The environment configuration object.
+ * @param feedKey - The key identifying the feed.
+ * @param feedType - The type of feed to fetch items from.
+ * @returns An object containing an array of the fetched feed items.
+ */
+async function getRecentFeedItems(env: Env, feedKey: string, feedType: string) {
+  logDebug(`Fetching ${feedKey} feed items`)
+  const allItems: Awaited<ReturnType<typeof getFeedItems>>['items'] = []
+  let fetchedItemsCount = 0
+  const maxItems = 300
+
+  let excludeItemIdPrefixes: string[] = []
+
+  while (fetchedItemsCount < maxItems) {
+    logDebug(
+      'Fetching feed items with excludeItemIdPrefixes:',
+      excludeItemIdPrefixes,
+    )
+    const { items } = await getFeedItems(
+      env,
+      feedKey,
+      feedType,
+      excludeItemIdPrefixes,
+    )
+
+    // Add the new items to the total collection.
+    allItems.push(...items)
+    fetchedItemsCount += items.length
+
+    if (items.length === 0) {
+      // No more items to fetch, exit the loop.
+      logDebug('No more items to fetch')
+      break
+    }
+
+    // Add new prefixes to `excludeItemIdPrefixes` without resetting it.
+    const newPrefixes = pipe(
+      items,
+      map((item) => item.cast.hash.replace(/^0x/, '').slice(0, 8)),
+    )
+    excludeItemIdPrefixes = excludeItemIdPrefixes.concat(newPrefixes)
+  }
+
+  logDebug('Fetched total items:', fetchedItemsCount)
+  return { items: allItems }
+}
 
 /**
  * Handles the nouns channel in the given environment.
@@ -18,7 +79,7 @@ export async function handleNounsChannel(env: Env) {
     return
   }
 
-  const { items } = await getFeedItems(env, 'nouns', 'unfiltered')
+  const { items } = await getRecentFeedItems(env, 'nouns', 'default')
 
   for (const item of items) {
     if (!farcasterUsers.includes(item.cast.author.fid)) {
@@ -36,7 +97,7 @@ export async function handleNounsChannel(env: Env) {
  */
 async function handleLilNounsChannel(env: Env) {
   const owner = 'nekofar.eth'
-  const { items } = await getFeedItems(env, 'lilnouns', 'unfiltered')
+  const { items } = await getRecentFeedItems(env, 'lilnouns', 'default')
 
   for (const item of items) {
     // If the item's cast author is the owner
