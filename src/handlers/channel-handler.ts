@@ -70,23 +70,30 @@ async function getRecentFeedItems(env: Env, feedKey: string, feedType: string) {
  * @returns - A promise that resolves with no value.
  */
 export async function handleNounsChannel(env: Env) {
+  logDebug('Handling nouns channel')
   const { KV: kv } = env
 
   const farcasterUsers: number[] =
     (await kv.get('lilnouns-farcaster-users', { type: 'json' })) ?? []
 
+  logDebug('Farcaster users:', farcasterUsers)
+
   if (farcasterUsers.length === 0) {
+    logDebug('No farcaster users found')
     return
   }
 
   const { items } = await getRecentFeedItems(env, 'nouns', 'default')
 
   for (const item of items) {
+    logDebug('Processing item:', item)
     if (!farcasterUsers.includes(item.cast.author.fid)) {
+      logDebug('Item author not in farcaster users:', item.cast.author.fid)
       continue
     }
 
     await likeCast(env, item.cast.hash)
+    logDebug('Liked cast:', item.cast.hash)
   }
 }
 
@@ -96,25 +103,33 @@ export async function handleNounsChannel(env: Env) {
  * @returns - A promise that resolves once all the items have been processed.
  */
 async function handleLilNounsChannel(env: Env) {
+  logDebug('Handling lilnouns channel')
   const owner = 'nekofar.eth'
   const { items } = await getRecentFeedItems(env, 'lilnouns', 'default')
 
   for (const item of items) {
+    logDebug('Processing item:', item)
+
     // If the item's cast author is the owner
     if (item.cast.author.username == owner) {
       await recast(env, item.cast.hash)
+      logDebug('Recasted by owner:', item.cast.hash)
       await likeCast(env, item.cast.hash)
+      logDebug('Liked cast by owner:', item.cast.hash)
     }
 
     // If the number of reactions on the item's cast is greater than 5
     else if (item.cast.reactions.count > 5) {
       await recast(env, item.cast.hash)
+      logDebug('Recast due to reactions > 5:', item.cast.hash)
       await likeCast(env, item.cast.hash)
+      logDebug('Liked cast due to reactions > 5:', item.cast.hash)
     }
 
     // If the item's cast has at least one reaction
     else if (item.cast.reactions.count > 0) {
       const { likes } = await getCastLikes(env, item.cast.hash)
+      logDebug('Fetched likes for cast:', item.cast.hash, likes)
 
       for (const like of likes) {
         // If the user who reacted is not the owner
@@ -123,7 +138,9 @@ async function handleLilNounsChannel(env: Env) {
         }
 
         await recast(env, item.cast.hash)
+        logDebug('Recasted due to owner reaction:', item.cast.hash)
         await likeCast(env, item.cast.hash)
+        logDebug('Liked cast due to owner reaction:', item.cast.hash)
       }
     }
   }
