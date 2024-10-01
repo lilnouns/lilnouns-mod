@@ -6,14 +6,16 @@ import { getUserByVerification } from '@/services/warpcast/get-user-by-verificat
 import { DateTime } from 'luxon'
 import { map, pipe, sortBy, unique } from 'remeda'
 
+const expirationTtl = 60 * 60 * 24
+
 /**
- * Handles caching of data for LilNouns application.
- * @param env - The environment object containing KV storage.
- * @returns - A promise that resolves when caching is complete.
+ * Fetches the holder addresses from the KV storage or, if not available,
+ * from the accounts list, and stores them in the KV storage.
+ * @param env - The environment object containing the KV storage.
+ * @returns - A promise that resolves to an array of holder addresses.
  */
-export async function cacheHandler(env: Env) {
+async function fetchHolderAddresses(env: Env) {
   const { KV: kv } = env
-  const expirationTtl = 60 * 60 * 24
 
   let holdersAddresses: string[] =
     (await kv.get('lilnouns-holders-addresses', { type: 'json' })) ?? []
@@ -31,6 +33,18 @@ export async function cacheHandler(env: Env) {
       },
     )
   }
+  return holdersAddresses
+}
+
+/**
+ * Fetches delegate addresses from the KVNamespace.
+ * If addresses are not available, fetches them from an external environment
+ * and stores them in the KVNamespace.
+ * @param env - The environment configuration used to fetch delegate data.
+ * @returns A promise that resolves to an array of delegate addresses.
+ */
+async function fetchDelegateAddresses(env: Env) {
+  const { KV: kv } = env
 
   let delegatesAddresses: string[] =
     (await kv.get('lilnouns-delegates-addresses', { type: 'json' })) ?? []
@@ -48,6 +62,24 @@ export async function cacheHandler(env: Env) {
       },
     )
   }
+  return delegatesAddresses
+}
+
+/**
+ * Fetches and stores Farcaster users into a Key-Value store.
+ *
+ * This method retrieves the addresses of holders and delegates,
+ * fetches the corresponding Farcaster user data, and stores the
+ * unique and sorted list of user FIDs in a Key-Value store.
+ * @param env - The environment object containing necessary configurations and KV store.
+ * @returns A promise that resolves when the process is complete.
+ */
+async function fetchAndStoreFarcasterUsers(env: Env) {
+  const { KV: kv } = env
+
+  const holdersAddresses = await fetchHolderAddresses(env)
+
+  const delegatesAddresses = await fetchDelegateAddresses(env)
 
   let farcasterUsers: number[] =
     (await kv.get('lilnouns-farcaster-users', { type: 'json' })) ?? []
@@ -79,6 +111,16 @@ export async function cacheHandler(env: Env) {
       expirationTtl,
     })
   }
+}
+
+/**
+ * Fetches and stores Farcaster voters' addresses and FIDs
+ * (Farcaster IDs) in the given key-value store.
+ * @param env - The environment object containing configuration and KV store.
+ * @returns A Promise that resolves when the operation is completed.
+ */
+async function fetchAndStoreFarcasterVoters(env: Env) {
+  const { KV: kv } = env
 
   let votersAddresses: string[]
   let farcasterVoters: number[] =
@@ -119,4 +161,14 @@ export async function cacheHandler(env: Env) {
       expirationTtl,
     })
   }
+}
+
+/**
+ * Handles caching of data for LilNouns application.
+ * @param env - The environment object containing KV storage.
+ * @returns - A promise that resolves when caching is complete.
+ */
+export async function cacheHandler(env: Env) {
+  await fetchAndStoreFarcasterUsers(env)
+  await fetchAndStoreFarcasterVoters(env)
 }
