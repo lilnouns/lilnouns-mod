@@ -19,22 +19,26 @@ async function fetchHolderAddresses(env: Env): Promise<string[]> {
   const { KV: kv } = env
   const cacheKey = 'lilnouns-holders-addresses'
 
+  logger.info('Loading holder addresses from KV...')
   let holdersAddresses =
     (await kv.get<string[] | null>(cacheKey, { type: 'json' })) ?? []
 
-  if (holdersAddresses.length !== 0) {
+  if (holdersAddresses.length > 0) {
     logger.debug(
       { addresses: holdersAddresses },
-      'Holder addresses found in KV storage:',
+      'Holder addresses loaded from KV.',
     )
     return holdersAddresses
   }
 
-  logger.info('Holder addresses not found in KV storage, fetching from API...')
+  logger.info('Fetching holder addresses from API...')
   const { accounts } = await fetchAccounts(env)
   holdersAddresses = accounts.map((account) => account.id)
 
-  logger.debug({ addresses: holdersAddresses }, 'Fetched holder addresses')
+  logger.debug(
+    { addresses: holdersAddresses },
+    'Fetched holder addresses from API.',
+  )
   await kv.put(cacheKey, JSON.stringify(holdersAddresses), { expirationTtl })
 
   return holdersAddresses
@@ -51,28 +55,27 @@ async function fetchDelegateAddresses(env: Env): Promise<string[]> {
   const { KV: kv } = env
   const cacheKey = 'lilnouns-delegates-addresses'
 
-  logger.info('Fetching delegate addresses from KV storage...')
+  logger.info('Loading delegate addresses from KV...')
   let delegatesAddresses: string[] =
     (await kv.get<string[] | null>(cacheKey, { type: 'json' })) ?? []
 
   if (delegatesAddresses.length > 0) {
     logger.debug(
       { addresses: delegatesAddresses },
-      'Delegate addresses found in KV storage',
+      'Delegate addresses found in KV.',
     )
     return delegatesAddresses
   }
 
-  logger.info(
-    'Delegate addresses not found in KV storage, fetching from API...',
-  )
+  logger.info('Fetching delegate addresses from API...')
   const { delegates } = await fetchDelegates(env)
   delegatesAddresses = delegates.map((delegate) => delegate.id)
 
-  logger.debug({ addresses: delegatesAddresses }, 'Fetched delegate addresses')
-  await kv.put(cacheKey, JSON.stringify(delegatesAddresses), {
-    expirationTtl,
-  })
+  logger.debug(
+    { addresses: delegatesAddresses },
+    'Fetched delegate addresses from API.',
+  )
+  await kv.put(cacheKey, JSON.stringify(delegatesAddresses), { expirationTtl })
 
   return delegatesAddresses
 }
@@ -90,53 +93,44 @@ async function fetchAndStoreFarcasterUsers(env: Env): Promise<void> {
   const { KV: kv } = env
   const cacheKey = 'lilnouns-farcaster-users'
 
-  logger.info('Fetching Farcaster users from KV storage...')
-  const holdersAddresses = await fetchHolderAddresses(env)
-  const delegatesAddresses = await fetchDelegateAddresses(env)
-
+  logger.info('Loading Farcaster users from KV...')
   let farcasterUsers: number[] =
     (await kv.get<number[] | null>(cacheKey, { type: 'json' })) ?? []
 
   if (farcasterUsers.length > 0) {
-    logger.debug({ users: farcasterUsers }, 'Farcaster users already stored')
+    logger.debug({ users: farcasterUsers }, 'Farcaster users already cached.')
     return
   }
 
-  logger.info('No Farcaster users found in KV storage, fetching from API...')
+  logger.info('Fetching Farcaster users from API...')
+  const holdersAddresses = await fetchHolderAddresses(env)
+  const delegatesAddresses = await fetchDelegateAddresses(env)
+
   const addresses = pipe([...holdersAddresses, ...delegatesAddresses], unique())
 
   for (const address of addresses) {
     try {
-      logger.debug({ address }, `Fetching Farcaster user for address`)
+      logger.debug({ address }, 'Fetching Farcaster user for address.')
       const { user } = await getUserByVerification(env, address)
       farcasterUsers = pipe(
         [...farcasterUsers, user.fid],
         unique(),
         sortBy((fid) => fid),
       )
-      logger.debug(
-        { fid: user.fid, address },
-        `Fetched Farcaster user for address`,
-      )
+      logger.debug({ fid: user.fid, address }, 'Farcaster user fetched.')
     } catch (error) {
       if (
         error instanceof Error &&
         !error.message.startsWith('No FID has connected')
       ) {
-        logger.error({ error }, `An error occurred`)
+        logger.error({ error }, 'Error fetching Farcaster user.')
       }
     }
   }
 
-  farcasterUsers = pipe(
-    farcasterUsers,
-    unique(),
-    sortBy((fid) => fid),
-  )
-
   logger.debug(
     { users: farcasterUsers },
-    'Fetched and processed Farcaster users',
+    'Fetched and processed Farcaster users.',
   )
   await kv.put(cacheKey, JSON.stringify(farcasterUsers), { expirationTtl })
 }
@@ -151,12 +145,15 @@ async function fetchAndStoreFarcasterVoters(env: Env) {
   const { KV: kv } = env
   const cacheKey = 'lilnouns-farcaster-voters'
 
-  logger.info('Fetching Farcaster voters from KV storage...')
+  logger.info('Loading Farcaster voters from KV...')
   let farcasterVoters: number[] =
-    (await kv.get(cacheKey, { type: 'json' })) ?? []
+    (await kv.get<number[] | null>(cacheKey, { type: 'json' })) ?? []
 
   if (farcasterVoters.length > 0) {
-    logger.debug({ voters: farcasterVoters }, 'Farcaster voters already stored')
+    logger.debug(
+      { voters: farcasterVoters },
+      'Farcaster voters already cached.',
+    )
     return
   }
 
@@ -167,16 +164,16 @@ async function fetchAndStoreFarcasterVoters(env: Env) {
   const blocksInThreeMonths = secondsInThreeMonths / blockTimeInSeconds
   const startBlock = (await getBlockNumber(env)) - blocksInThreeMonths
 
-  logger.info('No Farcaster voters found in KV storage, fetching from API...')
+  logger.info('Fetching Farcaster voters from API...')
   const { voters } = await fetchVoters(env, startBlock)
-  const addresses: string[] = pipe(
+  const addresses = pipe(
     voters,
     map((voter) => voter.id),
   )
 
   for (const address of addresses) {
     try {
-      logger.debug({ address }, `Fetching Farcaster user for address`)
+      logger.debug({ address }, 'Fetching Farcaster user for voter address.')
       const { user } = await getUserByVerification(env, address)
       farcasterVoters = pipe(
         [...farcasterVoters, user.fid],
@@ -185,25 +182,23 @@ async function fetchAndStoreFarcasterVoters(env: Env) {
       )
       logger.debug(
         { fid: user.fid, address },
-        `Fetched Farcaster user for address`,
+        'Farcaster user fetched for voter.',
       )
     } catch (error) {
       if (
         error instanceof Error &&
         !error.message.startsWith('No FID has connected')
       ) {
-        logger.error({ error }, `An error occurred`)
+        logger.error({ error }, 'Error fetching Farcaster voter.')
       }
     }
   }
 
   logger.debug(
     { voters: farcasterVoters },
-    'Fetched and processed Farcaster voters',
+    'Fetched and processed Farcaster voters.',
   )
-  await kv.put(cacheKey, JSON.stringify(farcasterVoters), {
-    expirationTtl,
-  })
+  await kv.put(cacheKey, JSON.stringify(farcasterVoters), { expirationTtl })
 }
 
 /**
