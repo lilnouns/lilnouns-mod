@@ -22,12 +22,17 @@ async function fetchHolderAddresses(env: Env): Promise<string[]> {
     (await kv.get<string[] | null>(cacheKey, { type: 'json' })) ?? []
 
   if (holdersAddresses.length !== 0) {
+    console.debug('Holder addresses found in KV storage:', holdersAddresses)
     return holdersAddresses
   }
 
+  console.debug(
+    'Holder addresses not found in KV storage, fetching from API...',
+  )
   const { accounts } = await fetchAccounts(env)
   holdersAddresses = accounts.map((account) => account.id)
 
+  console.debug('Fetched holder addresses:', holdersAddresses)
   await kv.put(cacheKey, JSON.stringify(holdersAddresses), { expirationTtl })
 
   return holdersAddresses
@@ -44,16 +49,22 @@ async function fetchDelegateAddresses(env: Env): Promise<string[]> {
   const { KV: kv } = env
   const cacheKey = 'lilnouns-delegates-addresses'
 
+  console.debug('Fetching delegate addresses from KV storage...')
   let delegatesAddresses: string[] =
     (await kv.get<string[] | null>(cacheKey, { type: 'json' })) ?? []
 
   if (delegatesAddresses.length > 0) {
+    console.debug('Delegate addresses found in KV storage:', delegatesAddresses)
     return delegatesAddresses
   }
 
+  console.debug(
+    'Delegate addresses not found in KV storage, fetching from API...',
+  )
   const { delegates } = await fetchDelegates(env)
   delegatesAddresses = delegates.map((delegate) => delegate.id)
 
+  console.debug('Fetched delegate addresses:', delegatesAddresses)
   await kv.put(cacheKey, JSON.stringify(delegatesAddresses), {
     expirationTtl,
   })
@@ -73,6 +84,8 @@ async function fetchDelegateAddresses(env: Env): Promise<string[]> {
 async function fetchAndStoreFarcasterUsers(env: Env): Promise<void> {
   const { KV: kv } = env
   const cacheKey = 'lilnouns-farcaster-users'
+
+  console.debug('Fetching Farcaster users from KV storage...')
   const holdersAddresses = await fetchHolderAddresses(env)
   const delegatesAddresses = await fetchDelegateAddresses(env)
 
@@ -80,17 +93,23 @@ async function fetchAndStoreFarcasterUsers(env: Env): Promise<void> {
     (await kv.get<number[] | null>(cacheKey, { type: 'json' })) ?? []
 
   if (existingFarcasterUsers.length > 0) {
+    console.debug('Farcaster users already stored:', existingFarcasterUsers)
     return
   }
 
+  console.debug('No Farcaster users found in KV storage, fetching from API...')
   const addresses = pipe([...holdersAddresses, ...delegatesAddresses], unique())
   let farcasterUsers: number[] = []
 
   await Promise.all(
     addresses.map(async (address) => {
       try {
+        console.debug(`Fetching Farcaster user for address: ${address}`)
         const { user } = await getUserByVerification(env, address)
         farcasterUsers.push(user.fid)
+        console.debug(
+          `Fetched Farcaster user (FID: ${user.fid.toString()}) for address: ${address}`,
+        )
       } catch (error) {
         if (
           error instanceof Error &&
@@ -108,6 +127,7 @@ async function fetchAndStoreFarcasterUsers(env: Env): Promise<void> {
     sortBy((fid) => fid),
   )
 
+  console.debug('Fetched and processed Farcaster users:', farcasterUsers)
   await kv.put(cacheKey, JSON.stringify(farcasterUsers), { expirationTtl })
 }
 
@@ -121,11 +141,12 @@ async function fetchAndStoreFarcasterVoters(env: Env) {
   const { KV: kv } = env
   const cacheKey = 'lilnouns-farcaster-voters'
 
-
+  console.debug('Fetching Farcaster voters from KV storage...')
   let farcasterVoters: number[] =
     (await kv.get(cacheKey, { type: 'json' })) ?? []
 
   if (farcasterVoters.length > 0) {
+    console.debug('Farcaster voters already stored:', farcasterVoters)
     return
   }
 
@@ -136,6 +157,7 @@ async function fetchAndStoreFarcasterVoters(env: Env) {
   const blocksInThreeMonths = secondsInThreeMonths / blockTimeInSeconds
   const startBlock = (await getBlockNumber(env)) - blocksInThreeMonths
 
+  console.debug('No Farcaster voters found in KV storage, fetching from API...')
   const { voters } = await fetchVoters(env, startBlock)
   const votersAddresses: string[] = pipe(
     voters,
@@ -144,11 +166,15 @@ async function fetchAndStoreFarcasterVoters(env: Env) {
 
   for (const address of votersAddresses) {
     try {
+      console.debug(`Fetching Farcaster user for address: ${address}`)
       const { user } = await getUserByVerification(env, address)
       farcasterVoters = pipe(
         [...farcasterVoters, user.fid],
         unique(),
         sortBy((fid) => fid),
+      )
+      console.debug(
+        `Fetched Farcaster user (FID: ${user.fid.toString()}) for address: ${address}`,
       )
     } catch (error) {
       if (
@@ -160,6 +186,7 @@ async function fetchAndStoreFarcasterVoters(env: Env) {
     }
   }
 
+  console.debug('Fetched and processed Farcaster voters:', farcasterVoters)
   await kv.put(cacheKey, JSON.stringify(farcasterVoters), {
     expirationTtl,
   })
