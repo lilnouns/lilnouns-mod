@@ -25,11 +25,12 @@ interface EventInfo {
  */
 export async function eventsHandler(env: Env) {
   const { KV: kv, QUEUE: queue } = env
+  const cacheKey = 'lilnouns-farcaster-voters'
 
   const { user } = await getMe(env)
 
-  const farcasterVoters: number[] =
-    (await kv.get('lilnouns-farcaster-voters', { type: 'json' })) ?? []
+  const farcasterVoters =
+    (await kv.get<number[] | null>(cacheKey, { type: 'json' })) ?? []
 
   if (farcasterVoters.length === 0) {
     return
