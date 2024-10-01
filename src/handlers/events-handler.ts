@@ -1,4 +1,5 @@
 import { getMe } from '@/services/warpcast/get-me'
+import { logger } from '@/utilities/logger'
 import { DateTime, WeekdayNumbers } from 'luxon'
 import { createHash } from 'node:crypto'
 
@@ -27,17 +28,24 @@ export async function eventsHandler(env: Env) {
   const { KV: kv, QUEUE: queue } = env
   const cacheKey = 'lilnouns-farcaster-voters'
 
+  logger.info('Fetching current user data...')
   const { user } = await getMe(env)
 
+  logger.info('Fetching Farcaster voters from KV...')
   const farcasterVoters =
     (await kv.get<number[] | null>(cacheKey, { type: 'json' })) ?? []
 
   if (farcasterVoters.length === 0) {
+    logger.warn('No Farcaster voters found in KV storage.')
     return
   }
 
-  const batch: MessageSendRequest<DirectCastBody>[] = []
+  logger.info(
+    { votersCount: farcasterVoters.length },
+    'Farcaster voters loaded.',
+  )
 
+  const batch: MessageSendRequest<DirectCastBody>[] = []
   const now = DateTime.utc()
 
   const targetTimes: EventInfo[] = [
@@ -46,21 +54,21 @@ export async function eventsHandler(env: Env) {
       hour: 16,
       minute: 15,
       eventMessage:
-        'The Tuesday call is at 16:15 UTC! ' +
-        "A 'semi-focused' discussion on the tasks at hand in the DAO, " +
+        'The Tuesday call is at 16:15 UTC. ' +
+        'A "semi-focused" discussion on the tasks at hand in the DAO, ' +
         'with the goal of leaving each week with tangible objectives.',
       eventLink: 'https://discord.gg/pSX3yrCsHw',
-    }, // Tuesday at 16:15 UTC
+    },
     {
       weekday: 4,
       hour: 21,
       minute: 0,
       eventMessage:
-        'Join us for another Lil Nouns Happy Hour at 21:00 UTC! ' +
+        'Join us for another Lil Nouns Happy Hour at 21:00 UTC. ' +
         'We will review proposals, air grievances, and probably argue about ' +
         'things that do not really matter, but hey, that is what makes it fun!',
       eventLink: 'https://discord.gg/6mVmyAUPYk',
-    }, // Thursday at 21:00 UTC
+    },
   ]
 
   for (const target of targetTimes) {
@@ -72,12 +80,22 @@ export async function eventsHandler(env: Env) {
 
     const minutesDifference = nextTargetTime.diff(now, 'minutes').minutes
 
+    logger.debug(
+      {
+        event: target.eventMessage,
+        nextTargetTime: nextTargetTime.toISO(),
+        minutesDifference,
+      },
+      'Calculated next target time.',
+    )
+
     if (minutesDifference <= 120 && minutesDifference >= 0) {
       const message = `${target.eventMessage}\nYou can join here: ${target.eventLink}`
       const idempotencyKey = createHash('sha256').update(message).digest('hex')
 
       for (const recipientFid of farcasterVoters) {
         if (recipientFid === user.fid) {
+          logger.debug({ recipientFid }, 'Skipping current user.')
           continue
         }
 
@@ -97,12 +115,15 @@ export async function eventsHandler(env: Env) {
     }
 
     if (batch.length > 0) {
+      logger.info({ batchSize: batch.length }, 'Sending batch to the queue.')
       try {
         await queue.sendBatch(batch)
-        console.log('Batch enqueued successfully:', batch)
+        logger.info({ batchSize: batch.length }, 'Batch enqueued successfully.')
       } catch (error) {
-        console.error('Error enqueuing batch:', error)
+        logger.error({ error, batch }, 'Error enqueuing batch.')
       }
+    } else {
+      logger.debug('No notifications to send at this time.')
     }
   }
 }
@@ -131,6 +152,16 @@ const getNextTargetTime = (
   if (targetDateTime <= now) {
     targetDateTime = targetDateTime.plus({ weeks: 1 })
   }
+
+  logger.debug(
+    {
+      weekday,
+      hour,
+      minute,
+      targetDateTime: targetDateTime.toISO(),
+    },
+    'Calculated next target DateTime.',
+  )
 
   return targetDateTime
 }
