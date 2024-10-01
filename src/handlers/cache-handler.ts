@@ -101,25 +101,27 @@ async function fetchAndStoreFarcasterUsers(env: Env): Promise<void> {
   const addresses = pipe([...holdersAddresses, ...delegatesAddresses], unique())
   let farcasterUsers: number[] = []
 
-  await Promise.all(
-    addresses.map(async (address) => {
-      try {
-        console.debug(`Fetching Farcaster user for address: ${address}`)
-        const { user } = await getUserByVerification(env, address)
-        farcasterUsers.push(user.fid)
-        console.debug(
-          `Fetched Farcaster user (FID: ${user.fid.toString()}) for address: ${address}`,
-        )
-      } catch (error) {
-        if (
-          error instanceof Error &&
-          !error.message.startsWith('No FID has connected')
-        ) {
-          console.error(`An error occurred: ${error.message}`)
-        }
+  for (const address of addresses) {
+    try {
+      console.debug(`Fetching Farcaster user for address: ${address}`)
+      const { user } = await getUserByVerification(env, address)
+      farcasterUsers = pipe(
+        [...farcasterUsers, user.fid],
+        unique(),
+        sortBy((fid) => fid),
+      )
+      console.debug(
+        `Fetched Farcaster user (FID: ${user.fid.toString()}) for address: ${address}`,
+      )
+    } catch (error) {
+      if (
+        error instanceof Error &&
+        !error.message.startsWith('No FID has connected')
+      ) {
+        console.error(`An error occurred: ${error.message}`)
       }
-    }),
-  )
+    }
+  }
 
   farcasterUsers = pipe(
     farcasterUsers,
@@ -159,12 +161,12 @@ async function fetchAndStoreFarcasterVoters(env: Env) {
 
   console.debug('No Farcaster voters found in KV storage, fetching from API...')
   const { voters } = await fetchVoters(env, startBlock)
-  const votersAddresses: string[] = pipe(
+  const addresses: string[] = pipe(
     voters,
     map((voter) => voter.id),
   )
 
-  for (const address of votersAddresses) {
+  for (const address of addresses) {
     try {
       console.debug(`Fetching Farcaster user for address: ${address}`)
       const { user } = await getUserByVerification(env, address)
