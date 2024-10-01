@@ -2,6 +2,26 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.0.0-alpha.41] - 2024-10-01
+
+### 🚀 Features
+
+- *(cache-handler)* Add debug logs for fetching data
+- *(logger)* Add custom logging utility
+- *(events-handler)* Integrate logging with `logger`
+- *(handlers)* Add logging to direct casts handler
+- *(proposal-handler)* Add logging for proposal process
+- *(reminder-handler)* Add logging to reminder process
+
+### 🚜 Refactor
+
+- *(cache-handler)* Replace `Promise.all` with `for` loop
+- *(cache-handler)* Implement `logger` for better logging
+- *(channel-handler)* Replace `logDebug` with `logger`
+- *(cache-handler)* Improve logging messages
+- *(events-handler)* Use `cacheKey` for consistency
+- *(queue-handler)* Integrate `logger` for logging
+
 ## [1.0.0-alpha.40] - 2024-10-01
 
 ### 🚀 Features
