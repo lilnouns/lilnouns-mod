@@ -168,7 +168,9 @@ async function fetchAndStoreFarcasterVoters(env: Env) {
  * @param env - The environment object containing KV storage.
  * @returns - A promise that resolves when caching is complete.
  */
-export async function cacheHandler(env: Env) {
-  await fetchAndStoreFarcasterUsers(env)
-  await fetchAndStoreFarcasterVoters(env)
+export async function cacheHandler(env: Env): Promise<void> {
+  await Promise.all([
+    fetchAndStoreFarcasterUsers(env),
+    fetchAndStoreFarcasterVoters(env),
+  ])
 }
