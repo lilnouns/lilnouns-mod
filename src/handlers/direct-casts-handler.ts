@@ -1,5 +1,6 @@
 import { getDirectCastConversations } from '@/services/warpcast/get-direct-cast-conversations'
 import { getMe } from '@/services/warpcast/get-me'
+import { logger } from '@/utilities/logger'
 import { createHash } from 'node:crypto'
 import { flat, pipe, sort, unique } from 'remeda'
 
@@ -20,18 +21,29 @@ interface DirectCastBody {
  */
 async function handleSubscribers(env: Env) {
   const { KV: kv } = env
-
+  const cacheKey = 'lilnouns-farcaster-subscribers'
   const categories = ['default', 'request']
 
+  logger.info('Fetching current subscribers from KV...')
   const subscribers: number[] =
-    (await kv.get('lilnouns-farcaster-subscribers', { type: 'json' })) ?? []
+    (await kv.get<number[] | null>(cacheKey, { type: 'json' })) ?? []
+
+  logger.info(
+    { subscribersCount: subscribers.length },
+    'Fetched current subscribers.',
+  )
 
   const newSubscribers = await Promise.all(
     categories.map(async (category) => {
+      logger.info({ category }, 'Fetching conversations for category.')
       const { conversations } = await getDirectCastConversations(
         env,
         100,
         category as 'default' | 'request',
+      )
+      logger.info(
+        { category, conversationsCount: conversations.length },
+        'Fetched conversations.',
       )
       return conversations.flatMap(({ participants }) =>
         participants.map(({ fid }) => fid),
@@ -45,10 +57,13 @@ async function handleSubscribers(env: Env) {
     sort((a, b) => a - b),
   )
 
-  await kv.put(
-    'lilnouns-farcaster-subscribers',
-    JSON.stringify(updatedSubscribers),
+  logger.info(
+    { updatedSubscribersCount: updatedSubscribers.length },
+    'Updated subscribers list.',
   )
+
+  await kv.put(cacheKey, JSON.stringify(updatedSubscribers))
+  logger.info('Subscribers list saved to KV.')
 }
 
 /**
@@ -60,13 +75,20 @@ async function handleSubscribers(env: Env) {
 async function handleMessages(env: Env) {
   const { QUEUE: queue } = env
 
+  logger.info('Fetching current user data...')
   const { user } = await getMe(env)
 
+  logger.info('Fetching unread conversations...')
   const { conversations } = await getDirectCastConversations(
     env,
     100,
     'default',
     'unread',
+  )
+
+  logger.info(
+    { conversationsCount: conversations.length },
+    'Fetched unread conversations.',
   )
 
   const participants = conversations.flatMap(({ participants }) =>
@@ -77,12 +99,13 @@ async function handleMessages(env: Env) {
 
   for (const recipientFid of participants) {
     if (recipientFid === user.fid) {
+      logger.debug({ recipientFid }, 'Skipping message for current user.')
       continue
     }
 
     const message =
-      `This account runs on autopilot, so please don’t send messages directly here. ` +
-      `If you have any issues or questions, just reach out to @nekofar! 😊`
+      'This account runs on autopilot, so please don’t send messages directly here. ' +
+      'If you have any issues or questions, just reach out to @nekofar! 😊'
     const idempotencyKey = createHash('sha256').update(message).digest('hex')
 
     const task: MessageSendRequest<DirectCastBody> = {
@@ -100,12 +123,18 @@ async function handleMessages(env: Env) {
   }
 
   if (batch.length > 0) {
+    logger.info(
+      { batchSize: batch.length },
+      'Sending message batch to the queue...',
+    )
     try {
       await queue.sendBatch(batch)
-      console.log('Batch enqueued successfully:', batch)
+      logger.info({ batchSize: batch.length }, 'Batch enqueued successfully.')
     } catch (error) {
-      console.error('Error enqueuing batch:', error)
+      logger.error({ error, batch }, 'Error enqueuing message batch.')
     }
+  } else {
+    logger.debug('No messages to send at this time.')
   }
 }
 
@@ -115,6 +144,8 @@ async function handleMessages(env: Env) {
  * @returns - A promise that resolves after the update is completed.
  */
 export async function directCastsHandler(env: Env) {
+  logger.info('Starting direct cast handler process...')
   await handleMessages(env)
   await handleSubscribers(env)
+  logger.info('Direct cast handler process completed.')
 }

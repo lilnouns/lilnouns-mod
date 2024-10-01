@@ -1,4 +1,5 @@
 import { sendDirectCast } from '@/services/warpcast/send-direct-cast'
+import { logger } from '@/utilities/logger'
 
 interface DirectCastBody {
   type: 'direct-cast'
@@ -31,6 +32,8 @@ const calculateExponentialBackoff = (
 async function handleDirectCastTask(env: Env, data: DirectCastBody['data']) {
   const { recipientFid, message: castMessage, idempotencyKey } = data
 
+  logger.info({ recipientFid, idempotencyKey }, 'Sending direct cast message.')
+
   try {
     const result = await sendDirectCast(
       env,
@@ -43,15 +46,9 @@ async function handleDirectCastTask(env: Env, data: DirectCastBody['data']) {
       throw new Error(`Non-successful result: ${JSON.stringify(result)}`)
     }
 
-    console.log(
-      `Direct cast sent successfully to recipientFid ${recipientFid.toString()}:`,
-      result,
-    )
+    logger.info({ recipientFid, result }, 'Direct cast sent successfully.')
   } catch (error) {
-    console.error(
-      `Failed to send direct cast to recipientFid ${recipientFid.toString()}:`,
-      error,
-    )
+    logger.error({ recipientFid, error }, 'Failed to send direct cast message.')
     throw error
   }
 }
@@ -66,13 +63,17 @@ async function processMessage(env: Env, message: Message) {
   // @ts-expect-error: A message body type might not have a clear structure
   const { type, data } = message.body
 
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+  logger.info({ type }, 'Processing message.')
+
   switch (type) {
     case 'direct-cast':
       await handleDirectCastTask(env, data as DirectCastBody['data'])
       break
 
     default:
-      console.error('Unknown task type:', type)
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+      logger.error({ type }, 'Unknown task type received.')
   }
 }
 
@@ -91,14 +92,23 @@ export async function queueHandler(
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   _ctx: ExecutionContext,
 ) {
+  logger.info({ batchSize: batch.messages.length }, 'Processing message batch.')
+
   for (const message of batch.messages) {
     try {
       await processMessage(env, message)
 
       // Acknowledge the message after successful processing
       message.ack()
+      logger.info(
+        { messageId: message.id },
+        'Message acknowledged successfully.',
+      )
     } catch (error) {
-      console.error('Error processing message, will retry:', error)
+      logger.error(
+        { messageId: message.id, error, attempts: message.attempts },
+        'Error processing message, retrying...',
+      )
 
       // Retry the message in case of failure
       message.retry({
