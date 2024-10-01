@@ -2,6 +2,22 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.0.0-alpha.40] - 2024-10-01
+
+### 🚀 Features
+
+- *(warpcast)* Add `cast` function for creating new casts
+
+### 🚜 Refactor
+
+- *(cache-handler)* Modularize data fetching functions
+- *(cache-handler)* Streamline cache key usage
+- *(cache-handler)* Optimize data fetching logic
+
+### ⚡ Performance
+
+- *(cache-handler)* Parallelize data fetching
+
 ## [1.0.0-alpha.39] - 2024-09-28
 
 ### 🚀 Features
