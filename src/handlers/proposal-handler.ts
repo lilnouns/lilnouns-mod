@@ -169,7 +169,7 @@ export async function proposalHandler(env: Env) {
     )
     try {
       await queue.sendBatch(batch)
-      logger.info('Batch enqueued successfully.')
+      logger.info({ batchSize: batch.length }, 'Batch enqueued successfully.')
     } catch (error) {
       logger.error({ error, batch }, 'Error enqueuing message batch.')
     }

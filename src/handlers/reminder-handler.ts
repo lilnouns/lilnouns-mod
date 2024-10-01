@@ -3,6 +3,7 @@ import { getBlockTimestamp } from '@/services/ethereum/get-block-timestamp'
 import { getProposals } from '@/services/lilnouns/get-proposals'
 import { getMe } from '@/services/warpcast/get-me'
 import { getUserByVerification } from '@/services/warpcast/get-user-by-verification'
+import { logger } from '@/utilities/logger'
 import { DateTime } from 'luxon'
 import { createHash } from 'node:crypto'
 import { filter, isTruthy } from 'remeda'
@@ -15,6 +16,7 @@ interface DirectCastBody {
     idempotencyKey: string
   }
 }
+
 /**
  * Calculate the number of hours left until a given timestamp.
  * @param timestamp - The target time in milliseconds since the Unix epoch.
@@ -39,12 +41,24 @@ function hoursLeftUntil(timestamp: number): number {
 export async function reminderHandler(env: Env) {
   const { KV: kv, QUEUE: queue } = env
 
+  logger.info('Fetching current user data...')
   const { user } = await getMe(env)
 
-  const farcasterVoters: number[] =
-    (await kv.get('lilnouns-farcaster-voters', { type: 'json' })) ?? []
+  logger.info('Fetching Farcaster voters from KV...')
+  const farcasterVoters =
+    (await kv.get<number[] | null>('lilnouns-farcaster-voters', {
+      type: 'json',
+    })) ?? []
 
+  logger.info(
+    { farcasterVotersCount: farcasterVoters.length },
+    'Fetched Farcaster voters.',
+  )
+
+  logger.info('Fetching current block number...')
   const blockNumber = await getBlockNumber(env)
+
+  logger.info('Fetching active proposals...')
   let { proposals } = await getProposals(env)
 
   proposals = filter(
@@ -53,16 +67,34 @@ export async function reminderHandler(env: Env) {
       proposal.status === 'ACTIVE' && Number(proposal.endBlock) > blockNumber,
   )
 
+  logger.info(
+    { activeProposalsCount: proposals.length },
+    'Filtered active proposals.',
+  )
+
   const batch: MessageSendRequest<DirectCastBody>[] = []
 
   for (const proposal of proposals) {
     const { votes, endBlock, id } = proposal
 
+    logger.debug(
+      { proposalId: id },
+      'Fetching end block timestamp for proposal.',
+    )
     const endBlockTimestamp = await getBlockTimestamp(env, Number(endBlock))
 
     if (endBlockTimestamp && hoursLeftUntil(endBlockTimestamp) > 2) {
+      logger.debug(
+        { proposalId: id },
+        'Proposal voting ends in more than 2 hours, skipping.',
+      )
       continue
     }
+
+    logger.info(
+      { proposalId: id },
+      'Processing proposal nearing end of voting period.',
+    )
 
     const voters = await Promise.all(
       votes.map(async (vote) => {
@@ -77,20 +109,34 @@ export async function reminderHandler(env: Env) {
             error instanceof Error &&
             !error.message.startsWith('No FID has connected')
           ) {
-            console.error(`An error occurred: ${error.message}`)
+            logger.error(
+              { error, voterId: vote.voter.id },
+              'Error fetching Farcaster user for voter.',
+            )
           }
           return null
         }
       }),
     ).then((results) => filter(results, isTruthy))
 
+    logger.info(
+      { votersCount: voters.length, proposalId: id },
+      'Fetched and filtered voters for the proposal.',
+    )
+
     const message =
-      `Hey mate, quick reminder fa ya, voting on proposal #${id.toString()} wraps up in under two hours ⏳` +
-      ` Would appreciate if you could take a sec and cast your vote! 🙌`
+      'Hey mate, quick reminder fa ya, voting on proposal #' +
+      id.toString() +
+      ' wraps up in under two hours ⏳' +
+      ' Would appreciate if you could take a sec and cast your vote! 🙌'
     const idempotencyKey = createHash('sha256').update(message).digest('hex')
 
     for (const recipientFid of farcasterVoters) {
       if (recipientFid === user.fid || voters.includes(recipientFid)) {
+        logger.debug(
+          { recipientFid },
+          'Skipping current user or already voted.',
+        )
         continue
       }
 
@@ -110,11 +156,17 @@ export async function reminderHandler(env: Env) {
   }
 
   if (batch.length > 0) {
+    logger.info(
+      { batchSize: batch.length },
+      'Sending reminder batch to the queue...',
+    )
     try {
       await queue.sendBatch(batch)
-      console.log('Batch enqueued successfully:', batch)
+      logger.info({ batchSize: batch.length }, 'Batch enqueued successfully.')
     } catch (error) {
-      console.error('Error enqueuing batch:', error)
+      logger.error({ error, batch }, 'Error enqueuing reminder batch.')
     }
+  } else {
+    logger.debug('No reminders to send at this time.')
   }
 }
