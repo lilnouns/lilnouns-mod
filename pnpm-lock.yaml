@@ -37,8 +37,8 @@ importers:
         version: 2.21.16(typescript@5.6.2)(zod@3.23.8)
     devDependencies:
       '@cloudflare/vitest-pool-workers':
-        specifier: 0.5.12
-        version: 0.5.12(@cloudflare/workers-types@4.20240925.0)(@vitest/runner@2.1.1)(@vitest/snapshot@2.1.1)(vitest@2.1.1(@types/node@22.7.4))
+        specifier: 0.5.13
+        version: 0.5.13(@cloudflare/workers-types@4.20240925.0)(@vitest/runner@2.1.1)(@vitest/snapshot@2.1.1)(vitest@2.1.1(@types/node@22.7.4))
       '@cloudflare/workers-types':
         specifier: 4.20240925.0
         version: 4.20240925.0
@@ -136,8 +136,8 @@ packages:
     resolution: {integrity: sha512-YLPHc8yASwjNkmcDMQMY35yiWjoKAKnhUbPRszBRS0YgH+IXtsMp61j+yTcnCE3oO2DgP0U3iejLC8FTtKDC8Q==}
     engines: {node: '>=16.13'}
 
-  '@cloudflare/vitest-pool-workers@0.5.12':
-    resolution: {integrity: sha512-LDcjNSVUUjz4g6+Kwtkw1OnbUtCkmDRzv2D+L3f0cnw0zwT8u9cIiZNhwBjnwX2RLaBKT2E0ExcLpPTiZ49nRg==}
+  '@cloudflare/vitest-pool-workers@0.5.13':
+    resolution: {integrity: sha512-/Fqp1Rl48K2uzAp3erprv5GoOju0wj7ePItvaNRLbZE+ZmOKaLpsDkeC9Po7FPVdMPm7txBE9vdkkpYheLnoPA==}
     peerDependencies:
       '@vitest/runner': 2.0.x - 2.1.x
       '@vitest/snapshot': 2.0.x - 2.1.x
@@ -2383,7 +2383,7 @@ snapshots:
     dependencies:
       mime: 3.0.0
 
-  '@cloudflare/vitest-pool-workers@0.5.12(@cloudflare/workers-types@4.20240925.0)(@vitest/runner@2.1.1)(@vitest/snapshot@2.1.1)(vitest@2.1.1(@types/node@22.7.4))':
+  '@cloudflare/vitest-pool-workers@0.5.13(@cloudflare/workers-types@4.20240925.0)(@vitest/runner@2.1.1)(@vitest/snapshot@2.1.1)(vitest@2.1.1(@types/node@22.7.4))':
     dependencies:
       '@vitest/runner': 2.1.1
       '@vitest/snapshot': 2.1.1
@@ -2394,7 +2394,7 @@ snapshots:
       miniflare: 3.20240925.0
       semver: 7.6.3
       vitest: 2.1.1(@types/node@22.7.4)
-      wrangler: 3.78.12(@cloudflare/workers-types@4.20240925.0)
+      wrangler: 3.79.0(@cloudflare/workers-types@4.20240925.0)
       zod: 3.23.8
     transitivePeerDependencies:
       - '@cloudflare/workers-types'
