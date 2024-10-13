@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.0.0-alpha.42] - 2024-10-13
+
+### ⚙️ Miscellaneous Tasks
+
+- *(config)* Enable Workers Logs in `wrangler.toml`
+
 ## [1.0.0-alpha.41] - 2024-10-01
 
 ### 🚀 Features
