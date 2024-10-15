@@ -1,6 +1,6 @@
 {
   "name": "lilnouns-mod",
-  "version": "1.0.0-alpha.43",
+  "version": "1.0.0-alpha.44",
   "private": true,
   "type": "module",
   "scripts": {
@@ -12,6 +12,11 @@
     "prepare": "husky",
     "start": "wrangler dev --test-scheduled",
     "test": "vitest run"
+  },
+  "resolutions": {
+    "cookie": ">=0.7.0",
+    "rollup": ">=4.22.4",
+    "vite": ">=5.4.6"
   },
   "dependencies": {
     "cron-time-generator": "2.0.3",
