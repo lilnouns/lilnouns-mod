@@ -32,7 +32,9 @@ export interface Profile {
 export interface ViewerContext {
   following: boolean
   followedBy: boolean
+  canSendDirectCasts: boolean
   enableNotifications: boolean
+  hasUploadedInboxKeys: boolean
 }
 
 export interface User {
