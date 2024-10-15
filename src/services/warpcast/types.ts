@@ -15,8 +15,8 @@ export interface Pfp {
 
 export interface Bio {
   text: string
-  mentions: never[]
-  channelMentions: never[]
+  mentions: string[]
+  channelMentions: string[]
 }
 
 export interface Location {
@@ -31,6 +31,8 @@ export interface Profile {
 
 export interface ViewerContext {
   following: boolean
+  followedBy: boolean
+  enableNotifications: boolean
 }
 
 export interface User {
