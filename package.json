@@ -14,7 +14,8 @@
     "test": "vitest run"
   },
   "resolutions": {
-    "rollup": ">=4.22.4"
+    "rollup": ">=4.22.4",
+    "vite": ">=5.4.6"
   },
   "dependencies": {
     "cron-time-generator": "2.0.3",
