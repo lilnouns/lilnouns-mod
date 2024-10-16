@@ -1,8 +1,15 @@
 import { fetchRequest, HttpRequestMethod } from '@/services/warpcast/index'
 import { User } from '@/services/warpcast/types'
 
+interface Extras {
+  fid: number
+  custodyAddress: string
+}
+
 interface Result {
   user: User
+  collectionsOwned: string[]
+  extras: Extras
 }
 
 interface Response {
