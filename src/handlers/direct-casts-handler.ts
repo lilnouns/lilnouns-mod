@@ -73,7 +73,17 @@ async function handleSubscribers(env: Env) {
  * @returns A promise that resolves when the messages have been handled.
  */
 async function handleMessages(env: Env) {
-  const { QUEUE: queue } = env
+  const { KV: kv, QUEUE: queue } = env
+  const cacheKey = 'lilnouns-farcaster-responders'
+
+  logger.info('Fetching current responders from KV...')
+  const respondedFids: number[] =
+    (await kv.get<number[] | null>(cacheKey, { type: 'json' })) ?? []
+
+  logger.info(
+    { respondedFidsCount: respondedFids.length },
+    'Fetched FIDs who have already responded.',
+  )
 
   logger.info('Fetching current user data...')
   const { user } = await getMe(env)
@@ -103,6 +113,11 @@ async function handleMessages(env: Env) {
       continue
     }
 
+    if (respondedFids.includes(recipientFid)) {
+      logger.debug({ recipientFid }, 'Skipping already responded user.')
+      continue
+    }
+
     const message =
       'This account runs on autopilot, so please don’t send messages directly here. ' +
       'If you have any issues or questions, just reach out to @nekofar! 😊'
@@ -120,6 +135,7 @@ async function handleMessages(env: Env) {
     }
 
     batch.push(task)
+    respondedFids.push(recipientFid)
   }
 
   if (batch.length > 0) {
@@ -130,6 +146,10 @@ async function handleMessages(env: Env) {
     try {
       await queue.sendBatch(batch)
       logger.info({ batchSize: batch.length }, 'Batch enqueued successfully.')
+
+      // Update the KV store with the new list of responded users
+      await kv.put(cacheKey, JSON.stringify(respondedFids))
+      logger.info('Updated responders list saved to KV.')
     } catch (error) {
       logger.error({ error, batch }, 'Error enqueuing message batch.')
     }
