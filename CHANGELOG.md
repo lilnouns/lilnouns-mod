@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.0.0-alpha.45] - 2024-10-16
+
+### 🚀 Features
+
+- *(warpcast)* Add `getChannelFollowers` function
+- *(warpcast)* Update `Bio` and `ViewerContext` interfaces
+- *(warpcast)* Add `getChannelUsers` to fetch channel users
+- *(services)* Add `canSendDirectCasts` and `hasUploadedInboxKeys`
+- *(warpcast)* Extend `getUserByUsername` result object
+- *(handlers)* Add responder tracking to KV store
+
 ## [1.0.0-alpha.44] - 2024-10-15
 
 ### 🐛 Bug Fixes
