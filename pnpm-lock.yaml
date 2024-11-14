@@ -42,8 +42,8 @@ importers:
         version: 2.21.45(typescript@5.6.3)(zod@3.23.8)
     devDependencies:
       '@cloudflare/vitest-pool-workers':
-        specifier: 0.5.26
-        version: 0.5.26(@cloudflare/workers-types@4.20241106.0)(@vitest/runner@2.1.4)(@vitest/snapshot@2.1.4)(vitest@2.1.4(@types/node@22.9.0))
+        specifier: 0.5.27
+        version: 0.5.27(@cloudflare/workers-types@4.20241106.0)(@vitest/runner@2.1.4)(@vitest/snapshot@2.1.4)(vitest@2.1.4(@types/node@22.9.0))
       '@cloudflare/workers-types':
         specifier: 4.20241106.0
         version: 4.20241106.0
@@ -141,8 +141,8 @@ packages:
     resolution: {integrity: sha512-YLPHc8yASwjNkmcDMQMY35yiWjoKAKnhUbPRszBRS0YgH+IXtsMp61j+yTcnCE3oO2DgP0U3iejLC8FTtKDC8Q==}
     engines: {node: '>=16.13'}
 
-  '@cloudflare/vitest-pool-workers@0.5.26':
-    resolution: {integrity: sha512-2rHWWIvGZT5nwB7cBg/RXQKFmHEqHyfWeoctZu/OMxqUs5NCd2/WlqAGewxshibxWYft8Xk5Y9X4XbItXIFt3Q==}
+  '@cloudflare/vitest-pool-workers@0.5.27':
+    resolution: {integrity: sha512-nnrkluRcfmkJa8FO++JEjpzjd5RyY2dBTo/Qe9AT81iyS14NbaTCFo4ONE43qn6AvS27ZHkfT99bty/zT2Gfvw==}
     peerDependencies:
       '@vitest/runner': 2.0.x - 2.1.x
       '@vitest/snapshot': 2.0.x - 2.1.x
@@ -2374,7 +2374,7 @@ snapshots:
     dependencies:
       mime: 3.0.0
 
-  '@cloudflare/vitest-pool-workers@0.5.26(@cloudflare/workers-types@4.20241106.0)(@vitest/runner@2.1.4)(@vitest/snapshot@2.1.4)(vitest@2.1.4(@types/node@22.9.0))':
+  '@cloudflare/vitest-pool-workers@0.5.27(@cloudflare/workers-types@4.20241106.0)(@vitest/runner@2.1.4)(@vitest/snapshot@2.1.4)(vitest@2.1.4(@types/node@22.9.0))':
     dependencies:
       '@vitest/runner': 2.1.4
       '@vitest/snapshot': 2.1.4
@@ -2385,7 +2385,7 @@ snapshots:
       miniflare: 3.20241106.0
       semver: 7.6.3
       vitest: 2.1.4(@types/node@22.9.0)
-      wrangler: 3.86.0(@cloudflare/workers-types@4.20241106.0)
+      wrangler: 3.86.1(@cloudflare/workers-types@4.20241106.0)
       zod: 3.23.8
     transitivePeerDependencies:
       - '@cloudflare/workers-types'
