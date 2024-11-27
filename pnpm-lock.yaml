@@ -42,8 +42,8 @@ importers:
         version: 2.21.51(typescript@5.7.2)(zod@3.23.8)
     devDependencies:
       '@cloudflare/vitest-pool-workers':
-        specifier: 0.5.31
-        version: 0.5.31(@cloudflare/workers-types@4.20241112.0)(@vitest/runner@2.1.5)(@vitest/snapshot@2.1.5)(vitest@2.1.5(@types/node@22.10.0))
+        specifier: 0.5.32
+        version: 0.5.32(@cloudflare/workers-types@4.20241112.0)(@vitest/runner@2.1.5)(@vitest/snapshot@2.1.5)(vitest@2.1.5(@types/node@22.10.0))
       '@cloudflare/workers-types':
         specifier: 4.20241112.0
         version: 4.20241112.0
@@ -141,8 +141,8 @@ packages:
     resolution: {integrity: sha512-YLPHc8yASwjNkmcDMQMY35yiWjoKAKnhUbPRszBRS0YgH+IXtsMp61j+yTcnCE3oO2DgP0U3iejLC8FTtKDC8Q==}
     engines: {node: '>=16.13'}
 
-  '@cloudflare/vitest-pool-workers@0.5.31':
-    resolution: {integrity: sha512-WGChnELpii95VLumWM4F+NiuuIHXdNcUyMPCBL8WKhn1GD04GjE5MtI5R6IyDsGYh8GAbULHzRy6j6t9ajZb9g==}
+  '@cloudflare/vitest-pool-workers@0.5.32':
+    resolution: {integrity: sha512-lJHwXq3VWKgzy7BzXs61O/QukT9QQ42hl27eRcqCV6P20OF4/bLH8rmUaYxdR8IxLlmNY7Q5h0wGN0nXBn8XKg==}
     peerDependencies:
       '@vitest/runner': 2.0.x - 2.1.x
       '@vitest/snapshot': 2.0.x - 2.1.x
@@ -2351,7 +2351,7 @@ snapshots:
     dependencies:
       mime: 3.0.0
 
-  '@cloudflare/vitest-pool-workers@0.5.31(@cloudflare/workers-types@4.20241112.0)(@vitest/runner@2.1.5)(@vitest/snapshot@2.1.5)(vitest@2.1.5(@types/node@22.10.0))':
+  '@cloudflare/vitest-pool-workers@0.5.32(@cloudflare/workers-types@4.20241112.0)(@vitest/runner@2.1.5)(@vitest/snapshot@2.1.5)(vitest@2.1.5(@types/node@22.10.0))':
     dependencies:
       '@vitest/runner': 2.1.5
       '@vitest/snapshot': 2.1.5
@@ -2362,7 +2362,7 @@ snapshots:
       miniflare: 3.20241106.1
       semver: 7.6.3
       vitest: 2.1.5(@types/node@22.10.0)
-      wrangler: 3.90.0(@cloudflare/workers-types@4.20241112.0)
+      wrangler: 3.91.0(@cloudflare/workers-types@4.20241112.0)
       zod: 3.23.8
     transitivePeerDependencies:
       - '@cloudflare/workers-types'
