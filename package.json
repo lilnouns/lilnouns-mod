@@ -1,6 +1,6 @@
 {
   "name": "lilnouns-mod",
-  "version": "1.0.0-alpha.51",
+  "version": "1.0.0-alpha.52",
   "private": true,
   "type": "module",
   "scripts": {
@@ -23,20 +23,20 @@
     "graphql": "16.10.0",
     "graphql-request": "6.1.0",
     "luxon": "3.5.0",
-    "pino": "9.5.0",
-    "remeda": "2.18.0",
+    "pino": "9.6.0",
+    "remeda": "2.19.0",
     "type-fest": "4.30.2",
     "unicorn-magic": "0.3.0",
-    "viem": "2.21.55"
+    "viem": "2.21.57"
   },
   "devDependencies": {
-    "@cloudflare/vitest-pool-workers": "0.5.39",
+    "@cloudflare/vitest-pool-workers": "0.5.40",
     "@cloudflare/workers-types": "4.20241218.0",
     "@eslint/js": "9.17.0",
     "@types/eslint__js": "8.42.3",
     "@types/luxon": "3.4.2",
     "@types/node": "22.10.2",
-    "@typescript-eslint/parser": "8.18.1",
+    "@typescript-eslint/parser": "8.18.2",
     "eslint": "9.17.0",
     "eslint-config-prettier": "9.1.0",
     "eslint-plugin-jsdoc": "50.6.1",
@@ -53,8 +53,8 @@
     "prettier-plugin-packagejson": "2.5.6",
     "prettier-plugin-toml": "2.0.1",
     "typescript": "5.7.2",
-    "typescript-eslint": "8.18.1",
+    "typescript-eslint": "8.18.2",
     "vitest": "2.1.8",
-    "wrangler": "3.98.0"
+    "wrangler": "3.99.0"
   }
 }
