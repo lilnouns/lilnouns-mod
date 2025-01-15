@@ -1,6 +1,6 @@
 {
   "name": "lilnouns-mod",
-  "version": "1.0.0-alpha.55",
+  "version": "1.0.0-alpha.56",
   "private": true,
   "type": "module",
   "scripts": {
@@ -24,21 +24,21 @@
     "graphql-request": "6.1.0",
     "luxon": "3.5.0",
     "pino": "9.6.0",
-    "remeda": "2.19.0",
+    "remeda": "2.19.1",
     "type-fest": "4.32.0",
     "unicorn-magic": "0.3.0",
-    "viem": "2.22.6"
+    "viem": "2.22.8"
   },
   "devDependencies": {
     "@cloudflare/vitest-pool-workers": "0.6.0",
     "@cloudflare/workers-types": "4.20250109.0",
-    "@eslint/js": "9.17.0",
+    "@eslint/js": "9.18.0",
     "@types/eslint__js": "8.42.3",
     "@types/luxon": "3.4.2",
-    "@types/node": "22.10.5",
-    "@typescript-eslint/parser": "8.19.1",
-    "eslint": "9.17.0",
-    "eslint-config-prettier": "9.1.0",
+    "@types/node": "22.10.6",
+    "@typescript-eslint/parser": "8.20.0",
+    "eslint": "9.18.0",
+    "eslint-config-prettier": "10.0.1",
     "eslint-plugin-jsdoc": "50.6.1",
     "eslint-plugin-prettier": "5.2.1",
     "eslint-plugin-regexp": "2.7.0",
@@ -53,7 +53,7 @@
     "prettier-plugin-packagejson": "2.5.6",
     "prettier-plugin-toml": "2.0.1",
     "typescript": "5.7.3",
-    "typescript-eslint": "8.19.1",
+    "typescript-eslint": "8.20.0",
     "vitest": "2.1.8",
     "wrangler": "3.101.0"
   }
