@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.0.0-alpha.57] - 2025-01-15
+
+### 🐛 Bug Fixes
+
+- *(cache-handler)* Adjust time range calculation to 3 years
+
 ## [1.0.0-alpha.56] - 2025-01-15
 
 ### 🐛 Bug Fixes
