@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.0.0-alpha.59] - 2025-01-21
+
+### 🚀 Features
+
+- *(logger)* Add `asObject` option to logger configuration
+
+### ⚙️ Miscellaneous Tasks
+
+- *(build)* Remove unused test step in GitHub Actions
+- *(husky)* Comment out `pnpm test` in pre-commit hook
+
 ## [1.0.0-alpha.58] - 2025-01-20
 
 ### 🐛 Bug Fixes
