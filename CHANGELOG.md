@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.0.0-alpha.60] - 2025-01-21
+
+### 🚜 Refactor
+
+- *(scheduled-handler)* Replace `console.log` with `logger`
+
+### ⚙️ Miscellaneous Tasks
+
+- *(deploy)* Remove deploy workflow
+- *(config)* Disable `workers_dev` in `wrangler.toml`
+
 ## [1.0.0-alpha.59] - 2025-01-21
 
 ### 🚀 Features
