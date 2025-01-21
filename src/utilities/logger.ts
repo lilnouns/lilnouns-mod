@@ -40,6 +40,7 @@ function customFormatter(log: LogObject): string {
 
 const loggerOptions: LoggerOptions = {
   browser: {
+    asObject: true,
     write: (o) => {
       console.log(customFormatter(o as LogObject))
     },
