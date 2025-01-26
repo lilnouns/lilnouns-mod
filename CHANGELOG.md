@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.0.0-alpha.63] - 2025-01-26
+
+### ⚙️ Miscellaneous Tasks
+
+- *(config)* Add `LOG_LEVEL` variable to `vars`
+
 ## [1.0.0-alpha.62] - 2025-01-26
 
 ### 🚀 Features
