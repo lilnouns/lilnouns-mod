@@ -24,9 +24,9 @@ export async function scheduledHandler(
       await eventsHandler(env)
       await channelHandler(env)
       await reminderHandler(env)
-      await starterPackHandler(env)
       break
     case CronTime.every(12).hours():
+      await starterPackHandler(env)
       await directCastsHandler(env)
       break
     case CronTime.everyDayAt(14, 0):
