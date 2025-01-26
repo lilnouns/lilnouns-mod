@@ -17,24 +17,23 @@ interface Response {
 }
 
 /**
- * Retrieves user information based on the provided username.
- * @param env - The environment object containing necessary configuration values.
- * @param username - The username for which the user information is to be fetched.
- * @returns A promise that resolves to the result containing user information.
+ * Fetches a user by their FID (Farcaster ID) from the Warpcast API.
+ * @async
+ * @param env - The environment object containing API configuration, including `WARPCAST_ACCESS_TOKEN` and `WARPCAST_BASE_URL`.
+ * @param fid - The Farcaster ID of the user to retrieve.
+ * @returns A promise resolving to the result containing the user data.
+ * @throws Will throw an error if the fetch request fails or the API response indicates an error.
  */
-export const getUserByUsername = async (
-  env: Env,
-  username: string,
-): Promise<Result> => {
+export const getUserByFid = async (env: Env, fid: number): Promise<Result> => {
   const { WARPCAST_ACCESS_TOKEN: accessToken, WARPCAST_BASE_URL: baseUrl } = env
 
-  const params = { username }
+  const params = { fid: fid.toString() }
 
   const { result } = await fetchRequest<Response>(
     baseUrl,
     accessToken,
     HttpRequestMethod.GET,
-    `/v2/user-by-username`,
+    `/v2/user-by-fid`,
     { params },
   )
 

@@ -2,6 +2,32 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.0.0-alpha.62] - 2025-01-26
+
+### 🚀 Features
+
+- *(warpcast)* Add `StarterPack` interface
+- *(warpcast)* Add `connectedAccounts` to user type
+- *(warpcast)* Add `PATCH` method to `HttpRequestMethod`
+- *(warpcast)* Add `getUserByFid` to fetch user by FID
+- *(warpcast)* Add `getStarterPacks` function
+- *(warpcast)* Add `getStarterPackUsers` function
+- *(warpcast)* Add `getStarterPack` function
+- *(warpcast)* Add `createStarterPack` function
+- *(warpcast)* Add `updateStarterPack` function
+- *(handlers)* Add `starterPackHandler` for starter packs
+- *(scheduled-handler)* Add `starterPackHandler` to scheduler
+
+### 🐛 Bug Fixes
+
+- *(cache-handler)* Correct time range calculation
+- *(scheduled-handler)* Adjust `starterPackHandler` timing
+
+### 🚜 Refactor
+
+- *(warpcast)* Simplify `getUserByUsername` implementation
+- *(logger)* Update configuration based on env
+
 ## [1.0.0-alpha.61] - 2025-01-24
 
 ### 🐛 Bug Fixes

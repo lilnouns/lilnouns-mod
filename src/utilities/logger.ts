@@ -39,13 +39,21 @@ function customFormatter(log: LogObject): string {
 }
 
 const loggerOptions: LoggerOptions = {
-  browser: {
-    asObject: true,
-    write: (o) => {
-      console.log(customFormatter(o as LogObject))
+  ...(process.env.NODE_ENV === 'development' && {
+    browser: {
+      asObject: true,
+      write: (o) => {
+        console.log(customFormatter(o as LogObject))
+      },
     },
-  },
-  level: 'trace',
+  }),
+  ...(process.env.NODE_ENV === 'production' && {
+    timestamp: pino.stdTimeFunctions.isoTime,
+  }),
+  serializers: pino.stdSerializers,
+  level:
+    process.env.LOG_LEVEL ??
+    (process.env.NODE_ENV === 'development' ? 'trace' : 'info'),
 }
 
 export const logger = pino(loggerOptions)

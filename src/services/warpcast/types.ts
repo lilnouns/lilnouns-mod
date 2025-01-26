@@ -46,6 +46,7 @@ export interface User {
   followerCount: number
   followingCount: number
   activeOnFcNetwork: boolean
+  connectedAccounts: string[]
   viewerContext: ViewerContext
 }
 
@@ -176,4 +177,15 @@ export interface Conversation {
     membersCanInvite: boolean
   }
   viewerContext: ViewerContext
+}
+
+export interface StarterPack {
+  id: string
+  creator: User
+  name: string
+  description: string
+  openGraphImageUrl: string
+  itemCount: number
+  items: User[]
+  labels: string[]
 }
