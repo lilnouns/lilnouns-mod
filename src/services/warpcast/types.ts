@@ -177,3 +177,14 @@ export interface Conversation {
   }
   viewerContext: ViewerContext
 }
+
+export interface StarterPack {
+  id: string
+  creator: User
+  name: string
+  description: string
+  openGraphImageUrl: string
+  itemCount: number
+  items: User[]
+  labels: string[]
+}
