@@ -4,6 +4,7 @@ import { directCastsHandler } from '@/handlers/direct-casts-handler'
 import { eventsHandler } from '@/handlers/events-handler'
 import { proposalHandler } from '@/handlers/proposal-handler'
 import { reminderHandler } from '@/handlers/reminder-handler'
+import { starterPackHandler } from '@/handlers/starter-pack-handler'
 import { logger } from '@/utilities/logger'
 import { CronTime } from 'cron-time-generator'
 
@@ -23,6 +24,7 @@ export async function scheduledHandler(
       await eventsHandler(env)
       await channelHandler(env)
       await reminderHandler(env)
+      await starterPackHandler(env)
       break
     case CronTime.every(12).hours():
       await directCastsHandler(env)
