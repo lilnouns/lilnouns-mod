@@ -18,18 +18,18 @@ export const getVerifications = async (
 ): Promise<Result> => {
   const { WARPCAST_ACCESS_TOKEN: accessToken, WARPCAST_BASE_URL: baseUrl } = env
 
+  const params = {
+    fid: fid.toString(),
+    ...(cursor && { cursor }),
+    limit: limit.toString(),
+  }
+
   const { result } = await fetchRequest<Response>(
     baseUrl,
     accessToken,
     HttpRequestMethod.GET,
     '/v2/verifications',
-    {
-      params: {
-        fid: fid.toString(),
-        cursor: cursor ?? '',
-        limit: limit.toString(),
-      },
-    },
+    { params },
   )
 
   return result

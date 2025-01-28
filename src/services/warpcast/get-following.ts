@@ -41,15 +41,15 @@ export const getFollowing = async (
       cursor: newCursor,
       limit: String(limit),
     }
+
     response = await fetchRequest<Response>(
       baseUrl,
       accessToken,
       HttpRequestMethod.GET,
       '/v2/following',
-      {
-        params,
-      },
+      { params },
     )
+
     users = [...users, ...response.result.users]
     newCursor = response.next ? response.next.cursor : ''
   } while (response.next && users.length < limit)

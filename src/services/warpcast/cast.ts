@@ -27,6 +27,7 @@ export const cast = async (
   castDistribution = 'channel-only',
 ): Promise<Result> => {
   const { WARPCAST_ACCESS_TOKEN: accessToken, WARPCAST_BASE_URL: baseUrl } = env
+
   const body = { text, embeds, channelKey, castDistribution }
 
   const { result } = await fetchRequest<Response>(
@@ -34,7 +35,7 @@ export const cast = async (
     accessToken,
     HttpRequestMethod.POST,
     '/v2/casts',
-    { json: body },
+    { json: { ...body } },
   )
 
   return result

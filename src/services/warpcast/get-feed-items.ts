@@ -35,9 +35,7 @@ export const getFeedItems = async (
     accessToken,
     HttpRequestMethod.POST,
     '/v2/feed-items',
-    {
-      json: { ...body },
-    },
+    { json: { ...body } },
   )
 
   return result

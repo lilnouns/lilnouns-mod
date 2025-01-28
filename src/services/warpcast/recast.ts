@@ -17,7 +17,9 @@ interface Response {
  */
 export const recast = async (env: Env, castHash: string): Promise<Result> => {
   const { WARPCAST_ACCESS_TOKEN: accessToken, WARPCAST_BASE_URL: baseUrl } = env
+
   const body = { castHash }
+
   const { result } = await fetchRequest<Response>(
     baseUrl,
     accessToken,

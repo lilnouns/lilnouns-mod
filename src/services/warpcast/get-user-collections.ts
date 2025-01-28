@@ -41,15 +41,15 @@ export const getUserCollections = async (
       cursor: newCursor,
       limit: String(limit),
     }
+
     response = await fetchRequest<Response>(
       baseUrl,
       accessToken,
       HttpRequestMethod.GET,
       '/v2/user-collections',
-      {
-        params,
-      },
+      { params },
     )
+
     collections = [...collections, ...response.result.collections]
     newCursor = response.next ? response.next.cursor : ''
   } while (response.next && collections.length < limit)

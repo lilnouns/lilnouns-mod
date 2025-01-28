@@ -33,9 +33,7 @@ export const getStarterPackUsers = async (
     accessToken,
     HttpRequestMethod.GET,
     '/v2/starter-pack-users',
-    {
-      params,
-    },
+    { params },
   )
 
   return result

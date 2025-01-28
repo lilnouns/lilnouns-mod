@@ -28,6 +28,7 @@ export const updateStarterPack = async (
   labels: string[],
 ): Promise<Result> => {
   const { WARPCAST_ACCESS_TOKEN: accessToken, WARPCAST_BASE_URL: baseUrl } = env
+
   const body = { id, name, description, fids, labels }
 
   const { result } = await fetchRequest<Response>(
@@ -35,9 +36,7 @@ export const updateStarterPack = async (
     accessToken,
     HttpRequestMethod.PATCH,
     '/v2/starter-pack',
-    {
-      json: body,
-    },
+    { json: body },
   )
 
   return result
