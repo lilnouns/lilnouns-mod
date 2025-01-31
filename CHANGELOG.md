@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.0.0-alpha.65] - 2025-01-31
+
+### 🚀 Features
+
+- *(handlers)* Add retry logic to starter pack updates
+
 ## [1.0.0-alpha.64] - 2025-01-31
 
 ### 🐛 Bug Fixes
