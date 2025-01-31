@@ -3,6 +3,7 @@ import { getStarterPacks } from '@/services/warpcast/get-starter-packs'
 import { updateStarterPack } from '@/services/warpcast/update-starter-pack'
 import { logger } from '@/utilities/logger'
 import { filter, first, pipe } from 'remeda'
+import { delay } from 'unicorn-magic'
 
 /**
  * Handles the starter pack processing for the provided environment.
@@ -13,7 +14,10 @@ export async function starterPackHandler(env: Env): Promise<void> {
 
   // Prevent update if farcasterVoters is empty
   if (farcasterVoters.length === 0) {
-    logger.warn('No Farcaster voters found, skipping starter pack update')
+    logger.warn(
+      { event: 'StartProcessing', message: 'No Farcaster voters found' },
+      'Skipping starter pack update',
+    )
     return
   }
 
@@ -21,25 +25,62 @@ export async function starterPackHandler(env: Env): Promise<void> {
   const firstStarterPack = await fetchFirstMatchingStarterPack(env, user.fid)
 
   if (!firstStarterPack) {
-    logger.warn('No matching starter pack found')
+    logger.warn(
+      { event: 'StarterPackLookup', userFid: user.fid },
+      'No matching starter pack found',
+    )
     return
   }
 
   const { id, name, description, labels } = firstStarterPack
 
-  const { success } = await updateStarterPack(
-    env,
-    id,
-    name,
-    description,
-    [...farcasterVoters],
-    labels,
-  )
+  // Retry logic with a limit
+  const maxRetries = 3
+  const retryDelayMs = 5000 // 5 seconds
 
-  if (success) {
-    logger.info({ starterPackId: id }, 'Successfully updated starter pack')
-  } else {
-    logger.error({ starterPackId: id }, 'Failed to update starter pack')
+  for (let attempt = 1; attempt <= maxRetries; attempt++) {
+    const { success } = await updateStarterPack(
+      env,
+      id,
+      name,
+      description,
+      [...farcasterVoters],
+      labels,
+    )
+
+    if (success) {
+      logger.info(
+        { event: 'StarterPackUpdate', starterPackId: id },
+        'Successfully updated starter pack',
+      )
+      return
+    } else {
+      logger.error(
+        {
+          event: 'StarterPackUpdateError',
+          starterPackId: id,
+          attempt,
+        },
+        'Attempt failed to update starter pack',
+      )
+
+      if (attempt < maxRetries) {
+        logger.info(
+          { event: 'RetryDelay', attempt, retryDelayMs },
+          'Retrying in a few milliseconds...',
+        )
+        await delay({ milliseconds: retryDelayMs }) // Wait before retrying
+      } else {
+        logger.error(
+          {
+            event: 'StarterPackUpdateFailure',
+            starterPackId: id,
+            maxRetries,
+          },
+          'All retry attempts to update starter pack failed',
+        )
+      }
+    }
   }
 }
 
