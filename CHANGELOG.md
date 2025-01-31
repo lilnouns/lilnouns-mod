@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.0.0-alpha.64] - 2025-01-31
+
+### 🐛 Bug Fixes
+
+- *(starter-pack-handler)* Prevent updates with no voters
+
+### 🚜 Refactor
+
+- *(warpcast)* Simplify request payload structures
+
 ## [1.0.0-alpha.63] - 2025-01-26
 
 ### ⚙️ Miscellaneous Tasks
