@@ -39,9 +39,7 @@ export const createStarterPack = async (
     accessToken,
     HttpRequestMethod.POST,
     '/v2/starter-pack',
-    {
-      json: body,
-    },
+    { json: { ...body } },
   )
 
   return result

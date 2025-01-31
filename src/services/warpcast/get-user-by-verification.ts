@@ -15,14 +15,14 @@ export const getUserByVerification = async (
 ): Promise<Result> => {
   const { WARPCAST_ACCESS_TOKEN: accessToken, WARPCAST_BASE_URL: baseUrl } = env
 
+  const params = { address }
+
   const { result } = await fetchRequest<Response>(
     baseUrl,
     accessToken,
     HttpRequestMethod.GET,
     '/v2/user-by-verification',
-    {
-      params: { address },
-    },
+    { params },
   )
 
   return result

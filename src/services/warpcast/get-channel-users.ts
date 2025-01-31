@@ -58,15 +58,15 @@ export const getChannelUsers = async (
       query,
       limit: String(limit),
     }
+
     response = await fetchRequest<Response>(
       baseUrl,
       accessToken,
       HttpRequestMethod.GET,
       '/v1/channel-users',
-      {
-        params,
-      },
+      { params },
     )
+
     users = [...users, ...response.result.users]
     newCursor = response.next ? response.next.cursor : ''
   } while (response.next && users.length < limit)

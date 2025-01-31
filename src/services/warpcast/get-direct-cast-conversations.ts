@@ -45,15 +45,15 @@ export const getDirectCastConversations = async (
       category,
       ...(filter && { filter }),
     }
+
     response = await fetchRequest<Response>(
       baseUrl,
       accessToken,
       HttpRequestMethod.GET,
       '/v2/direct-cast-conversation-list',
-      {
-        params,
-      },
+      { params },
     )
+
     conversations = [...conversations, ...response.result.conversations]
     newCursor = response.next ? response.next.cursor : ''
   } while (response.next && conversations.length < limit)

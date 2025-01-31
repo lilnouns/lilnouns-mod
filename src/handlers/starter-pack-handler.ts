@@ -10,8 +10,14 @@ import { filter, first, pipe } from 'remeda'
  */
 export async function starterPackHandler(env: Env): Promise<void> {
   const farcasterVoters = await getFarcasterVoters(env)
-  const { user } = await getMe(env)
 
+  // Prevent update if farcasterVoters is empty
+  if (farcasterVoters.length === 0) {
+    logger.warn('No Farcaster voters found, skipping starter pack update')
+    return
+  }
+
+  const { user } = await getMe(env)
   const firstStarterPack = await fetchFirstMatchingStarterPack(env, user.fid)
 
   if (!firstStarterPack) {

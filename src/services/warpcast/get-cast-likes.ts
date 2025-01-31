@@ -35,9 +35,7 @@ export const getCastLikes = async (
     accessToken,
     HttpRequestMethod.GET,
     '/v2/cast-likes',
-    {
-      params: params,
-    },
+    { params },
   )
 
   return result

@@ -26,9 +26,7 @@ export const getStarterPack = async (env: Env, id: string): Promise<Result> => {
     accessToken,
     HttpRequestMethod.GET,
     '/v2/starter-pack',
-    {
-      params,
-    },
+    { params },
   )
 
   return result
