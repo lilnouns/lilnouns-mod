@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.0.0-alpha.67] - 2025-02-03
+
+### 🚜 Refactor
+
+- *(handlers)* Chunk large batches before enqueuing
+
 ## [1.0.0-alpha.66] - 2025-02-03
 
 ### 🚜 Refactor
