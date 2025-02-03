@@ -2,7 +2,7 @@ import { getDirectCastConversations } from '@/services/warpcast/get-direct-cast-
 import { getMe } from '@/services/warpcast/get-me'
 import { logger } from '@/utilities/logger'
 import { createHash } from 'node:crypto'
-import { flat, pipe, sort, unique } from 'remeda'
+import { chunk, flat, pipe, sort, unique } from 'remeda'
 
 interface DirectCastBody {
   type: 'direct-cast'
@@ -144,7 +144,14 @@ async function handleMessages(env: Env) {
       'Sending message batch to the queue...',
     )
     try {
-      await queue.sendBatch(batch)
+      const batchSizeLimit = 100
+
+      const chunkedBatches = pipe(batch, chunk(batchSizeLimit))
+
+      for (const chunk of chunkedBatches) {
+        await queue.sendBatch(chunk)
+        logger.info({ chunk }, 'Chunk enqueued successfully')
+      }
       logger.info({ batchSize: batch.length }, 'Batch enqueued successfully.')
 
       // Update the KV store with the new list of responded users
