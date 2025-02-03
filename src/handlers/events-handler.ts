@@ -2,6 +2,7 @@ import { getMe } from '@/services/warpcast/get-me'
 import { logger } from '@/utilities/logger'
 import { DateTime, WeekdayNumbers } from 'luxon'
 import { createHash } from 'node:crypto'
+import { chunk, pipe } from 'remeda'
 
 interface DirectCastBody {
   type: 'direct-cast'
@@ -117,7 +118,14 @@ export async function eventsHandler(env: Env) {
     if (batch.length > 0) {
       logger.info({ batchSize: batch.length }, 'Sending batch to the queue.')
       try {
-        await queue.sendBatch(batch)
+        const batchSizeLimit = 100
+
+        const chunkedBatches = pipe(batch, chunk(batchSizeLimit))
+
+        for (const chunk of chunkedBatches) {
+          await queue.sendBatch(chunk)
+          logger.info({ chunk }, 'Chunk enqueued successfully')
+        }
         logger.info({ batchSize: batch.length }, 'Batch enqueued successfully.')
       } catch (error) {
         logger.error({ error, batch }, 'Error enqueuing batch.')
