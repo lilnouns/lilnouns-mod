@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.0.0-alpha.66] - 2025-02-03
+
+### 🚜 Refactor
+
+- *(handlers)* Add batching logic to `queue.sendBatch`
+
 ## [1.0.0-alpha.65] - 2025-01-31
 
 ### 🚀 Features
