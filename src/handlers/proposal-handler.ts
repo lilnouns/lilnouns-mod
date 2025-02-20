@@ -123,15 +123,11 @@ export async function proposalHandler(env: Env) {
     )
 
     const message =
-      "🗳️ It's voting time, Lil Nouns fam! Proposal #" +
-      id.toString() +
-      ' is live and ready for your voice. ' +
-      'Voting started ' +
-      proposalStart +
-      ' and wraps up ' +
-      proposalEnd +
-      '. ' +
-      "You received this message because you haven't voted yet. Don't miss out, cast your vote now! 🌟"
+      `🗳️ Lil Nouns, your vote matters! Proposal #${id.toString()} is live.
+      Voting opened ${proposalStart} and closes ${proposalEnd}.
+      You haven't voted yet—make your voice count before time runs out! ⏳🚀
+      https://lilnouns.camp/proposals/${id.toString()}`.replace(/\n\s+/g, '\n')
+
     const idempotencyKey = createHash('sha256').update(message).digest('hex')
 
     for (const recipientFid of farcasterSubscribers) {
