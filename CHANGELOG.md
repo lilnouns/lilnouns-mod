@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.0.0-alpha.69] - 2025-02-20
+
+### 🐛 Bug Fixes
+
+- *(scheduled-handler)* Comment out unused `eventsHandler`
+
+### 🚜 Refactor
+
+- *(proposal-handler)* Improve voting message clarity
+
 ## [1.0.0-alpha.68] - 2025-02-20
 
 ### 🐛 Bug Fixes
