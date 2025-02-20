@@ -21,7 +21,7 @@ export async function scheduledHandler(
   switch (controller.cron) {
     case CronTime.everyHour():
       await cacheHandler(env)
-      await eventsHandler(env)
+      // await eventsHandler(env)
       await channelHandler(env)
       await reminderHandler(env)
       break
