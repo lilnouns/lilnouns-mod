@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.0.0-alpha.70] - 2025-02-20
+
+### 🚜 Refactor
+
+- *(reminder-handler)* Improve reminder message format
+
 ## [1.0.0-alpha.69] - 2025-02-20
 
 ### 🐛 Bug Fixes
