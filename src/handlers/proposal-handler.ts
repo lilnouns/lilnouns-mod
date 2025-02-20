@@ -125,7 +125,7 @@ export async function proposalHandler(env: Env) {
     const message =
       `🗳️ Lil Nouns, your vote matters! Proposal #${id.toString()} is live.
       Voting opened ${proposalStart} and closes ${proposalEnd}.
-      You haven't voted yet—make your voice count before time runs out! ⏳🚀
+      You haven't voted yet; make your voice count before time runs out! ⏳🚀
       https://lilnouns.camp/proposals/${id.toString()}`.replace(/\n\s+/g, '\n')
 
     const idempotencyKey = createHash('sha256').update(message).digest('hex')
