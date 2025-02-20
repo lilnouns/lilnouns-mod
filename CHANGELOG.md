@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.0.0-alpha.71] - 2025-02-20
+
+### 🎨 Styling
+
+- *(proposal-handler)* Replace em dash with semicolon
+
 ## [1.0.0-alpha.70] - 2025-02-20
 
 ### 🚜 Refactor
