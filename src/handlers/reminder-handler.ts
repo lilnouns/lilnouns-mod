@@ -125,10 +125,10 @@ export async function reminderHandler(env: Env) {
     )
 
     const message =
-      'Hey mate, quick reminder fa ya, voting on proposal #' +
-      id.toString() +
-      ' wraps up in under two hours ⏳' +
-      ' Would appreciate if you could take a sec and cast your vote! 🙌'
+      `Hey there! Just a heads-up that voting on proposal #${id.toString()} is closing in less than two hours ⏳.
+      If you’ve got a moment, we'd love for you to cast your vote! 🙌
+      https://lilnouns.camp/proposals/${id.toString()}`.replace(/\n\s+/g, '\n')
+
     const idempotencyKey = createHash('sha256').update(message).digest('hex')
 
     for (const recipientFid of farcasterVoters) {
