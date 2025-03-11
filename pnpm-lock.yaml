@@ -29,8 +29,8 @@ importers:
         specifier: 9.6.0
         version: 9.6.0
       remeda:
-        specifier: 2.21.0
-        version: 2.21.0
+        specifier: 2.21.1
+        version: 2.21.1
       type-fest:
         specifier: 4.37.0
         version: 4.37.0
@@ -2002,8 +2002,8 @@ packages:
     resolution: {integrity: sha512-cnE+y8bz4NhMjISKbgeVJtqNbtf5QpjZP+Bslo+UqkIt9QPnX9q095eiRRASJG1/tz6dlNr6Z5NsBiWYokp6EQ==}
     hasBin: true
 
-  remeda@2.21.0:
-    resolution: {integrity: sha512-ANFqOts3BsvW1MrKOv9SVHG3ly0MzzLa0HIu5qLkiRuEPGPuH9ny3sgd7VdHvC2VOUSN/7RkmabPlAda6JtGgg==}
+  remeda@2.21.1:
+    resolution: {integrity: sha512-7I3JaB+geXL0Vq8V3TEwX6mMlWUCv18OdweAovYKiwDCbjKYf1DIHB58B6z8K7juPuZ1whwj79fOvUaHHHjbew==}
 
   resolve-from@4.0.0:
     resolution: {integrity: sha512-pb/MYmXstAkysRFx8piNI1tGFNQIFA3vkE3Gq4EuA1dF6gHp/+vgZqsCGJapvy8N3Q+4o7FwvquPJcnZ7RYy4g==}
@@ -2409,6 +2409,7 @@ packages:
   wrangler@3.114.0:
     resolution: {integrity: sha512-cY0HxgU5yuc24tE1Y4KD2n9UzYYEx+9lSL7p/Sqj18SgDfwyiMPY/FryXQAPYLuD/S+dxArRQyeEkFSokIr75Q==}
     engines: {node: '>=16.17.0'}
+    deprecated: Deployments with nodejs_compat are broken. Please downgrade to 3.112.0
     hasBin: true
     peerDependencies:
       '@cloudflare/workers-types': ^4.20250224.0
@@ -4227,7 +4228,7 @@ snapshots:
     dependencies:
       jsesc: 3.0.2
 
-  remeda@2.21.0:
+  remeda@2.21.1:
     dependencies:
       type-fest: 4.37.0
 
