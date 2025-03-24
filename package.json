@@ -1,6 +1,6 @@
 {
   "name": "lilnouns-mod",
-  "version": "1.0.0-alpha.73",
+  "version": "1.0.0-alpha.74",
   "private": true,
   "type": "module",
   "scripts": {
@@ -24,38 +24,38 @@
     "graphql-request": "6.1.0",
     "luxon": "3.5.0",
     "pino": "9.6.0",
-    "remeda": "2.21.1",
+    "remeda": "2.21.2",
     "type-fest": "4.37.0",
     "unicorn-magic": "0.3.0",
-    "viem": "2.23.10"
+    "viem": "2.23.13"
   },
   "devDependencies": {
-    "@cloudflare/vitest-pool-workers": "0.7.8",
-    "@cloudflare/workers-types": "4.20250311.0",
+    "@cloudflare/vitest-pool-workers": "0.8.3",
+    "@cloudflare/workers-types": "4.20250320.0",
     "@eslint/js": "9.22.0",
     "@types/eslint__js": "9.14.0",
     "@types/luxon": "3.4.2",
     "@types/node": "22.13.10",
-    "@typescript-eslint/parser": "8.26.1",
+    "@typescript-eslint/parser": "8.27.0",
     "eslint": "9.22.0",
     "eslint-config-prettier": "10.1.1",
-    "eslint-plugin-jsdoc": "50.6.6",
+    "eslint-plugin-jsdoc": "50.6.8",
     "eslint-plugin-prettier": "5.2.3",
     "eslint-plugin-regexp": "2.7.0",
     "eslint-plugin-unicorn": "57.0.0",
     "eslint-plugin-vitest": "0.5.4",
     "globals": "16.0.0",
     "husky": "9.1.7",
-    "lint-staged": "15.4.3",
+    "lint-staged": "15.5.0",
     "prettier": "3.5.3",
     "prettier-plugin-jsdoc": "1.3.2",
     "prettier-plugin-organize-imports": "4.1.0",
     "prettier-plugin-packagejson": "2.5.10",
     "prettier-plugin-toml": "2.0.2",
-    "typescript": "5.7.3",
-    "typescript-eslint": "8.26.1",
-    "vitest": "3.0.8",
-    "wrangler": "3.114.1"
+    "typescript": "5.8.2",
+    "typescript-eslint": "8.27.0",
+    "vitest": "3.0.9",
+    "wrangler": "4.3.0"
   },
   "packageManager": "pnpm@10.0.0"
 }
