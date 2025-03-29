@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.0.0-alpha.75] - 2025-03-29
+
+### 📚 Documentation
+
+- *(readme)* Update badges for Farcaster and donations
+
 ## [1.0.0-alpha.74] - 2025-03-24
 
 ### 🐛 Bug Fixes
