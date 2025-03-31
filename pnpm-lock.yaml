@@ -120,8 +120,8 @@ importers:
         specifier: 3.0.9
         version: 3.0.9(@types/debug@4.1.12)(@types/node@22.13.14)(yaml@2.7.0)
       wrangler:
-        specifier: 4.5.1
-        version: 4.5.1(@cloudflare/workers-types@4.20250327.0)
+        specifier: 4.6.0
+        version: 4.6.0(@cloudflare/workers-types@4.20250327.0)
 
 packages:
 
@@ -193,8 +193,8 @@ packages:
     resolution: {integrity: sha512-IchNf6dN4tHoMFIn/7OE8LWZ19Y6q/67Bmf6vnGREv8RSbBVb9LPJxEcnwrcwX6ixSvaiGoomAUvu4YSxXrVgw==}
     engines: {node: '>=12'}
 
-  '@emnapi/runtime@1.3.1':
-    resolution: {integrity: sha512-kEBmG8KyqtxJZv+ygbEim+KCGtIq1fC22Ms3S4ziXmYKm8uyoLX0MHONVKwp+9opg390VaKRNt4a7A9NwmpNhw==}
+  '@emnapi/runtime@1.4.0':
+    resolution: {integrity: sha512-64WYIf4UYcdLnbKn/umDlNjQDSS8AgZrI/R9+x5ilkUVFxXcA1Ebl+gQLc/6mERA4407Xof0R7wEyEuj091CVw==}
 
   '@es-joy/jsdoccomment@0.49.0':
     resolution: {integrity: sha512-xjZTSFgECpb9Ohuk5yMX5RhUEbfeQcuOp8IF60e+wyzWEF0M5xeSgqsfLtvPEX8BIyOX9saZqzuGPmZ8oWc+5Q==}
@@ -2470,7 +2470,7 @@ snapshots:
     dependencies:
       '@jridgewell/trace-mapping': 0.3.9
 
-  '@emnapi/runtime@1.3.1':
+  '@emnapi/runtime@1.4.0':
     dependencies:
       tslib: 2.8.1
     optional: true
@@ -2767,7 +2767,7 @@ snapshots:
 
   '@img/sharp-wasm32@0.33.5':
     dependencies:
-      '@emnapi/runtime': 1.3.1
+      '@emnapi/runtime': 1.4.0
     optional: true
 
   '@img/sharp-win32-ia32@0.33.5':
