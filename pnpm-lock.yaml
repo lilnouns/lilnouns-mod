@@ -14,8 +14,8 @@ importers:
   .:
     dependencies:
       '@nekofar/warpcast':
-        specifier: 2.0.0-alpha.5
-        version: 2.0.0-alpha.5
+        specifier: 2.0.0-alpha.12
+        version: 2.0.0-alpha.12
       cron-time-generator:
         specifier: 2.0.3
         version: 2.0.3
@@ -691,8 +691,8 @@ packages:
   '@jridgewell/trace-mapping@0.3.9':
     resolution: {integrity: sha512-3Belt6tdc8bPgAtbcmdtNJlirVoTmEb5e2gC94PnkwEW9jI6CAHUeoG85tjWP5WquqfavoMtMwiG4P926ZKKuQ==}
 
-  '@nekofar/warpcast@2.0.0-alpha.5':
-    resolution: {integrity: sha512-Z6RfptgpAX+UO+Ji5M7jcGx/LmtgGNVYjDP54Y7KVWoc25jbSlhXUUOu/KVIPQxgZb0cONpU4cz35YiJnYucOw==}
+  '@nekofar/warpcast@2.0.0-alpha.12':
+    resolution: {integrity: sha512-8giS5WYjCwOCTvfD4C42luOkFEsk7fIVIWBW0i6aH9fCo3MF2q5FNfSh1tM2+ruKq0RlHsCDHpGRYGwTUg99uQ==}
 
   '@noble/curves@1.8.1':
     resolution: {integrity: sha512-warwspo+UYUPep0Q+vtdVB4Ugn8GGQj8iyB3gnRWsztmUHTI3S1nhdiWNsPUGL0vud7JlRRk1XEu7Lq1KGTnMQ==}
@@ -2775,7 +2775,7 @@ snapshots:
       '@jridgewell/resolve-uri': 3.1.2
       '@jridgewell/sourcemap-codec': 1.5.0
 
-  '@nekofar/warpcast@2.0.0-alpha.5':
+  '@nekofar/warpcast@2.0.0-alpha.12':
     dependencies:
       '@hey-api/client-fetch': 0.8.4
 
