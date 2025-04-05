@@ -31,7 +31,7 @@
     "viem": "2.25.0"
   },
   "devDependencies": {
-    "@cloudflare/vitest-pool-workers": "0.8.8",
+    "@cloudflare/vitest-pool-workers": "0.8.11",
     "@cloudflare/workers-types": "4.20250327.0",
     "@eslint/js": "9.23.0",
     "@types/eslint__js": "9.14.0",
