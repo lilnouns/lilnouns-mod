@@ -26,7 +26,7 @@
     "luxon": "3.6.1",
     "pino": "9.6.0",
     "remeda": "2.21.2",
-    "type-fest": "4.38.0",
+    "type-fest": "4.39.1",
     "unicorn-magic": "0.3.0",
     "viem": "2.25.0"
   },
