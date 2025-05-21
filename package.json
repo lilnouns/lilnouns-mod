@@ -39,7 +39,7 @@
     "@types/node": "22.15.0",
     "@typescript-eslint/parser": "8.31.1",
     "eslint": "9.26.0",
-    "eslint-config-prettier": "10.1.2",
+    "eslint-config-prettier": "10.1.5",
     "eslint-plugin-jsdoc": "50.6.17",
     "eslint-plugin-prettier": "5.4.0",
     "eslint-plugin-regexp": "2.7.0",
