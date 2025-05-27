@@ -22,7 +22,7 @@
     "@nekofar/warpcast": "2.0.0-alpha.23",
     "cron-time-generator": "2.0.3",
     "graphql": "16.11.0",
-    "graphql-request": "6.1.0",
+    "graphql-request": "7.2.0",
     "luxon": "3.6.1",
     "pino": "9.6.0",
     "remeda": "2.21.3",
