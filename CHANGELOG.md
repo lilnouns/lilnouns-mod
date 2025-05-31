@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.0.0-alpha.78] - 2025-05-31
+
+### 🚀 Features
+
+- *(utilities)* Add `replacer` function for BigInt support
+
 ## [1.0.0-alpha.77] - 2025-04-09
 
 ### 🐛 Bug Fixes
