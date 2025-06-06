@@ -2,7 +2,7 @@
 
 interface Env {
 	KV: KVNamespace;
-	WARPCAST_BASE_URL: "https://client.warpcast.com";
+	WARPCAST_BASE_URL: "https://client.farcaster.xyz";
 	LILNOUNS_SUBGRAPH_URL: "https://api.goldsky.com/api/public/project_cldjvjgtylso13swq3dre13sf/subgraphs/lil-nouns-subgraph/1.0.6/gn";
 	WARPCAST_ACCESS_TOKEN: string;
 	WARPCAST_API_KEY: string;
