@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.0.0-alpha.80] - 2025-06-06
+
+### 🐛 Bug Fixes
+
+- *(env)* Update `WARPCAST_BASE_URL` to new domain
+
+### 📚 Documentation
+
+- *(readme)* Update Farcaster link to new domain
+
 ## [1.0.0-alpha.79] - 2025-05-31
 
 ### 🐛 Bug Fixes
