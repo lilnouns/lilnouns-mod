@@ -41,8 +41,8 @@ importers:
         specifier: 0.3.0
         version: 0.3.0
       viem:
-        specifier: 2.31.2
-        version: 2.31.2(typescript@5.8.3)(zod@3.25.61)
+        specifier: 2.31.6
+        version: 2.31.6(typescript@5.8.3)(zod@3.25.61)
     devDependencies:
       '@cloudflare/vitest-pool-workers':
         specifier: 0.8.38
@@ -1309,8 +1309,8 @@ packages:
     resolution: {integrity: sha512-WkrWp9GR4KXfKGYzOLmTuGVi1UWFfws377n9cc55/tb6DuqyF6pcQ5AbiHEshaDpY9v6oaSr2XCDidGmMwdzIA==}
     engines: {node: '>=8'}
 
-  dotenv@16.6.0:
-    resolution: {integrity: sha512-Omf1L8paOy2VJhILjyhrhqwLIdstqm1BvcDPKg4NGAlkwEu9ODyrFbvk8UymUOMCT+HXo31jg1lArIrVAAhuGA==}
+  dotenv@16.6.1:
+    resolution: {integrity: sha512-uBq4egWHTcTt33a72vpSG0z3HnPuIl6NqYcTrKEg2azoEyl2hpW0zqlxysq2pK9HlDIHyHyakeYaYnSAwd8bow==}
     engines: {node: '>=12'}
 
   electron-to-chromium@1.5.166:
@@ -2346,8 +2346,8 @@ packages:
   uri-js@4.4.1:
     resolution: {integrity: sha512-7rKUyy33Q1yc98pQ1DAmLtwX109F7TIfWlW1Ydo8Wl1ii1SeHieeh0HHfPeL2fMXK6z0s8ecKs9frCuLJvndBg==}
 
-  viem@2.31.2:
-    resolution: {integrity: sha512-IPcwtNdqnMCJT06Eublh0L1wsHUXaan40qZTpJ79wfOp5g+FtHJ3cYv3CVToyDcUGm0Tn6Cay0NKv9TLB6PBXQ==}
+  viem@2.31.6:
+    resolution: {integrity: sha512-2PPbXL/8bHQxUzaLFDk4R6WHifTcXxAqMC8/j6RBgXl/OexQ1HU8r9OukwfDTqrFoHtWWiYz5fktHATy7+U9nQ==}
     peerDependencies:
       typescript: '>=5.0.4'
     peerDependenciesMeta:
@@ -3313,7 +3313,7 @@ snapshots:
       chokidar: 4.0.3
       confbox: 0.1.8
       defu: 6.1.4
-      dotenv: 16.6.0
+      dotenv: 16.6.1
       giget: 1.2.5
       jiti: 2.4.2
       mlly: 1.7.4
@@ -3466,7 +3466,7 @@ snapshots:
     dependencies:
       path-type: 4.0.0
 
-  dotenv@16.6.0: {}
+  dotenv@16.6.1: {}
 
   electron-to-chromium@1.5.166: {}
 
@@ -4641,7 +4641,7 @@ snapshots:
     dependencies:
       punycode: 2.3.1
 
-  viem@2.31.2(typescript@5.8.3)(zod@3.25.61):
+  viem@2.31.6(typescript@5.8.3)(zod@3.25.61):
     dependencies:
       '@noble/curves': 1.9.2
       '@noble/hashes': 1.8.0
