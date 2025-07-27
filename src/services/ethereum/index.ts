@@ -1,4 +1,4 @@
-import { createPublicClient, http } from 'viem'
+import { createPublicClient, http, fallback } from 'viem'
 import { mainnet } from 'viem/chains'
 
 /**
@@ -7,10 +7,13 @@ import { mainnet } from 'viem/chains'
  * @returns - The created client.
  */
 export function createClient(env: Env) {
-  const { ALCHEMY_API_KEY: alchemyApiKey } = env
+  const { ALCHEMY_API_KEY: alchemyApiKey, ANKR_API_KEY: ankrApiKey } = env
 
   return createPublicClient({
     chain: mainnet,
-    transport: http(`https://eth-mainnet.g.alchemy.com/v2/${alchemyApiKey}`),
+    transport: fallback([
+      http(`https://eth-mainnet.g.alchemy.com/v2/${alchemyApiKey}`),
+      http(`https://rpc.ankr.com/eth/${ankrApiKey}`),
+    ]),
   })
 }
