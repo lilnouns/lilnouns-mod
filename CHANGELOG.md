@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.0.0-alpha.87] - 2025-07-27
+
+### 🚀 Features
+
+- *(ethereum)* Add fallback support for RPC endpoints
+
+### ⚙️ Miscellaneous Tasks
+
+- *(types)* Update `worker-configuration` type definitions
+- *(scripts)* Update `cf-typegen` script for wrangler types
+
 ## [1.0.0-alpha.86] - 2025-06-28
 
 ### 🐛 Bug Fixes
