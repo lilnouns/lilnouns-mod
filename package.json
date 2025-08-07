@@ -19,7 +19,7 @@
     "vite": ">=5.4.6"
   },
   "dependencies": {
-    "@nekofar/warpcast": "2.0.0-alpha.23",
+    "@nekofar/warpcast": "2.0.0-alpha.42",
     "cron-time-generator": "2.0.3",
     "graphql": "16.11.0",
     "graphql-request": "7.2.0",
