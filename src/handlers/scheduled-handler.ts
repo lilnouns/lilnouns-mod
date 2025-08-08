@@ -1,7 +1,6 @@
 import { cacheHandler } from '@/handlers/cache-handler'
 import { channelHandler } from '@/handlers/channel-handler'
 import { directCastsHandler } from '@/handlers/direct-casts-handler'
-import { eventsHandler } from '@/handlers/events-handler'
 import { proposalHandler } from '@/handlers/proposal-handler'
 import { reminderHandler } from '@/handlers/reminder-handler'
 import { starterPackHandler } from '@/handlers/starter-pack-handler'
