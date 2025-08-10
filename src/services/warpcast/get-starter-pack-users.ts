@@ -1,4 +1,4 @@
-import { fetchRequest, HttpRequestMethod } from '@/services/warpcast/index'
+import { getStarterPackUsers as sdkGetStarterPackUsers } from '@nekofar/warpcast'
 import { User } from '@/services/warpcast/types'
 import type { IntRange } from 'type-fest'
 
@@ -8,7 +8,8 @@ interface Result {
 }
 
 interface Response {
-  result: Result
+  result: { users: User[] }
+  next?: { cursor: string }
 }
 
 /**
@@ -26,15 +27,13 @@ export const getStarterPackUsers = async (
 ): Promise<Result> => {
   const { WARPCAST_ACCESS_TOKEN: accessToken, WARPCAST_BASE_URL: baseUrl } = env
 
-  const params = { id, limit: limit.toString() }
-
-  const { result } = await fetchRequest<Response>(
+  const { result, next } = (await sdkGetStarterPackUsers({
     baseUrl,
-    accessToken,
-    HttpRequestMethod.GET,
-    '/v2/starter-pack-users',
-    { params },
-  )
+    auth: accessToken,
+    query: { id, limit },
+    responseStyle: 'data',
+    throwOnError: true,
+  })) as unknown as Response
 
-  return result
+  return { users: result.users, cursor: next?.cursor }
 }

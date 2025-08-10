@@ -18,6 +18,9 @@ interface Response {
 
 /**
  * Retrieves the owners of a collection.
+ *
+ * NOTE: This endpoint is not currently exposed by @nekofar/warpcast SDK (v2.0.0-alpha.42),
+ * so we use the legacy fetchRequest helper against Warpcast HTTP API.
  * @param env - The environment variables containing access token and base URL.
  * @param collectionId - The ID of the collection.
  * @param [cursor] - The cursor to paginate through the owners.

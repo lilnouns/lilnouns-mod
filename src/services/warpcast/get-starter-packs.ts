@@ -1,4 +1,4 @@
-import { fetchRequest, HttpRequestMethod } from '@/services/warpcast/index'
+import { getUserStarterPacks as sdkGetUserStarterPacks } from '@nekofar/warpcast'
 import { StarterPack } from '@/services/warpcast/types'
 import type { IntRange } from 'type-fest'
 
@@ -8,17 +8,15 @@ interface Result {
 }
 
 interface Response {
-  result: Result
+  result: { starterPacks: StarterPack[] }
+  next?: { cursor: string }
 }
 
 /**
- * Fetches starter packs data for a given FID (farcaster ID) from the Warpcast API.
- *
- * This function interacts with the Warpcast API to retrieve a list of users associated with a specified starter pack.
- * It requires environment configuration values such as the API's base URL and access token.
+ * Fetches starter packs data for a given FID (farcaster ID) using the Warpcast SDK.
  * @param env - The environment configuration containing necessary API credentials.
- * @param fid - The Farcaster ID for which the starter pack users are to be retrieved.
- * @param [limit] - The maximum number of users to retrieve, defaulted to 15. Must be a non-negative value.
+ * @param fid - The Farcaster ID for which the starter packs are to be retrieved.
+ * @param [limit] - The maximum number of starter packs to retrieve, defaulted to 15.
  * @returns - A promise that resolves to the result containing the starter packs data.
  */
 export const getStarterPacks = async (
@@ -28,15 +26,13 @@ export const getStarterPacks = async (
 ): Promise<Result> => {
   const { WARPCAST_ACCESS_TOKEN: accessToken, WARPCAST_BASE_URL: baseUrl } = env
 
-  const params = { fid: fid.toString(), limit: limit.toString() }
-
-  const { result } = await fetchRequest<Response>(
+  const { result, next } = (await sdkGetUserStarterPacks({
     baseUrl,
-    accessToken,
-    HttpRequestMethod.GET,
-    '/v2/starter-packs',
-    { params },
-  )
+    auth: accessToken,
+    query: { fid, limit },
+    responseStyle: 'data',
+    throwOnError: true,
+  })) as unknown as Response
 
-  return result
+  return { starterPacks: result.starterPacks, cursor: next?.cursor }
 }

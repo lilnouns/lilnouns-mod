@@ -1,4 +1,4 @@
-import { fetchRequest, HttpRequestMethod } from '@/services/warpcast/index'
+import { recastCast as sdkRecastCast } from '@nekofar/warpcast'
 
 interface Result {
   recast: {
@@ -18,14 +18,13 @@ interface Response {
 export const recast = async (env: Env, castHash: string): Promise<Result> => {
   const { WARPCAST_ACCESS_TOKEN: accessToken, WARPCAST_BASE_URL: baseUrl } = env
 
-  const body = { castHash }
-
-  const { result } = await fetchRequest<Response>(
+  const { result } = (await sdkRecastCast({
     baseUrl,
-    accessToken,
-    HttpRequestMethod.PUT,
-    '/v2/recasts',
-    { json: body },
-  )
+    auth: accessToken,
+    body: { castHash },
+    responseStyle: 'data',
+    throwOnError: true,
+  })) as unknown as Response
+
   return result
 }

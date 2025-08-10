@@ -1,4 +1,4 @@
-import { fetchRequest, HttpRequestMethod } from '@/services/warpcast/index'
+import { getVerifications as sdkGetVerifications } from '@nekofar/warpcast'
 import { Verification } from '@/services/warpcast/types'
 import { NonNegative } from 'type-fest'
 
@@ -17,20 +17,15 @@ export const getVerifications = async (
   limit: NonNegative<number> = 25,
 ): Promise<Result> => {
   const { WARPCAST_ACCESS_TOKEN: accessToken, WARPCAST_BASE_URL: baseUrl } = env
+  void cursor
 
-  const params = {
-    fid: fid.toString(),
-    ...(cursor && { cursor }),
-    limit: limit.toString(),
-  }
-
-  const { result } = await fetchRequest<Response>(
+  const { result } = (await sdkGetVerifications({
     baseUrl,
-    accessToken,
-    HttpRequestMethod.GET,
-    '/v2/verifications',
-    { params },
-  )
+    auth: accessToken,
+    query: { fid, limit },
+    responseStyle: 'data',
+    throwOnError: true,
+  })) as unknown as Response
 
   return result
 }

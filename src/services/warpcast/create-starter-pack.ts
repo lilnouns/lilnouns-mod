@@ -12,6 +12,9 @@ interface Response {
 /**
  * Asynchronously creates a new Starter Pack.
  *
+ * NOTE: This endpoint is not currently exposed by @nekofar/warpcast SDK (v2.0.0-alpha.42),
+ * so we use the legacy fetchRequest helper against Warpcast HTTP API.
+ *
  * This function makes a POST request to the `/v2/starter-pack` endpoint to create a new Starter Pack
  * using the given parameters. It utilizes the environment configuration for authentication and
  * base URL.

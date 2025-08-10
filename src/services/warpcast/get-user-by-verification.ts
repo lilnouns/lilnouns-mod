@@ -1,4 +1,4 @@
-import { fetchRequest, HttpRequestMethod } from '@/services/warpcast/index'
+import { getUserByVerificationAddress as sdkGetUserByVerificationAddress } from '@nekofar/warpcast'
 import { User } from '@/services/warpcast/types'
 
 interface Result {
@@ -15,15 +15,13 @@ export const getUserByVerification = async (
 ): Promise<Result> => {
   const { WARPCAST_ACCESS_TOKEN: accessToken, WARPCAST_BASE_URL: baseUrl } = env
 
-  const params = { address }
-
-  const { result } = await fetchRequest<Response>(
+  const { result } = (await sdkGetUserByVerificationAddress({
     baseUrl,
-    accessToken,
-    HttpRequestMethod.GET,
-    '/v2/user-by-verification',
-    { params },
-  )
+    auth: accessToken,
+    query: { address },
+    responseStyle: 'data',
+    throwOnError: true,
+  })) as unknown as Response
 
   return result
 }

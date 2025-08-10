@@ -1,4 +1,4 @@
-import { fetchRequest, HttpRequestMethod } from '@/services/warpcast/index'
+import { getUserByFid as sdkGetUserByFid } from '@nekofar/warpcast'
 import { User } from '@/services/warpcast/types'
 
 interface Result {
@@ -17,25 +17,23 @@ interface Response {
 }
 
 /**
- * Fetches a user by their FID (Farcaster ID) from the Warpcast API.
+ * Fetches a user by their FID (Farcaster ID) using the Warpcast SDK.
  * @async
  * @param env - The environment object containing API configuration, including `WARPCAST_ACCESS_TOKEN` and `WARPCAST_BASE_URL`.
  * @param fid - The Farcaster ID of the user to retrieve.
  * @returns A promise resolving to the result containing the user data.
- * @throws Will throw an error if the fetch request fails or the API response indicates an error.
+ * @throws Will throw an error if the SDK call fails.
  */
 export const getUserByFid = async (env: Env, fid: number): Promise<Result> => {
   const { WARPCAST_ACCESS_TOKEN: accessToken, WARPCAST_BASE_URL: baseUrl } = env
 
-  const params = { fid: fid.toString() }
-
-  const { result } = await fetchRequest<Response>(
+  const { result } = (await sdkGetUserByFid({
     baseUrl,
-    accessToken,
-    HttpRequestMethod.GET,
-    `/v2/user-by-fid`,
-    { params },
-  )
+    auth: accessToken,
+    query: { fid },
+    responseStyle: 'data',
+    throwOnError: true,
+  })) as unknown as Response
 
   return result
 }

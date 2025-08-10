@@ -1,4 +1,4 @@
-import { fetchRequest, HttpRequestMethod } from '@/services/warpcast/index'
+import { getUserByUsername as sdkGetUserByUsername } from '@nekofar/warpcast'
 import { User } from '@/services/warpcast/types'
 
 interface Result {
@@ -17,7 +17,7 @@ interface Response {
 }
 
 /**
- * Retrieves user information based on the provided username.
+ * Retrieves user information based on the provided username using the SDK.
  * @param env - The environment object containing necessary configuration values.
  * @param username - The username for which the user information is to be fetched.
  * @returns A promise that resolves to the result containing user information.
@@ -28,15 +28,13 @@ export const getUserByUsername = async (
 ): Promise<Result> => {
   const { WARPCAST_ACCESS_TOKEN: accessToken, WARPCAST_BASE_URL: baseUrl } = env
 
-  const params = { username }
-
-  const { result } = await fetchRequest<Response>(
+  const { result } = (await sdkGetUserByUsername({
     baseUrl,
-    accessToken,
-    HttpRequestMethod.GET,
-    `/v2/user-by-username`,
-    { params },
-  )
+    auth: accessToken,
+    query: { username },
+    responseStyle: 'data',
+    throwOnError: true,
+  })) as unknown as Response
 
   return result
 }

@@ -1,4 +1,4 @@
-import { fetchRequest, HttpRequestMethod } from '@/services/warpcast/index'
+import { getFeedItems as sdkGetFeedItems } from '@nekofar/warpcast'
 import { Item } from './types'
 
 interface Result {
@@ -28,15 +28,13 @@ export const getFeedItems = async (
 ): Promise<Result> => {
   const { WARPCAST_ACCESS_TOKEN: accessToken, WARPCAST_BASE_URL: baseUrl } = env
 
-  const body = { feedKey, feedType, excludeItemIdPrefixes }
-
-  const { result } = await fetchRequest<Response>(
+  const { result } = (await sdkGetFeedItems({
     baseUrl,
-    accessToken,
-    HttpRequestMethod.POST,
-    '/v2/feed-items',
-    { json: { ...body } },
-  )
+    auth: accessToken,
+    body: { feedKey, feedType, excludeItemIdPrefixes },
+    responseStyle: 'data',
+    throwOnError: true,
+  })) as unknown as Response
 
   return result
 }

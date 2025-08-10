@@ -10,6 +10,9 @@ interface Response {
 
 /**
  * Updates a starter pack on the Warpcast platform.
+ *
+ * NOTE: This endpoint is not currently exposed by @nekofar/warpcast SDK (v2.0.0-alpha.42),
+ * so we use the legacy fetchRequest helper against Warpcast HTTP API.
  * @param env - The environment variables required for the API request, including access tokens and base URLs.
  * @param id - The unique identifier of the starter pack to update.
  * @param name - The new name of the starter pack.

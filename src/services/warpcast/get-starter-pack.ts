@@ -1,4 +1,4 @@
-import { fetchRequest, HttpRequestMethod } from '@/services/warpcast/index'
+import { getStarterPack as sdkGetStarterPack } from '@nekofar/warpcast'
 import { StarterPack } from '@/services/warpcast/types'
 
 interface Result {
@@ -19,15 +19,13 @@ interface Response {
 export const getStarterPack = async (env: Env, id: string): Promise<Result> => {
   const { WARPCAST_ACCESS_TOKEN: accessToken, WARPCAST_BASE_URL: baseUrl } = env
 
-  const params = { id }
-
-  const { result } = await fetchRequest<Response>(
+  const { result } = (await sdkGetStarterPack({
     baseUrl,
-    accessToken,
-    HttpRequestMethod.GET,
-    '/v2/starter-pack',
-    { params },
-  )
+    auth: accessToken,
+    query: { id },
+    responseStyle: 'data',
+    throwOnError: true,
+  })) as unknown as Response
 
   return result
 }

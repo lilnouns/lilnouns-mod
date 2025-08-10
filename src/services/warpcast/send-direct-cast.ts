@@ -1,4 +1,4 @@
-import { fetchRequest, HttpRequestMethod } from '@/services/warpcast/index'
+import { sendDirectCast as sdkSendDirectCast } from '@nekofar/warpcast'
 
 interface Result {
   success: boolean
@@ -24,19 +24,13 @@ export const sendDirectCast = async (
 ): Promise<Result> => {
   const { WARPCAST_API_KEY: apiKey, WARPCAST_BASE_URL: baseUrl } = env
 
-  const body = {
-    recipientFid,
-    message,
-    idempotencyKey,
-  }
-
-  const { result } = await fetchRequest<Response>(
+  const { result } = (await sdkSendDirectCast({
     baseUrl,
-    apiKey,
-    HttpRequestMethod.PUT,
-    '/v2/ext-send-direct-cast',
-    { json: body },
-  )
+    auth: apiKey,
+    body: { recipientFid, message, idempotencyKey },
+    responseStyle: 'data',
+    throwOnError: true,
+  })) as unknown as Response
 
   return result
 }

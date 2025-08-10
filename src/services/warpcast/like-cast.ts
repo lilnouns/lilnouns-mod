@@ -1,4 +1,4 @@
-import { fetchRequest, HttpRequestMethod } from '@/services/warpcast/index'
+import { likeCast as sdkLikeCast } from '@nekofar/warpcast'
 import { Like } from '@/services/warpcast/types'
 
 interface Result {
@@ -18,15 +18,13 @@ interface Response {
 export const likeCast = async (env: Env, castHash: string): Promise<Result> => {
   const { WARPCAST_ACCESS_TOKEN: accessToken, WARPCAST_BASE_URL: baseUrl } = env
 
-  const body = { castHash }
-
-  const { result } = await fetchRequest<Response>(
+  const { result } = (await sdkLikeCast({
     baseUrl,
-    accessToken,
-    HttpRequestMethod.PUT,
-    '/v2/cast-likes',
-    { json: body },
-  )
+    auth: accessToken,
+    body: { castHash },
+    responseStyle: 'data',
+    throwOnError: true,
+  })) as unknown as Response
 
   return result
 }

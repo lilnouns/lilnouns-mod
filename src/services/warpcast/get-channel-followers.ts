@@ -1,4 +1,4 @@
-import { fetchRequest, HttpRequestMethod } from '@/services/warpcast/index'
+import { getChannelFollowers as sdkGetChannelFollowers } from '@nekofar/warpcast'
 import { User } from '@/services/warpcast/types'
 import { IntRange } from 'type-fest'
 
@@ -31,28 +31,14 @@ export const getChannelFollowers = async (
   limit: IntRange<1, 101> = 15,
 ): Promise<Result> => {
   const { WARPCAST_ACCESS_TOKEN: accessToken, WARPCAST_BASE_URL: baseUrl } = env
-  let newCursor = cursor ?? ''
-  let users: User[] = []
-  let response: Response
 
-  do {
-    const params = {
-      channelKey,
-      cursor: newCursor,
-      limit: String(limit),
-    }
+  const { result, next } = (await sdkGetChannelFollowers({
+    baseUrl,
+    auth: accessToken,
+    query: { channelId: channelKey, cursor, limit },
+    responseStyle: 'data',
+    throwOnError: true,
+  })) as unknown as Response
 
-    response = await fetchRequest<Response>(
-      baseUrl,
-      accessToken,
-      HttpRequestMethod.GET,
-      '/v2/channel-followers',
-      { params },
-    )
-
-    users = [...users, ...response.result.users]
-    newCursor = response.next ? response.next.cursor : ''
-  } while (response.next && users.length < limit)
-
-  return { users: users.slice(0, limit), cursor: newCursor }
+  return { users: result.users, cursor: next?.cursor }
 }

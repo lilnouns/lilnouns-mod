@@ -1,4 +1,4 @@
-import { fetchRequest, HttpRequestMethod } from '@/services/warpcast/index'
+import { getDirectCastInbox as sdkGetDirectCastInbox } from '@nekofar/warpcast'
 import { Conversation } from '@/services/warpcast/types'
 import { IntRange } from 'type-fest'
 
@@ -17,7 +17,7 @@ interface Response {
 }
 
 /**
- * Retrieves direct cast conversations from the server.
+ * Retrieves direct cast conversations using Warpcast SDK.
  * @async
  * @param env - The environment variables.
  * @param [limit] - The maximum number of conversations to retrieve.
@@ -30,33 +30,39 @@ export const getDirectCastConversations = async (
   env: Env,
   limit: IntRange<1, 101> = 15,
   category: 'default' | 'request' = 'default',
-  filter?: 'unread' | 'group',
+  filter?: 'unread' | 'group' | '1-1',
   cursor?: string,
 ): Promise<Result> => {
   const { WARPCAST_ACCESS_TOKEN: accessToken, WARPCAST_BASE_URL: baseUrl } = env
   let newCursor = cursor ?? ''
   let conversations: Conversation[] = []
-  let response: Response
+  let resultPage: Response
+
+  // Map legacy "request" to SDK's "requests"; keep signature backward compatible
+  const mappedCategory = (category === 'request' ? 'requests' : category) as
+    | 'default'
+    | 'requests'
+    | 'spam'
 
   do {
-    const params = {
-      cursor: newCursor,
-      limit: String(limit),
-      category,
-      ...(filter && { filter }),
-    }
-
-    response = await fetchRequest<Response>(
+    const { result, next } = (await sdkGetDirectCastInbox({
       baseUrl,
-      accessToken,
-      HttpRequestMethod.GET,
-      '/v2/direct-cast-conversation-list',
-      { params },
-    )
+      auth: accessToken,
+      query: {
+        ...(newCursor && { cursor: newCursor }),
+        limit,
+        category: mappedCategory,
+        ...(filter && { filter }),
+      },
+      responseStyle: 'data',
+      throwOnError: true,
+    })) as unknown as Response
 
-    conversations = [...conversations, ...response.result.conversations]
-    newCursor = response.next ? response.next.cursor : ''
-  } while (response.next && conversations.length < limit)
+    resultPage = { result, next }
+
+    conversations = [...conversations, ...result.conversations]
+    newCursor = next ? next.cursor : ''
+  } while (resultPage.next && conversations.length < limit)
 
   return { conversations: conversations.slice(0, limit), cursor: newCursor }
 }

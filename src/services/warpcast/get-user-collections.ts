@@ -18,6 +18,9 @@ interface Response {
 
 /**
  * Retrieves the collections of a user by their Farcaster ID.
+ *
+ * NOTE: This endpoint is not currently exposed by @nekofar/warpcast SDK (v2.0.0-alpha.42),
+ * so we use the legacy fetchRequest helper against Warpcast HTTP API.
  * @param env - The environment variables containing access token and base URL.
  * @param ownerFid - The Farcaster ID of the user.
  * @param [cursor] - The cursor to paginate through the collections.

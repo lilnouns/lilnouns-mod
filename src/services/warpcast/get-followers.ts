@@ -1,4 +1,4 @@
-import { fetchRequest, HttpRequestMethod } from '@/services/warpcast/index'
+import { getFollowers as sdkGetFollowers } from '@nekofar/warpcast'
 import { User } from '@/services/warpcast/types'
 import { IntRange } from 'type-fest'
 
@@ -11,16 +11,13 @@ interface Response {
   result: {
     users: User[]
   }
-  next?: {
-    cursor: string
-  }
 }
 
 /**
  * Retrieves followers of a user.
  * @param env - The environment variables containing access token and base URL.
  * @param fid - The ID of the user for whom to retrieve followers.
- * @param [cursor] - The cursor to paginate through the followers.
+ * @param [cursor] - The cursor to paginate through the followers (ignored; SDK returns first page only).
  * @param [limit] - The maximum number of followers to retrieve (default: 25).
  * @returns - A promise that resolves to an object containing the retrieved users and the current cursor.
  */
@@ -31,28 +28,15 @@ export const getFollowers = async (
   limit: IntRange<1, 101> = 25,
 ): Promise<Result> => {
   const { WARPCAST_ACCESS_TOKEN: accessToken, WARPCAST_BASE_URL: baseUrl } = env
-  let newCursor = cursor ?? ''
-  let users: User[] = []
-  let response: Response
+  void cursor
 
-  do {
-    const params = {
-      fid: fid.toString(),
-      cursor: newCursor,
-      limit: String(limit),
-    }
+  const { result } = (await sdkGetFollowers({
+    baseUrl,
+    auth: accessToken,
+    query: { fid, limit },
+    responseStyle: 'data',
+    throwOnError: true,
+  })) as unknown as Response
 
-    response = await fetchRequest<Response>(
-      baseUrl,
-      accessToken,
-      HttpRequestMethod.GET,
-      '/v2/followers',
-      { params },
-    )
-
-    users = [...users, ...response.result.users]
-    newCursor = response.next ? response.next.cursor : ''
-  } while (response.next && users.length < limit)
-
-  return { users: users.slice(0, limit), cursor: newCursor }
+  return { users: result.users, cursor: undefined }
 }
