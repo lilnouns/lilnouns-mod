@@ -1,5 +1,5 @@
-import { sendDirectCast } from '@/services/warpcast/send-direct-cast'
 import { logger } from '@/utilities/logger'
+import { sendDirectCast } from '@nekofar/warpcast'
 
 interface DirectCastBody {
   type: 'direct-cast'
@@ -35,18 +35,17 @@ async function handleDirectCastTask(env: Env, data: DirectCastBody['data']) {
   logger.info({ recipientFid, idempotencyKey }, 'Sending direct cast message.')
 
   try {
-    const result = await sendDirectCast(
-      env,
-      recipientFid,
-      castMessage,
-      idempotencyKey,
-    )
+    const { data } = await sendDirectCast({
+      auth: () => env.WARPCAST_API_KEY,
+      body: {
+        recipientFid,
+        message: castMessage,
+        idempotencyKey,
+      },
+      throwOnError: true,
+    })
 
-    if (!result.success) {
-      throw new Error(`Non-successful result: ${JSON.stringify(result)}`)
-    }
-
-    logger.info({ recipientFid, result }, 'Direct cast sent successfully.')
+    logger.info({ recipientFid, data }, 'Direct cast sent successfully.')
   } catch (error) {
     logger.error({ recipientFid, error }, 'Failed to send direct cast message.')
     throw error

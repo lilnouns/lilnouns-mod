@@ -1,8 +1,8 @@
-import { getMe } from '@/services/warpcast/get-me'
 import { logger } from '@/utilities/logger'
 import { DateTime, WeekdayNumbers } from 'luxon'
 import { createHash } from 'node:crypto'
 import { chunk, pipe } from 'remeda'
+import { getCurrentUser } from '@nekofar/warpcast'
 
 interface DirectCastBody {
   type: 'direct-cast'
@@ -30,7 +30,16 @@ export async function eventsHandler(env: Env) {
   const cacheKey = 'lilnouns-farcaster-voters'
 
   logger.info('Fetching current user data...')
-  const { user } = await getMe(env)
+  const { data: useData, error: userError } = await getCurrentUser({
+    auth: () => env.WARPCAST_ACCESS_TOKEN,
+  })
+
+  if (userError) {
+    logger.error({ error: userError }, 'Failed to get current user')
+    return
+  }
+
+  const user = useData.result.user
 
   logger.info('Fetching Farcaster voters from KV...')
   const farcasterVoters =

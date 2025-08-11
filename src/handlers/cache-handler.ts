@@ -5,7 +5,7 @@ import { fetchVoters } from '@/services/lilnouns/fetch-voters'
 import { logger } from '@/utilities/logger'
 import { getUserByVerificationAddress } from '@nekofar/warpcast'
 import { DateTime } from 'luxon'
-import { first, map, pipe, sortBy, unique } from 'remeda'
+import { chunk, first, isNumber, map, pipe, sortBy, unique } from 'remeda'
 
 const expirationTtl = 60 * 60 * 24
 
@@ -108,45 +108,70 @@ async function fetchAndStoreFarcasterUsers(env: Env): Promise<void> {
 
   const addresses = pipe([...holdersAddresses, ...delegatesAddresses], unique())
 
-  for (const address of addresses) {
-    logger.debug({ address }, 'Fetching Farcaster user for address.')
-    const { data, error } = await getUserByVerificationAddress({
-      auth: () => env.WARPCAST_ACCESS_TOKEN,
-      query: {
-        address,
-      },
-    })
+  // Process in parallel batches to control concurrency
+  const batchSize = 20
+  const addressBatches = pipe(addresses, chunk(batchSize))
+  const collectedFids: number[] = []
 
-    if (error) {
-      const primaryError = first(error.errors ?? [])
-      const isNoFIDError = primaryError?.message?.startsWith(
-        'No FID has connected',
-      )
-      if (isNoFIDError) {
-        logger.warn({ error, address }, 'No FID has connected')
-      } else {
-        logger.error({ error, address }, 'Error fetching Farcaster user.')
+  // Process each batch: concurrently fetch Farcaster users for addresses,
+  // map to FIDs (or null), then append numeric FIDs to collectedFids.
+  for (const group of addressBatches) {
+    const results = await Promise.all(
+      group.map(async (address) => {
+        logger.debug({ address }, 'Fetching Farcaster user for address.')
+        const { data, error } = await getUserByVerificationAddress({
+          auth: () => env.WARPCAST_ACCESS_TOKEN,
+          query: { address },
+        })
+
+        // Handle API error: warn for an expected “No FID has connected” case,
+        // otherwise log error, then skip this address by returning null.
+        if (error) {
+          const primaryError = first(error.errors ?? [])
+          const isNoFIDError = primaryError?.message?.startsWith(
+            'No FID has connected',
+          )
+          if (isNoFIDError) {
+            logger.warn({ address }, 'No FID has connected')
+          } else {
+            logger.error({ error, address }, 'Error fetching Farcaster user.')
+          }
+          return null
+        }
+
+        // Validate the API response: if a numeric FID exists, log and return it;
+        // otherwise log absence and return null.
+        const fid = data.result.user?.fid
+        if (typeof fid === 'number') {
+          logger.debug({ fid, address }, 'Farcaster user fetched.')
+          return fid
+        } else {
+          logger.debug({ address }, 'No Farcaster user found for address.')
+          return null
+        }
+      }),
+    )
+
+    // Filter out null values and add numeric FIDs to collectedFids.
+    for (const fid of results) {
+      if (isNumber(fid)) {
+        collectedFids.push(fid)
       }
-      continue
-    }
-
-    const fid = data.result.user?.fid
-    if (typeof fid === 'number') {
-      farcasterUsers = pipe(
-        [...farcasterUsers, fid],
-        unique(),
-        sortBy((x) => x),
-      )
-      logger.debug({ fid, address }, 'Farcaster user fetched.')
-    } else {
-      logger.debug({ address }, 'No Farcaster user found for address.')
     }
   }
 
+  // Sort and deduplicate collectedFids, then store in KV.
+  farcasterUsers = pipe(
+    [...farcasterUsers, ...collectedFids],
+    unique(),
+    sortBy((x) => x),
+  )
   logger.debug(
     { users: farcasterUsers },
     'Fetched and processed Farcaster users.',
   )
+
+  // Store the sorted and deduplicated list of FIDs in KV.
   await kv.put(cacheKey, JSON.stringify(farcasterUsers), { expirationTtl })
 }
 
@@ -186,45 +211,75 @@ async function fetchAndStoreFarcasterVoters(env: Env) {
     map((voter) => voter.id),
   )
 
-  for (const address of addresses) {
-    logger.debug({ address }, 'Fetching Farcaster user for voter address.')
-    const { data, error } = await getUserByVerificationAddress({
-      auth: () => env.WARPCAST_ACCESS_TOKEN,
-      query: {
-        address,
-      },
-    })
+  // Process in parallel batches to control concurrency
+  const batchSize = 20
+  const addressBatches = pipe(addresses, chunk(batchSize))
+  const collectedFids: number[] = []
 
-    if (error) {
-      const primaryError = first(error.errors ?? [])
-      const isNoFIDError = primaryError?.message?.startsWith(
-        'No FID has connected',
-      )
-      if (isNoFIDError) {
-        logger.warn({ error, address }, 'No FID has connected')
-      } else {
-        logger.error({ error, address }, 'Error fetching Farcaster user.')
+  // Process each batch: concurrently fetch Farcaster users for addresses,
+  // map to FIDs (or null), then append numeric FIDs to collectedFids.
+  for (const group of addressBatches) {
+    const results = await Promise.all(
+      group.map(async (address) => {
+        logger.debug({ address }, 'Fetching Farcaster user for voter address.')
+
+        // Fetch Farcaster user data for the voter address.
+        const { data, error } = await getUserByVerificationAddress({
+          auth: () => env.WARPCAST_ACCESS_TOKEN,
+          query: { address },
+        })
+
+        // Handle error cases from Farcaster API: If error indicates no FID connection,
+        // log a warning since this is an expected case. For other errors, log them
+        // as errors. In both cases, skip processing this address by returning null.
+        if (error) {
+          const primaryError = first(error.errors ?? [])
+          const isNoFIDError = primaryError?.message?.startsWith(
+            'No FID has connected',
+          )
+          if (isNoFIDError) {
+            logger.warn({ address }, 'No FID has connected')
+          } else {
+            logger.error({ error, address }, 'Error fetching Farcaster user.')
+          }
+          return null
+        }
+
+        // Validate the API response: if a numeric FID exists, log and return it;
+        // otherwise log absence and return null.
+        const fid = data.result.user?.fid
+        if (typeof fid === 'number') {
+          logger.debug({ fid, address }, 'Farcaster user fetched for voter.')
+          return fid
+        } else {
+          logger.debug(
+            { address },
+            'No Farcaster user found for voter address.',
+          )
+          return null
+        }
+      }),
+    )
+
+    for (const fid of results) {
+      if (isNumber(fid)) {
+        collectedFids.push(fid)
       }
-      continue
-    }
-
-    const fid = data.result.user?.fid
-    if (typeof fid === 'number') {
-      farcasterVoters = pipe(
-        [...farcasterVoters, fid],
-        unique(),
-        sortBy((x) => x),
-      )
-      logger.debug({ fid, address }, 'Farcaster user fetched for voter.')
-    } else {
-      logger.debug({ address }, 'No Farcaster user found for voter address.')
     }
   }
 
+  // Sort and deduplicate collectedFids, then store in KV.
+  farcasterVoters = pipe(
+    [...farcasterVoters, ...collectedFids],
+    unique(),
+    sortBy((x) => x),
+  )
   logger.debug(
     { voters: farcasterVoters },
     'Fetched and processed Farcaster voters.',
   )
+
+  // Store the sorted and deduplicated list of FIDs in KV.
   await kv.put(cacheKey, JSON.stringify(farcasterVoters), { expirationTtl })
 }
 
