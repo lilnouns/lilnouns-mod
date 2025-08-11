@@ -22,7 +22,7 @@ interface DirectCastBody {
  * @param timestamp - The timestamp to be converted.
  * @returns A relative time string.
  */
-function toRelativeTime(timestamp: number): string {
+function toRelativeTime(timestamp: number) {
   return DateTime.fromSeconds(timestamp).toRelative({
     style: 'long',
     unit: ['hours', 'minutes'],
