@@ -187,36 +187,37 @@ async function fetchAndStoreFarcasterVoters(env: Env) {
   )
 
   for (const address of addresses) {
-    try {
-      logger.debug({ address }, 'Fetching Farcaster user for voter address.')
-      const {
-        data: {
-          result: { user },
-        },
-      } = await getUserByVerificationAddress<true>({
-        auth: () => env.WARPCAST_ACCESS_TOKEN,
-        query: {
-          address,
-        },
-      })
-      const fid = user?.fid
-      if (typeof fid === 'number') {
-        farcasterVoters = pipe(
-          [...farcasterVoters, fid],
-          unique(),
-          sortBy((x) => x),
-        )
-        logger.debug({ fid, address }, 'Farcaster user fetched for voter.')
+    logger.debug({ address }, 'Fetching Farcaster user for voter address.')
+    const { data, error } = await getUserByVerificationAddress({
+      auth: () => env.WARPCAST_ACCESS_TOKEN,
+      query: {
+        address,
+      },
+    })
+
+    if (error) {
+      const primaryError = first(error.errors ?? [])
+      const isNoFIDError = primaryError?.message?.startsWith(
+        'No FID has connected',
+      )
+      if (isNoFIDError) {
+        logger.warn({ error, address }, 'No FID has connected')
       } else {
-        logger.debug({ address }, 'No Farcaster user found for voter address.')
+        logger.error({ error, address }, 'Error fetching Farcaster user.')
       }
-    } catch (error) {
-      if (
-        error instanceof Error &&
-        !error.message.startsWith('No FID has connected')
-      ) {
-        logger.error({ error }, 'Error fetching Farcaster voter.')
-      }
+      continue
+    }
+
+    const fid = data.result.user?.fid
+    if (typeof fid === 'number') {
+      farcasterVoters = pipe(
+        [...farcasterVoters, fid],
+        unique(),
+        sortBy((x) => x),
+      )
+      logger.debug({ fid, address }, 'Farcaster user fetched for voter.')
+    } else {
+      logger.debug({ address }, 'No Farcaster user found for voter address.')
     }
   }
 
