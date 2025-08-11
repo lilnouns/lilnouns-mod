@@ -1,6 +1,5 @@
-import { getMe } from '@/services/warpcast/get-me'
 import { logger } from '@/utilities/logger'
-import { getDirectCastInbox } from '@nekofar/warpcast'
+import { getCurrentUser, getDirectCastInbox } from '@nekofar/warpcast'
 import { createHash } from 'node:crypto'
 import {
   chunk,
@@ -112,7 +111,16 @@ async function handleMessages(env: Env) {
   )
 
   logger.info('Fetching current user data...')
-  const { user } = await getMe(env)
+  const { data: useData, error: userError } = await getCurrentUser({
+    auth: () => env.WARPCAST_ACCESS_TOKEN,
+  })
+
+  if (userError) {
+    logger.error({ error: userError }, 'Failed to get current user')
+    return
+  }
+
+  const user = useData.result.user
 
   logger.info('Fetching unread conversations...')
   const { data, error } = await getDirectCastInbox({

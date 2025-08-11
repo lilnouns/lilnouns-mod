@@ -1,9 +1,8 @@
 import { getBlockNumber } from '@/services/ethereum/get-block-number'
 import { getBlockTimestamp } from '@/services/ethereum/get-block-timestamp'
 import { getProposals } from '@/services/lilnouns/get-proposals'
-import { getMe } from '@/services/warpcast/get-me'
 import { logger } from '@/utilities/logger'
-import { getUserByVerificationAddress } from '@nekofar/warpcast'
+import { getCurrentUser, getUserByVerificationAddress } from '@nekofar/warpcast'
 import { DateTime } from 'luxon'
 import { createHash } from 'node:crypto'
 import { chunk, filter, first, isTruthy, pipe } from 'remeda'
@@ -38,7 +37,16 @@ export async function proposalHandler(env: Env) {
   const { KV: kv, QUEUE: queue } = env
 
   logger.info('Fetching current user data...')
-  const { user } = await getMe(env)
+  const { data: useData, error: userError } = await getCurrentUser({
+    auth: () => env.WARPCAST_ACCESS_TOKEN,
+  })
+
+  if (userError) {
+    logger.error({ error: userError }, 'Failed to get current user')
+    return
+  }
+
+  const user = useData.result.user
 
   logger.info('Fetching Farcaster users and subscribers from KV...')
   const farcasterUsers =
