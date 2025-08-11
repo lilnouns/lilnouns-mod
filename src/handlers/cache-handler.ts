@@ -262,7 +262,7 @@ async function fetchAndStoreFarcasterVoters(env: Env) {
     )
 
     for (const fid of results) {
-      if (typeof fid === 'number') {
+      if (isNumber(fid)) {
         collectedFids.push(fid)
       }
     }
