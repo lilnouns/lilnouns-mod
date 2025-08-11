@@ -2,6 +2,26 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.0.0-alpha.91] - 2025-08-11
+
+### 🚜 Refactor
+
+- *(handlers)* Remove redundant error property in logs
+- *(handlers)* Batch process Farcaster users and voters
+- *(handlers)* Enhance processing for Farcaster users
+- *(handlers)* Clarify Farcaster user batch processing
+- *(handlers)* Replace type check with `isNumber`
+- *(services)* Remove unused warpcast services
+- *(handlers)* Update `getCastLikes` integration
+- *(services)* Remove deprecated warpcast services
+- *(handlers)* Replace deprecated Warpcast conversation API
+- *(services)* Remove `getStarterPacks` function
+- *(handlers)* Switch to `getUserStarterPacks` API
+- *(handlers)* Update `starter-pack-handler` logic
+- *(handlers)* Update `channel-handler` logic
+- *(services)* Remove warpcast services
+- *(handlers)* Update to `@nekofar/warpcast` APIs
+
 ## [1.0.0-alpha.90] - 2025-08-11
 
 ### 🐛 Bug Fixes
