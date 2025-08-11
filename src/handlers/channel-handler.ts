@@ -1,10 +1,10 @@
 import { likeCast } from '@/services/warpcast'
-import { getCastLikes } from '@/services/warpcast/get-cast-likes'
 import { getFeedItems } from '@/services/warpcast/get-feed-items'
 import { getMe } from '@/services/warpcast/get-me'
 import { recast } from '@/services/warpcast/recast'
 import { logger } from '@/utilities/logger'
-import { map, pipe } from 'remeda'
+import { getCastLikes } from '@nekofar/warpcast'
+import { filter, map, pipe } from 'remeda'
 
 /**
  * Fetches recent feed items for a given feed key and type.
@@ -81,19 +81,29 @@ export async function handleNounsChannel(env: Env) {
     logger.debug({ item }, 'Processing item')
 
     // Fetch likes for the cast item
-    logger.debug({ hash: item.cast.hash }, 'Fetching likes for item')
-    const { likes } = await getCastLikes(env, item.cast.hash)
+    const castHash = item.cast.hash
+    logger.debug({ hash: castHash }, 'Fetching likes for item')
+    const { data, error } = await getCastLikes({
+      auth: () => env.WARPCAST_ACCESS_TOKEN,
+      query: {
+        castHash,
+      },
+    })
+
+    if (error) {
+      logger.error({ error, castHash }, 'Error fetching cast likes')
+      continue
+    }
+
     const likerIds = pipe(
-      likes,
-      map((like) => like.reactor.fid),
+      data.result?.likes ?? [],
+      map((like) => like.reactor?.fid),
+      filter((id): id is number => id !== undefined),
     )
 
     // Skip if the current user already liked the item
     if (likerIds.includes(user.fid)) {
-      logger.debug(
-        { hash: item.cast.hash },
-        'Current user already liked the item:',
-      )
+      logger.debug({ hash: castHash }, 'Current user already liked the item:')
       continue
     }
 
@@ -105,8 +115,8 @@ export async function handleNounsChannel(env: Env) {
       continue
     }
 
-    await likeCast(env, item.cast.hash)
-    logger.debug({ hash: item.cast.hash }, 'Liked cast')
+    await likeCast(env, castHash)
+    logger.debug({ hash: castHash }, 'Liked cast')
   }
 }
 
@@ -128,10 +138,22 @@ async function handleLilNounsChannel(env: Env) {
     const hash = item.cast.hash
 
     logger.debug({ hash }, 'Fetching likes for item')
-    const { likes } = await getCastLikes(env, hash)
+    const { data, error } = await getCastLikes({
+      auth: () => env.WARPCAST_ACCESS_TOKEN,
+      query: {
+        castHash: hash,
+      },
+    })
+
+    if (error) {
+      logger.error({ error, hash }, 'Error fetching cast likes')
+      continue
+    }
+
     const likerIds = pipe(
-      likes,
-      map((like) => like.reactor.fid),
+      data.result?.likes ?? [],
+      map((like) => like.reactor?.fid),
+      filter((id): id is number => id !== undefined),
     )
 
     // Skip if the current user already liked the item
@@ -158,9 +180,9 @@ async function handleLilNounsChannel(env: Env) {
 
     // If the item's cast has at least one reaction
     else if (item.cast.reactions.count > 0) {
-      for (const like of likes) {
+      for (const like of data.result?.likes ?? []) {
         // If the user who reacted is not the owner
-        if (like.reactor.username != owner) {
+        if (like.reactor?.username != owner) {
           continue
         }
 
