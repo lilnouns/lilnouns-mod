@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.0.0-alpha.89] - 2025-08-11
+
+### 🐛 Bug Fixes
+
+- *(handlers)* Handle null values in `proposalStart` and `proposalEnd`
+
+### 🚜 Refactor
+
+- *(logger)* Reorder `pino` imports for consistency
+- *(handlers)* Remove redundant return type annotation
+
 ## [1.0.0-alpha.88] - 2025-08-11
 
 ### 🚜 Refactor

@@ -22,7 +22,7 @@ interface DirectCastBody {
  * @param timestamp - The timestamp to be converted.
  * @returns A relative time string.
  */
-function toRelativeTime(timestamp: number): string {
+function toRelativeTime(timestamp: number) {
   return DateTime.fromSeconds(timestamp).toRelative({
     style: 'long',
     unit: ['hours', 'minutes'],
@@ -124,7 +124,7 @@ export async function proposalHandler(env: Env) {
 
     const message =
       `🗳️ Lil Nouns, your vote matters! Proposal #${id.toString()} is live.
-      Voting opened ${proposalStart} and closes ${proposalEnd}.
+      Voting opened ${proposalStart ?? 'unknown'} and closes ${proposalEnd ?? 'unknown'}.
       You haven't voted yet; make your voice count before time runs out! ⏳🚀
       https://lilnouns.camp/proposals/${id.toString()}`.replace(/\n\s+/g, '\n')
 

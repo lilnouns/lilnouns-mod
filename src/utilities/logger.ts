@@ -1,4 +1,4 @@
-import { LoggerOptions, pino } from 'pino'
+import pino, { LoggerOptions } from 'pino'
 
 interface LogObject {
   level: number
