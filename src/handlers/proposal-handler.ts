@@ -2,8 +2,8 @@ import { getBlockNumber } from '@/services/ethereum/get-block-number'
 import { getBlockTimestamp } from '@/services/ethereum/get-block-timestamp'
 import { getProposals } from '@/services/lilnouns/get-proposals'
 import { getMe } from '@/services/warpcast/get-me'
-import { getUserByVerification } from '@/services/warpcast/get-user-by-verification'
 import { logger } from '@/utilities/logger'
+import { getUserByVerificationAddress } from '@nekofar/warpcast'
 import { DateTime } from 'luxon'
 import { createHash } from 'node:crypto'
 import { chunk, filter, isTruthy, pipe } from 'remeda'
@@ -97,11 +97,18 @@ export async function proposalHandler(env: Env) {
     const voters = await Promise.all(
       votes.map(async (vote) => {
         try {
-          const { user } = await getUserByVerification(
-            env,
-            vote.voter.id.toLowerCase(),
-          )
-          return user.fid
+          const {
+            data: {
+              result: { user },
+            },
+          } = await getUserByVerificationAddress<true>({
+            auth: () => env.WARPCAST_ACCESS_TOKEN,
+            query: {
+              address: vote.voter.id.toLowerCase(),
+            },
+          })
+
+          return user?.fid
         } catch (error) {
           if (
             error instanceof Error &&
