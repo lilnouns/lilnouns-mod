@@ -110,7 +110,7 @@ export async function proposalHandler(env: Env) {
             'No FID has connected',
           )
           if (isNoFIDError) {
-            logger.warn({ error, address }, 'No FID has connected')
+            logger.warn({ address }, 'No FID has connected')
           } else {
             logger.error({ error, address }, 'Error fetching Farcaster user.')
           }
