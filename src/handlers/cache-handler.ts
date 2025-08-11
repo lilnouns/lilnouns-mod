@@ -5,7 +5,7 @@ import { fetchVoters } from '@/services/lilnouns/fetch-voters'
 import { logger } from '@/utilities/logger'
 import { getUserByVerificationAddress } from '@nekofar/warpcast'
 import { DateTime } from 'luxon'
-import { chunk, first, map, pipe, sortBy, unique } from 'remeda'
+import { chunk, first, isNumber, map, pipe, sortBy, unique } from 'remeda'
 
 const expirationTtl = 60 * 60 * 24
 
@@ -113,6 +113,7 @@ async function fetchAndStoreFarcasterUsers(env: Env): Promise<void> {
   const addressBatches = pipe(addresses, chunk(batchSize))
   const collectedFids: number[] = []
 
+  // Process each batch: concurrently fetch Farcaster users for addresses, map to FIDs (or null), then append numeric FIDs to collectedFids.
   for (const group of addressBatches) {
     const results = await Promise.all(
       group.map(async (address) => {
@@ -122,6 +123,7 @@ async function fetchAndStoreFarcasterUsers(env: Env): Promise<void> {
           query: { address },
         })
 
+        // Handle API error: warn for an expected “No FID has connected” case, otherwise log error, then skip this address by returning null.
         if (error) {
           const primaryError = first(error.errors ?? [])
           const isNoFIDError = primaryError?.message?.startsWith(
@@ -135,6 +137,7 @@ async function fetchAndStoreFarcasterUsers(env: Env): Promise<void> {
           return null
         }
 
+        // Validate the API response: if a numeric FID exists, log and return it; otherwise log absence and return null.
         const fid = data.result.user?.fid
         if (typeof fid === 'number') {
           logger.debug({ fid, address }, 'Farcaster user fetched.')
@@ -146,23 +149,26 @@ async function fetchAndStoreFarcasterUsers(env: Env): Promise<void> {
       }),
     )
 
+    // Filter out null values and add numeric FIDs to collectedFids.
     for (const fid of results) {
-      if (typeof fid === 'number') {
+      if (isNumber(fid)) {
         collectedFids.push(fid)
       }
     }
   }
 
+  // Sort and deduplicate collectedFids, then store in KV.
   farcasterUsers = pipe(
     [...farcasterUsers, ...collectedFids],
     unique(),
     sortBy((x) => x),
   )
-
   logger.debug(
     { users: farcasterUsers },
     'Fetched and processed Farcaster users.',
   )
+
+  // Store the sorted and deduplicated list of FIDs in KV.
   await kv.put(cacheKey, JSON.stringify(farcasterUsers), { expirationTtl })
 }
 
