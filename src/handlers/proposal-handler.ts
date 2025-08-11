@@ -2,11 +2,11 @@ import { getBlockNumber } from '@/services/ethereum/get-block-number'
 import { getBlockTimestamp } from '@/services/ethereum/get-block-timestamp'
 import { getProposals } from '@/services/lilnouns/get-proposals'
 import { getMe } from '@/services/warpcast/get-me'
-import { getUserByVerification } from '@/services/warpcast/get-user-by-verification'
 import { logger } from '@/utilities/logger'
+import { getUserByVerificationAddress } from '@nekofar/warpcast'
 import { DateTime } from 'luxon'
 import { createHash } from 'node:crypto'
-import { chunk, filter, isTruthy, pipe } from 'remeda'
+import { chunk, filter, first, isTruthy, pipe } from 'remeda'
 
 interface DirectCastBody {
   type: 'direct-cast'
@@ -96,24 +96,29 @@ export async function proposalHandler(env: Env) {
 
     const voters = await Promise.all(
       votes.map(async (vote) => {
-        try {
-          const { user } = await getUserByVerification(
-            env,
-            vote.voter.id.toLowerCase(),
+        const address = vote.voter.id.toLowerCase()
+        const { data, error } = await getUserByVerificationAddress({
+          auth: () => env.WARPCAST_ACCESS_TOKEN,
+          query: {
+            address,
+          },
+        })
+
+        if (error) {
+          const primaryError = first(error.errors ?? [])
+          const isNoFIDError = primaryError?.message?.startsWith(
+            'No FID has connected',
           )
-          return user.fid
-        } catch (error) {
-          if (
-            error instanceof Error &&
-            !error.message.startsWith('No FID has connected')
-          ) {
-            logger.error(
-              { error, voterId: vote.voter.id },
-              'Error fetching Farcaster user for voter.',
-            )
+          if (isNoFIDError) {
+            logger.warn({ error, address }, 'No FID has connected')
+          } else {
+            logger.error({ error, address }, 'Error fetching Farcaster user.')
           }
+
           return null
         }
+
+        return data.result.user?.fid
       }),
     ).then((results) => filter(results, isTruthy))
 
