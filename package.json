@@ -30,7 +30,7 @@
     "unicorn-magic": "0.3.0",
     "viem": "2.33.3",
     "wagmi": "2.16.1",
-    "zod": "4.0.14"
+    "zod": "4.0.17"
   },
   "devDependencies": {
     "@cloudflare/vitest-pool-workers": "0.8.61",
