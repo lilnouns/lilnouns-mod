@@ -2,6 +2,23 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.0.0-alpha.90] - 2025-08-11
+
+### 🐛 Bug Fixes
+
+- *(handlers)* Include `address` in error logging
+
+### 🚜 Refactor
+
+- *(handlers)* Replace Warpcast service with `@nekofar/warpcast`
+- *(handlers)* Improve error handling for Farcaster users
+- *(handlers)* Enhance error handling for Farcaster users
+- *(handlers)* Improve error handling for voters
+
+### ⚙️ Miscellaneous Tasks
+
+- Add `.prettierignore` to ignore `pnpm-lock.yaml`
+
 ## [1.0.0-alpha.89] - 2025-08-11
 
 ### 🐛 Bug Fixes
