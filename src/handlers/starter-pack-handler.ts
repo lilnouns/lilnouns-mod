@@ -1,7 +1,7 @@
 import { getMe } from '@/services/warpcast/get-me'
-import { getStarterPacks } from '@/services/warpcast/get-starter-packs'
 import { updateStarterPack } from '@/services/warpcast/update-starter-pack'
 import { logger } from '@/utilities/logger'
+import { getUserStarterPacks } from '@nekofar/warpcast'
 import { filter, first, pipe } from 'remeda'
 import { delay } from 'unicorn-magic'
 
@@ -105,10 +105,20 @@ async function getFarcasterVoters(env: Env): Promise<number[]> {
  * @returns The first matching starter pack or `null` if no match is found.
  */
 async function fetchFirstMatchingStarterPack(env: Env, fid: number) {
-  const { starterPacks } = await getStarterPacks(env, fid, 100)
+  const { data, error } = await getUserStarterPacks({
+    auth: () => env.WARPCAST_ACCESS_TOKEN,
+    query: {
+      fid,
+    },
+  })
+
+  if (error) {
+    logger.error({ error }, 'Failed to fetch starter packs')
+    return null
+  }
 
   return pipe(
-    starterPacks,
+    data.result.starterPacks,
     filter((pack) => pack.id.startsWith('Lil-Legends')),
     first(),
   )
