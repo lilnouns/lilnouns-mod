@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.0.0-alpha.88] - 2025-08-11
+
+### 🚜 Refactor
+
+- *(handlers)* Remove unused `eventsHandler` import
+
+### ⚙️ Miscellaneous Tasks
+
+- *(gitignore)* Update ignore patterns for docs
+
 ## [1.0.0-alpha.87] - 2025-07-27
 
 ### 🚀 Features
