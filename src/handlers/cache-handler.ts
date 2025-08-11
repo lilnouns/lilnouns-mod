@@ -5,7 +5,7 @@ import { fetchVoters } from '@/services/lilnouns/fetch-voters'
 import { logger } from '@/utilities/logger'
 import { getUserByVerificationAddress } from '@nekofar/warpcast'
 import { DateTime } from 'luxon'
-import { first, map, pipe, sortBy, unique } from 'remeda'
+import { chunk, first, map, pipe, sortBy, unique } from 'remeda'
 
 const expirationTtl = 60 * 60 * 24
 
@@ -108,40 +108,56 @@ async function fetchAndStoreFarcasterUsers(env: Env): Promise<void> {
 
   const addresses = pipe([...holdersAddresses, ...delegatesAddresses], unique())
 
-  for (const address of addresses) {
-    logger.debug({ address }, 'Fetching Farcaster user for address.')
-    const { data, error } = await getUserByVerificationAddress({
-      auth: () => env.WARPCAST_ACCESS_TOKEN,
-      query: {
-        address,
-      },
-    })
+  // Process in parallel batches to control concurrency
+  const batchSize = 20
+  const addressBatches = pipe(addresses, chunk(batchSize))
+  const collectedFids: number[] = []
 
-    if (error) {
-      const primaryError = first(error.errors ?? [])
-      const isNoFIDError = primaryError?.message?.startsWith(
-        'No FID has connected',
-      )
-      if (isNoFIDError) {
-        logger.warn({ address }, 'No FID has connected')
-      } else {
-        logger.error({ error, address }, 'Error fetching Farcaster user.')
+  for (const group of addressBatches) {
+    const results = await Promise.all(
+      group.map(async (address) => {
+        logger.debug({ address }, 'Fetching Farcaster user for address.')
+        const { data, error } = await getUserByVerificationAddress({
+          auth: () => env.WARPCAST_ACCESS_TOKEN,
+          query: { address },
+        })
+
+        if (error) {
+          const primaryError = first(error.errors ?? [])
+          const isNoFIDError = primaryError?.message?.startsWith(
+            'No FID has connected',
+          )
+          if (isNoFIDError) {
+            logger.warn({ address }, 'No FID has connected')
+          } else {
+            logger.error({ error, address }, 'Error fetching Farcaster user.')
+          }
+          return null
+        }
+
+        const fid = data.result.user?.fid
+        if (typeof fid === 'number') {
+          logger.debug({ fid, address }, 'Farcaster user fetched.')
+          return fid
+        } else {
+          logger.debug({ address }, 'No Farcaster user found for address.')
+          return null
+        }
+      }),
+    )
+
+    for (const fid of results) {
+      if (typeof fid === 'number') {
+        collectedFids.push(fid)
       }
-      continue
-    }
-
-    const fid = data.result.user?.fid
-    if (typeof fid === 'number') {
-      farcasterUsers = pipe(
-        [...farcasterUsers, fid],
-        unique(),
-        sortBy((x) => x),
-      )
-      logger.debug({ fid, address }, 'Farcaster user fetched.')
-    } else {
-      logger.debug({ address }, 'No Farcaster user found for address.')
     }
   }
+
+  farcasterUsers = pipe(
+    [...farcasterUsers, ...collectedFids],
+    unique(),
+    sortBy((x) => x),
+  )
 
   logger.debug(
     { users: farcasterUsers },
@@ -186,40 +202,59 @@ async function fetchAndStoreFarcasterVoters(env: Env) {
     map((voter) => voter.id),
   )
 
-  for (const address of addresses) {
-    logger.debug({ address }, 'Fetching Farcaster user for voter address.')
-    const { data, error } = await getUserByVerificationAddress({
-      auth: () => env.WARPCAST_ACCESS_TOKEN,
-      query: {
-        address,
-      },
-    })
+  // Process in parallel batches to control concurrency
+  const batchSize = 20
+  const addressBatches = pipe(addresses, chunk(batchSize))
+  const collectedFids: number[] = []
 
-    if (error) {
-      const primaryError = first(error.errors ?? [])
-      const isNoFIDError = primaryError?.message?.startsWith(
-        'No FID has connected',
-      )
-      if (isNoFIDError) {
-        logger.warn({ address }, 'No FID has connected')
-      } else {
-        logger.error({ error, address }, 'Error fetching Farcaster user.')
+  for (const group of addressBatches) {
+    const results = await Promise.all(
+      group.map(async (address) => {
+        logger.debug({ address }, 'Fetching Farcaster user for voter address.')
+        const { data, error } = await getUserByVerificationAddress({
+          auth: () => env.WARPCAST_ACCESS_TOKEN,
+          query: { address },
+        })
+
+        if (error) {
+          const primaryError = first(error.errors ?? [])
+          const isNoFIDError = primaryError?.message?.startsWith(
+            'No FID has connected',
+          )
+          if (isNoFIDError) {
+            logger.warn({ address }, 'No FID has connected')
+          } else {
+            logger.error({ error, address }, 'Error fetching Farcaster user.')
+          }
+          return null
+        }
+
+        const fid = data.result.user?.fid
+        if (typeof fid === 'number') {
+          logger.debug({ fid, address }, 'Farcaster user fetched for voter.')
+          return fid
+        } else {
+          logger.debug(
+            { address },
+            'No Farcaster user found for voter address.',
+          )
+          return null
+        }
+      }),
+    )
+
+    for (const fid of results) {
+      if (typeof fid === 'number') {
+        collectedFids.push(fid)
       }
-      continue
-    }
-
-    const fid = data.result.user?.fid
-    if (typeof fid === 'number') {
-      farcasterVoters = pipe(
-        [...farcasterVoters, fid],
-        unique(),
-        sortBy((x) => x),
-      )
-      logger.debug({ fid, address }, 'Farcaster user fetched for voter.')
-    } else {
-      logger.debug({ address }, 'No Farcaster user found for voter address.')
     }
   }
+
+  farcasterVoters = pipe(
+    [...farcasterVoters, ...collectedFids],
+    unique(),
+    sortBy((x) => x),
+  )
 
   logger.debug(
     { voters: farcasterVoters },
