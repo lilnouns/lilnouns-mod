@@ -113,7 +113,8 @@ async function fetchAndStoreFarcasterUsers(env: Env): Promise<void> {
   const addressBatches = pipe(addresses, chunk(batchSize))
   const collectedFids: number[] = []
 
-  // Process each batch: concurrently fetch Farcaster users for addresses, map to FIDs (or null), then append numeric FIDs to collectedFids.
+  // Process each batch: concurrently fetch Farcaster users for addresses,
+  // map to FIDs (or null), then append numeric FIDs to collectedFids.
   for (const group of addressBatches) {
     const results = await Promise.all(
       group.map(async (address) => {
@@ -123,7 +124,8 @@ async function fetchAndStoreFarcasterUsers(env: Env): Promise<void> {
           query: { address },
         })
 
-        // Handle API error: warn for an expected “No FID has connected” case, otherwise log error, then skip this address by returning null.
+        // Handle API error: warn for an expected “No FID has connected” case,
+        // otherwise log error, then skip this address by returning null.
         if (error) {
           const primaryError = first(error.errors ?? [])
           const isNoFIDError = primaryError?.message?.startsWith(
@@ -137,7 +139,8 @@ async function fetchAndStoreFarcasterUsers(env: Env): Promise<void> {
           return null
         }
 
-        // Validate the API response: if a numeric FID exists, log and return it; otherwise log absence and return null.
+        // Validate the API response: if a numeric FID exists, log and return it;
+        // otherwise log absence and return null.
         const fid = data.result.user?.fid
         if (typeof fid === 'number') {
           logger.debug({ fid, address }, 'Farcaster user fetched.')
@@ -213,15 +216,22 @@ async function fetchAndStoreFarcasterVoters(env: Env) {
   const addressBatches = pipe(addresses, chunk(batchSize))
   const collectedFids: number[] = []
 
+  // Process each batch: concurrently fetch Farcaster users for addresses,
+  // map to FIDs (or null), then append numeric FIDs to collectedFids.
   for (const group of addressBatches) {
     const results = await Promise.all(
       group.map(async (address) => {
         logger.debug({ address }, 'Fetching Farcaster user for voter address.')
+
+        // Fetch Farcaster user data for the voter address.
         const { data, error } = await getUserByVerificationAddress({
           auth: () => env.WARPCAST_ACCESS_TOKEN,
           query: { address },
         })
 
+        // Handle error cases from Farcaster API: If error indicates no FID connection,
+        // log a warning since this is an expected case. For other errors, log them
+        // as errors. In both cases, skip processing this address by returning null.
         if (error) {
           const primaryError = first(error.errors ?? [])
           const isNoFIDError = primaryError?.message?.startsWith(
@@ -235,6 +245,8 @@ async function fetchAndStoreFarcasterVoters(env: Env) {
           return null
         }
 
+        // Validate the API response: if a numeric FID exists, log and return it;
+        // otherwise log absence and return null.
         const fid = data.result.user?.fid
         if (typeof fid === 'number') {
           logger.debug({ fid, address }, 'Farcaster user fetched for voter.')
@@ -256,16 +268,18 @@ async function fetchAndStoreFarcasterVoters(env: Env) {
     }
   }
 
+  // Sort and deduplicate collectedFids, then store in KV.
   farcasterVoters = pipe(
     [...farcasterVoters, ...collectedFids],
     unique(),
     sortBy((x) => x),
   )
-
   logger.debug(
     { voters: farcasterVoters },
     'Fetched and processed Farcaster voters.',
   )
+
+  // Store the sorted and deduplicated list of FIDs in KV.
   await kv.put(cacheKey, JSON.stringify(farcasterVoters), { expirationTtl })
 }
 
