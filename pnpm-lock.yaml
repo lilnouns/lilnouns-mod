@@ -78,8 +78,8 @@ importers:
         specifier: 10.1.8
         version: 10.1.8(eslint@9.35.0)
       eslint-plugin-jsdoc:
-        specifier: 57.0.8
-        version: 57.0.8(eslint@9.35.0)
+        specifier: 57.1.1
+        version: 57.1.1(eslint@9.35.0)
       eslint-plugin-prettier:
         specifier: 5.5.4
         version: 5.5.4(eslint-config-prettier@10.1.8(eslint@9.35.0))(eslint@9.35.0)(prettier@3.6.2)
@@ -1911,8 +1911,8 @@ packages:
     peerDependencies:
       eslint: '>=7.0.0'
 
-  eslint-plugin-jsdoc@57.0.8:
-    resolution: {integrity: sha512-L3kb1fz1VsWMDxcNOPqomC8gWROxCJomynYZkhQJInZu4m3Ugjod75pWAICRrKW1WedHkX8BotknBtGCLUFpAg==}
+  eslint-plugin-jsdoc@57.1.1:
+    resolution: {integrity: sha512-evg1pXzbNfmnrr8VD96/bbYXhME5yCUcghDvHHkxk97JriBsBROpqfg9KcKIMf2zRcqUOLMSiMhHWdxcOS7JbQ==}
     engines: {node: '>=20.11.0'}
     peerDependencies:
       eslint: ^7.0.0 || ^8.0.0 || ^9.0.0
@@ -4885,7 +4885,7 @@ snapshots:
   '@typescript-eslint/project-service@8.43.0(typescript@5.9.2)':
     dependencies:
       '@typescript-eslint/tsconfig-utils': 8.43.0(typescript@5.9.2)
-      '@typescript-eslint/types': 8.43.0
+      '@typescript-eslint/types': 8.44.0
       debug: 4.4.3
       typescript: 5.9.2
     transitivePeerDependencies:
@@ -4962,7 +4962,7 @@ snapshots:
       '@typescript-eslint/tsconfig-utils': 8.43.0(typescript@5.9.2)
       '@typescript-eslint/types': 8.43.0
       '@typescript-eslint/visitor-keys': 8.43.0
-      debug: 4.4.3
+      debug: 4.4.1
       fast-glob: 3.3.3
       is-glob: 4.0.3
       minimatch: 9.0.5
@@ -6121,7 +6121,7 @@ snapshots:
     dependencies:
       eslint: 9.35.0
 
-  eslint-plugin-jsdoc@57.0.8(eslint@9.35.0):
+  eslint-plugin-jsdoc@57.1.1(eslint@9.35.0):
     dependencies:
       '@es-joy/jsdoccomment': 0.58.0
       are-docs-informative: 0.0.2
