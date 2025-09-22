@@ -11,3 +11,16 @@ datasource db {
   provider = "sqlite"
   url      = env("DATABASE_URL")
 }
+
+model Account {
+  address   String  @id // ETH address, normalized lowercase
+  fid       Int? // Farcaster ID
+  fname     String? // Farcaster handle
+  ens       String? // ENS name
+  pfpUrl    String? // profile picture URL
+  updatedAt Int // unix epoch seconds
+
+  @@index([fid])
+  @@index([fname])
+  @@index([ens])
+}
