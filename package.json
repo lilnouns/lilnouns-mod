@@ -20,6 +20,7 @@
   },
   "dependencies": {
     "@nekofar/warpcast": "2.0.0-alpha.66",
+    "@prisma/client": "6.16.2",
     "cron-time-generator": "2.0.3",
     "graphql": "16.11.0",
     "graphql-request": "7.2.0",
