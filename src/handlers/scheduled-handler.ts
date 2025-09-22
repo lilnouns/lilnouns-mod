@@ -1,4 +1,3 @@
-import { cacheHandler } from '@/handlers/cache-handler'
 import { channelHandler } from '@/handlers/channel-handler'
 import { directCastsHandler } from '@/handlers/direct-casts-handler'
 import { proposalHandler } from '@/handlers/proposal-handler'
@@ -19,8 +18,6 @@ export async function scheduledHandler(
 ) {
   switch (controller.cron) {
     case CronTime.everyHour():
-      await cacheHandler(env)
-      // await eventsHandler(env)
       await channelHandler(env)
       await reminderHandler(env)
       break
