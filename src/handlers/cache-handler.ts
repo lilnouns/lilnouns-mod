@@ -2,7 +2,9 @@ import { getBlockNumber } from '@/services/ethereum/get-block-number'
 import { fetchAccounts } from '@/services/lilnouns/fetch-accounts'
 import { fetchDelegates } from '@/services/lilnouns/fetch-delegates'
 import { fetchVoters } from '@/services/lilnouns/fetch-voters'
+import { PrismaClient } from '@/generated/prisma/edge'
 import { logger } from '@/utilities/logger'
+import { PrismaD1 } from '@prisma/adapter-d1'
 import { getUserByVerificationAddress } from '@nekofar/warpcast'
 import { DateTime } from 'luxon'
 import { chunk, first, isNumber, map, pipe, sortBy, unique } from 'remeda'
@@ -10,38 +12,65 @@ import { chunk, first, isNumber, map, pipe, sortBy, unique } from 'remeda'
 const expirationTtl = 60 * 60 * 24
 
 /**
- * Fetches the holder addresses from the KV storage or, if not available,
- * from the account list, and stores them in the KV storage.
- * @param env - The environment object containing the KV storage.
+ * Loads holder addresses from the D1 database or, if none are stored yet,
+ * fetches them from the subgraph and persists them for reuse.
+ * @param env - The environment object containing the D1 binding.
  * @returns - A promise that resolves to an array of holder addresses.
  */
 async function fetchHolderAddresses(env: Env): Promise<string[]> {
-  const { KV: kv } = env
-  const cacheKey = 'lilnouns-holders-addresses'
+  const prisma = new PrismaClient({ adapter: new PrismaD1(env.DB) })
 
-  logger.info('Loading holder addresses from KV...')
-  let holdersAddresses =
-    (await kv.get<string[] | null>(cacheKey, { type: 'json' })) ?? []
+  logger.info('Loading holder addresses from D1...')
 
-  if (holdersAddresses.length > 0) {
+  try {
+    const storedAccounts = await prisma.account.findMany({
+      select: { address: true },
+    })
+
+    if (storedAccounts.length > 0) {
+      const addresses = storedAccounts.map(({ address }) => address)
+      logger.debug(
+        { addresses },
+        'Holder addresses loaded from D1.',
+      )
+      return addresses
+    }
+
+    logger.info('Fetching holder addresses from API...')
+    const { accounts } = await fetchAccounts(env)
+    const holdersAddresses = pipe(
+      accounts,
+      map((account) => account.id),
+      unique(),
+    )
+
     logger.debug(
       { addresses: holdersAddresses },
-      'Holder addresses loaded from KV.',
+      'Fetched holder addresses from API.',
     )
+
+    if (holdersAddresses.length > 0) {
+      const timestamp = Math.floor(Date.now() / 1000)
+      await prisma.account.createMany({
+        data: holdersAddresses.map((address) => ({
+          address,
+          updatedAt: timestamp,
+        })),
+      })
+
+      logger.debug(
+        { count: holdersAddresses.length },
+        'Holder addresses stored in D1.',
+      )
+    }
+
     return holdersAddresses
+  } catch (error) {
+    logger.error({ error }, 'Unable to load holder addresses from D1.')
+    throw error
+  } finally {
+    await prisma.$disconnect()
   }
-
-  logger.info('Fetching holder addresses from API...')
-  const { accounts } = await fetchAccounts(env)
-  holdersAddresses = accounts.map((account) => account.id)
-
-  logger.debug(
-    { addresses: holdersAddresses },
-    'Fetched holder addresses from API.',
-  )
-  await kv.put(cacheKey, JSON.stringify(holdersAddresses), { expirationTtl })
-
-  return holdersAddresses
 }
 
 /**
