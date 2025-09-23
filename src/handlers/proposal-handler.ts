@@ -5,7 +5,6 @@ import { createWarpcastUserLookup } from '@/services/warpcast/user'
 import { logger } from '@/utilities/logger'
 import { getCurrentUser } from '@nekofar/warpcast'
 import { DateTime } from 'luxon'
-import { createHash } from 'node:crypto'
 import { chunk, filter, first, isTruthy, pipe } from 'remeda'
 
 interface DirectCastBody {
@@ -190,7 +189,7 @@ export async function proposalHandler(env: Env) {
       You haven't voted yet; make your voice count before time runs out! ⏳🚀
       https://lilnouns.camp/proposals/${id.toString()}`.replace(/\n\s+/g, '\n')
 
-    const idempotencyKey = createHash('sha256').update(message).digest('hex')
+    const idempotencyKey = crypto.randomUUID()
 
     for (const recipientFid of farcasterSubscribers) {
       if (

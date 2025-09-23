@@ -1,6 +1,5 @@
 import { logger } from '@/utilities/logger'
 import { DateTime, WeekdayNumbers } from 'luxon'
-import { createHash } from 'node:crypto'
 import { chunk, pipe } from 'remeda'
 import { getCurrentUser } from '@nekofar/warpcast'
 
@@ -101,7 +100,7 @@ export async function eventsHandler(env: Env) {
 
     if (minutesDifference <= 120 && minutesDifference >= 0) {
       const message = `${target.eventMessage}\nYou can join here: ${target.eventLink}`
-      const idempotencyKey = createHash('sha256').update(message).digest('hex')
+      const idempotencyKey = crypto.randomUUID()
 
       for (const recipientFid of farcasterVoters) {
         if (recipientFid === user.fid) {
