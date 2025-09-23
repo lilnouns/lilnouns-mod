@@ -110,29 +110,71 @@ export async function proposalHandler(env: Env) {
     const voters = await Promise.all(
       votes.map(async (vote) => {
         const address = vote.voter.id.toLowerCase()
+        const maxRetries = 3
+        const baseDelayMs = 300
 
-        try {
-          const { data, error } =
-            await warpcastUsers.getUserByVerificationAddress(address)
+        let attempt = 0
+        // Retry loop with exponential backoff
+        // Known "No FID has connected" case is not retried and returns null
+        while (true) {
+          attempt += 1
+          try {
+            const { data, error } =
+              await warpcastUsers.getUserByVerificationAddress(address)
 
-          if (error) {
-            const primaryError = first(error.errors ?? [])
-            const isNoFIDError = primaryError?.message?.startsWith(
-              'No FID has connected',
-            )
-            if (isNoFIDError) {
-              logger.warn({ address }, 'No FID has connected')
-            } else {
-              logger.error({ error, address }, 'Error fetching Farcaster user.')
+            if (error) {
+              const primaryError = first(error.errors ?? [])
+              const isNoFIDError = primaryError?.message?.startsWith(
+                'No FID has connected',
+              )
+
+              if (isNoFIDError) {
+                logger.warn(
+                  { address, proposalId: id },
+                  'No FID has connected for address',
+                )
+                return null
+              }
+
+              if (attempt < maxRetries) {
+                logger.warn(
+                  { address, proposalId: id, attempt, error },
+                  'Transient error fetching Farcaster user. Retrying...',
+                )
+                await new Promise((resolve) =>
+                  setTimeout(resolve, baseDelayMs * 2 ** (attempt - 1)),
+                )
+                continue
+              }
+
+              logger.error(
+                { address, proposalId: id, attempts: attempt, error },
+                'Failed to fetch Farcaster user after retries. Aborting.',
+              )
+              throw new Error(primaryError?.message ?? 'Farcaster API error')
             }
 
-            return null
-          }
+            // Success path
+            return data?.result?.user?.fid ?? null
+          } catch (err) {
+            if (attempt < maxRetries) {
+              logger.warn(
+                { address, proposalId: id, attempt, error: err },
+                'Exception fetching Farcaster user. Retrying...',
+              )
+              await new Promise((resolve) =>
+                setTimeout(resolve, baseDelayMs * 2 ** (attempt - 1)),
+              )
+              continue
+            }
 
-          return data?.result?.user?.fid
-        } catch (error) {
-          logger.error({ error, address }, 'Error fetching Farcaster user.')
-          return null
+            logger.error(
+              { address, proposalId: id, attempts: attempt, error: err },
+              'Exception fetching Farcaster user after retries. Aborting.',
+            )
+            // Halt execution to avoid proceeding with partial/invalid data
+            throw err
+          }
         }
       }),
     ).then((results) => filter(results, isTruthy))
