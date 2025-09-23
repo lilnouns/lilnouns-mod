@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.0.0-alpha.94] - 2025-09-23
+
+### 🐛 Bug Fixes
+
+- *(cache-handler)* Extend `expirationTtl` to 7 days
+
 ## [1.0.0-alpha.93] - 2025-09-22
 
 ### ⚙️ Miscellaneous Tasks
