@@ -2,8 +2,8 @@ import { getBlockNumber } from '@/services/ethereum/get-block-number'
 import { fetchAccounts } from '@/services/lilnouns/fetch-accounts'
 import { fetchDelegates } from '@/services/lilnouns/fetch-delegates'
 import { fetchVoters } from '@/services/lilnouns/fetch-voters'
+import { createWarpcastUserLookup } from '@/services/warpcast/user'
 import { logger } from '@/utilities/logger'
-import { getUserByVerificationAddress } from '@nekofar/warpcast'
 import { DateTime } from 'luxon'
 import { chunk, first, isNumber, map, pipe, sortBy, unique } from 'remeda'
 
@@ -106,6 +106,10 @@ async function fetchAndStoreFarcasterUsers(env: Env): Promise<void> {
   const holdersAddresses = await fetchHolderAddresses(env)
   const delegatesAddresses = await fetchDelegateAddresses(env)
 
+  const warpcastUsers = createWarpcastUserLookup({
+    auth: () => env.WARPCAST_ACCESS_TOKEN,
+  })
+
   const addresses = pipe([...holdersAddresses, ...delegatesAddresses], unique())
 
   // Process in parallel batches to control concurrency
@@ -119,34 +123,37 @@ async function fetchAndStoreFarcasterUsers(env: Env): Promise<void> {
     const results = await Promise.all(
       group.map(async (address) => {
         logger.debug({ address }, 'Fetching Farcaster user for address.')
-        const { data, error } = await getUserByVerificationAddress({
-          auth: () => env.WARPCAST_ACCESS_TOKEN,
-          query: { address },
-        })
+        try {
+          const { data, error } = await warpcastUsers.getUserByVerificationAddress(
+            address,
+          )
 
-        // Handle API error: warn for an expected “No FID has connected” case,
-        // otherwise log error, then skip this address by returning null.
-        if (error) {
-          const primaryError = first(error.errors ?? [])
+          const primaryError = first(error?.errors ?? [])
           const isNoFIDError = primaryError?.message?.startsWith(
             'No FID has connected',
           )
+
           if (isNoFIDError) {
             logger.warn({ address }, 'No FID has connected')
-          } else {
-            logger.error({ error, address }, 'Error fetching Farcaster user.')
+            return null
           }
-          return null
-        }
 
-        // Validate the API response: if a numeric FID exists, log and return it;
-        // otherwise log absence and return null.
-        const fid = data.result.user?.fid
-        if (typeof fid === 'number') {
-          logger.debug({ fid, address }, 'Farcaster user fetched.')
-          return fid
-        } else {
+          if (error) {
+            logger.error({ error, address }, 'Error fetching Farcaster user.')
+            return null
+          }
+
+          const fid = data?.result?.user?.fid
+          if (typeof fid === 'number') {
+            logger.debug({ fid, address }, 'Farcaster user fetched.')
+            return fid
+          }
+
           logger.debug({ address }, 'No Farcaster user found for address.')
+          return null
+        } catch (caught) {
+          const err = caught instanceof Error ? caught : new Error(String(caught))
+          logger.error({ error: err, address }, 'Error fetching Farcaster user.')
           return null
         }
       }),
@@ -211,6 +218,10 @@ async function fetchAndStoreFarcasterVoters(env: Env) {
     map((voter) => voter.id),
   )
 
+  const warpcastUsers = createWarpcastUserLookup({
+    auth: () => env.WARPCAST_ACCESS_TOKEN,
+  })
+
   // Process in parallel batches to control concurrency
   const batchSize = 20
   const addressBatches = pipe(addresses, chunk(batchSize))
@@ -223,39 +234,42 @@ async function fetchAndStoreFarcasterVoters(env: Env) {
       group.map(async (address) => {
         logger.debug({ address }, 'Fetching Farcaster user for voter address.')
 
-        // Fetch Farcaster user data for the voter address.
-        const { data, error } = await getUserByVerificationAddress({
-          auth: () => env.WARPCAST_ACCESS_TOKEN,
-          query: { address },
-        })
+        try {
+          // Fetch Farcaster user data for the voter address.
+          const { data, error } =
+            await warpcastUsers.getUserByVerificationAddress(address)
 
-        // Handle error cases from Farcaster API: If error indicates no FID connection,
-        // log a warning since this is an expected case. For other errors, log them
-        // as errors. In both cases, skip processing this address by returning null.
-        if (error) {
-          const primaryError = first(error.errors ?? [])
-          const isNoFIDError = primaryError?.message?.startsWith(
-            'No FID has connected',
-          )
-          if (isNoFIDError) {
-            logger.warn({ address }, 'No FID has connected')
-          } else {
-            logger.error({ error, address }, 'Error fetching Farcaster user.')
+          // Handle error cases from Farcaster API: If error indicates no FID connection,
+          // log a warning since this is an expected case. For other errors, log them
+          // as errors. In both cases, skip processing this address by returning null.
+          if (error) {
+            const primaryError = first(error.errors ?? [])
+            const isNoFIDError = primaryError?.message?.startsWith(
+              'No FID has connected',
+            )
+            if (isNoFIDError) {
+              logger.warn({ address }, 'No FID has connected')
+            } else {
+              logger.error({ error, address }, 'Error fetching Farcaster user.')
+            }
+            return null
           }
-          return null
-        }
 
-        // Validate the API response: if a numeric FID exists, log and return it;
-        // otherwise log absence and return null.
-        const fid = data.result.user?.fid
-        if (typeof fid === 'number') {
-          logger.debug({ fid, address }, 'Farcaster user fetched for voter.')
-          return fid
-        } else {
-          logger.debug(
-            { address },
-            'No Farcaster user found for voter address.',
-          )
+          // Validate the API response: if a numeric FID exists, log and return it;
+          // otherwise log absence and return null.
+          const fid = data?.result?.user?.fid
+          if (typeof fid === 'number') {
+            logger.debug({ fid, address }, 'Farcaster user fetched for voter.')
+            return fid
+          } else {
+            logger.debug(
+              { address },
+              'No Farcaster user found for voter address.',
+            )
+            return null
+          }
+        } catch (error) {
+          logger.error({ error, address }, 'Error fetching Farcaster user.')
           return null
         }
       }),

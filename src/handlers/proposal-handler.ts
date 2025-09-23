@@ -1,8 +1,9 @@
 import { getBlockNumber } from '@/services/ethereum/get-block-number'
 import { getBlockTimestamp } from '@/services/ethereum/get-block-timestamp'
 import { getProposals } from '@/services/lilnouns/get-proposals'
+import { createWarpcastUserLookup } from '@/services/warpcast/user'
 import { logger } from '@/utilities/logger'
-import { getCurrentUser, getUserByVerificationAddress } from '@nekofar/warpcast'
+import { getCurrentUser } from '@nekofar/warpcast'
 import { DateTime } from 'luxon'
 import { createHash } from 'node:crypto'
 import { chunk, filter, first, isTruthy, pipe } from 'remeda'
@@ -47,6 +48,10 @@ export async function proposalHandler(env: Env) {
   }
 
   const user = useData.result.user
+
+  const warpcastUsers = createWarpcastUserLookup({
+    auth: () => env.WARPCAST_ACCESS_TOKEN,
+  })
 
   logger.info('Fetching Farcaster users and subscribers from KV...')
   const farcasterUsers =
@@ -105,28 +110,30 @@ export async function proposalHandler(env: Env) {
     const voters = await Promise.all(
       votes.map(async (vote) => {
         const address = vote.voter.id.toLowerCase()
-        const { data, error } = await getUserByVerificationAddress({
-          auth: () => env.WARPCAST_ACCESS_TOKEN,
-          query: {
-            address,
-          },
-        })
 
-        if (error) {
-          const primaryError = first(error.errors ?? [])
-          const isNoFIDError = primaryError?.message?.startsWith(
-            'No FID has connected',
-          )
-          if (isNoFIDError) {
-            logger.warn({ address }, 'No FID has connected')
-          } else {
-            logger.error({ error, address }, 'Error fetching Farcaster user.')
+        try {
+          const { data, error } =
+            await warpcastUsers.getUserByVerificationAddress(address)
+
+          if (error) {
+            const primaryError = first(error.errors ?? [])
+            const isNoFIDError = primaryError?.message?.startsWith(
+              'No FID has connected',
+            )
+            if (isNoFIDError) {
+              logger.warn({ address }, 'No FID has connected')
+            } else {
+              logger.error({ error, address }, 'Error fetching Farcaster user.')
+            }
+
+            return null
           }
 
+          return data?.result?.user?.fid
+        } catch (error) {
+          logger.error({ error, address }, 'Error fetching Farcaster user.')
           return null
         }
-
-        return data.result.user?.fid
       }),
     ).then((results) => filter(results, isTruthy))
 
