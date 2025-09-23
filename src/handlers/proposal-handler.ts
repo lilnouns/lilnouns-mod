@@ -1,8 +1,9 @@
 import { getBlockNumber } from '@/services/ethereum/get-block-number'
 import { getBlockTimestamp } from '@/services/ethereum/get-block-timestamp'
 import { getProposals } from '@/services/lilnouns/get-proposals'
+import { createWarpcastUserLookup } from '@/services/warpcast/user'
 import { logger } from '@/utilities/logger'
-import { getCurrentUser, getUserByVerificationAddress } from '@nekofar/warpcast'
+import { getCurrentUser } from '@nekofar/warpcast'
 import { DateTime } from 'luxon'
 import { createHash } from 'node:crypto'
 import { chunk, filter, first, isTruthy, pipe } from 'remeda'
@@ -47,6 +48,10 @@ export async function proposalHandler(env: Env) {
   }
 
   const user = useData.result.user
+
+  const warpcastUsers = createWarpcastUserLookup({
+    auth: () => env.WARPCAST_ACCESS_TOKEN,
+  })
 
   logger.info('Fetching Farcaster users and subscribers from KV...')
   const farcasterUsers =
@@ -105,28 +110,72 @@ export async function proposalHandler(env: Env) {
     const voters = await Promise.all(
       votes.map(async (vote) => {
         const address = vote.voter.id.toLowerCase()
-        const { data, error } = await getUserByVerificationAddress({
-          auth: () => env.WARPCAST_ACCESS_TOKEN,
-          query: {
-            address,
-          },
-        })
+        const maxRetries = 3
+        const baseDelayMs = 300
 
-        if (error) {
-          const primaryError = first(error.errors ?? [])
-          const isNoFIDError = primaryError?.message?.startsWith(
-            'No FID has connected',
-          )
-          if (isNoFIDError) {
-            logger.warn({ address }, 'No FID has connected')
-          } else {
-            logger.error({ error, address }, 'Error fetching Farcaster user.')
+        let attempt = 0
+        // Retry loop with exponential backoff
+        // Known "No FID has connected" case is not retried and returns null
+        while (true) {
+          attempt += 1
+          try {
+            const { data, error } =
+              await warpcastUsers.getUserByVerificationAddress(address)
+
+            if (error) {
+              const primaryError = first(error.errors ?? [])
+              const isNoFIDError = primaryError?.message?.startsWith(
+                'No FID has connected',
+              )
+
+              if (isNoFIDError) {
+                logger.warn(
+                  { address, proposalId: id },
+                  'No FID has connected for address',
+                )
+                return null
+              }
+
+              if (attempt < maxRetries) {
+                logger.warn(
+                  { address, proposalId: id, attempt, error },
+                  'Transient error fetching Farcaster user. Retrying...',
+                )
+                await new Promise((resolve) =>
+                  setTimeout(resolve, baseDelayMs * 2 ** (attempt - 1)),
+                )
+                continue
+              }
+
+              logger.error(
+                { address, proposalId: id, attempts: attempt, error },
+                'Failed to fetch Farcaster user after retries. Aborting.',
+              )
+              throw new Error(primaryError?.message ?? 'Farcaster API error')
+            }
+
+            // Success path
+            return data?.result?.user?.fid ?? null
+          } catch (err) {
+            if (attempt < maxRetries) {
+              logger.warn(
+                { address, proposalId: id, attempt, error: err },
+                'Exception fetching Farcaster user. Retrying...',
+              )
+              await new Promise((resolve) =>
+                setTimeout(resolve, baseDelayMs * 2 ** (attempt - 1)),
+              )
+              continue
+            }
+
+            logger.error(
+              { address, proposalId: id, attempts: attempt, error: err },
+              'Exception fetching Farcaster user after retries. Aborting.',
+            )
+            // Halt execution to avoid proceeding with partial/invalid data
+            throw err
           }
-
-          return null
         }
-
-        return data.result.user?.fid
       }),
     ).then((results) => filter(results, isTruthy))
 
