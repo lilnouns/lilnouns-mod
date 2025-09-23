@@ -4,7 +4,6 @@ import { getProposals } from '@/services/lilnouns/get-proposals'
 import { createWarpcastUserLookup } from '@/services/warpcast/user'
 import { logger } from '@/utilities/logger'
 import { DateTime } from 'luxon'
-import { createHash } from 'node:crypto'
 import { chunk, filter, isTruthy, pipe } from 'remeda'
 import { getCurrentUser } from '@nekofar/warpcast'
 
@@ -151,7 +150,7 @@ export async function reminderHandler(env: Env) {
       If you’ve got a moment, we'd love for you to cast your vote! 🙌
       https://lilnouns.camp/proposals/${id.toString()}`.replace(/\n\s+/g, '\n')
 
-    const idempotencyKey = createHash('sha256').update(message).digest('hex')
+    const idempotencyKey = crypto.randomUUID()
 
     for (const recipientFid of farcasterVoters) {
       if (recipientFid === user.fid || voters.includes(recipientFid)) {

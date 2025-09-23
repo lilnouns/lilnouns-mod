@@ -1,6 +1,5 @@
 import { logger } from '@/utilities/logger'
 import { getCurrentUser, getDirectCastInbox } from '@nekofar/warpcast'
-import { createHash } from 'node:crypto'
 import {
   chunk,
   filter,
@@ -165,7 +164,7 @@ async function handleMessages(env: Env) {
     const message =
       'This account runs on autopilot, so please don’t send messages directly here. ' +
       'If you have any issues or questions, just reach out to @nekofar! 😊'
-    const idempotencyKey = createHash('sha256').update(message).digest('hex')
+    const idempotencyKey = crypto.randomUUID()
 
     const task: MessageSendRequest<DirectCastBody> = {
       body: {

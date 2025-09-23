@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.0.0-alpha.98] - 2025-09-23
+
+### 🐛 Bug Fixes
+
+- *(handlers)* Replace `createHash` with `crypto.randomUUID`
+
 ## [1.0.0-alpha.97] - 2025-09-23
 
 ### 🐛 Bug Fixes
