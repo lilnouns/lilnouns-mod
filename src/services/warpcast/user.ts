@@ -107,7 +107,7 @@ export const createWarpcastUserLookup = ({
 
       if (attempt < rateLimitMaxRetries && hasRateLimitError(result)) {
         await delay(rateLimitRetryDelayMs)
-        return runRequest(address, attempt + 1)
+        return await runRequest(address, attempt + 1)
       }
 
       const data = 'data' in result
