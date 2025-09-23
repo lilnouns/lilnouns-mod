@@ -7,7 +7,7 @@ import { getUserByVerificationAddress } from '@nekofar/warpcast'
 import { DateTime } from 'luxon'
 import { chunk, first, isNumber, map, pipe, sortBy, unique } from 'remeda'
 
-const expirationTtl = 60 * 60 * 24
+const expirationTtl = 60 * 60 * 24 * 7
 
 /**
  * Fetches the holder addresses from the KV storage or, if not available,
