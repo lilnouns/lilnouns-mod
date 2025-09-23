@@ -32,14 +32,23 @@ async function fetchHolderAddresses(env: Env): Promise<string[]> {
   }
 
   logger.info('Fetching holder addresses from API...')
-  const { accounts } = await fetchAccounts(env)
-  holdersAddresses = accounts.map((account) => account.id)
+  try {
+    const { accounts } = await fetchAccounts(env)
+    holdersAddresses = accounts.map((account) => account.id)
+  } catch (error) {
+    logger.error({ error }, 'Failed to fetch holder addresses from API.')
+    throw error
+  }
 
   logger.debug(
     { addresses: holdersAddresses },
     'Fetched holder addresses from API.',
   )
-  await kv.put(cacheKey, JSON.stringify(holdersAddresses), { expirationTtl })
+  try {
+    await kv.put(cacheKey, JSON.stringify(holdersAddresses), { expirationTtl })
+  } catch (error) {
+    logger.warn({ error }, 'Failed to cache holder addresses; continuing.')
+  }
 
   return holdersAddresses
 }
@@ -68,14 +77,23 @@ async function fetchDelegateAddresses(env: Env): Promise<string[]> {
   }
 
   logger.info('Fetching delegate addresses from API...')
-  const { delegates } = await fetchDelegates(env)
-  delegatesAddresses = delegates.map((delegate) => delegate.id)
+  try {
+    const { delegates } = await fetchDelegates(env)
+    delegatesAddresses = delegates.map((delegate) => delegate.id)
+  } catch (error) {
+    logger.error({ error }, 'Failed to fetch delegate addresses from API.')
+    throw error
+  }
 
   logger.debug(
     { addresses: delegatesAddresses },
     'Fetched delegate addresses from API.',
   )
-  await kv.put(cacheKey, JSON.stringify(delegatesAddresses), { expirationTtl })
+  try {
+    await kv.put(cacheKey, JSON.stringify(delegatesAddresses), { expirationTtl })
+  } catch (error) {
+    logger.warn({ error }, 'Failed to cache delegate addresses; continuing.')
+  }
 
   return delegatesAddresses
 }
@@ -103,8 +121,18 @@ async function fetchAndStoreFarcasterUsers(env: Env): Promise<void> {
   }
 
   logger.info('Fetching Farcaster users from API...')
-  const holdersAddresses = await fetchHolderAddresses(env)
-  const delegatesAddresses = await fetchDelegateAddresses(env)
+  let holdersAddresses: string[]
+  let delegatesAddresses: string[]
+  try {
+    holdersAddresses = await fetchHolderAddresses(env)
+    delegatesAddresses = await fetchDelegateAddresses(env)
+  } catch (error) {
+    logger.error(
+      { error },
+      'Aborting Farcaster users fetch due to missing source addresses.',
+    )
+    throw error
+  }
 
   const warpcastUsers = createWarpcastUserLookup({
     auth: () => env.WARPCAST_ACCESS_TOKEN,
@@ -179,7 +207,11 @@ async function fetchAndStoreFarcasterUsers(env: Env): Promise<void> {
   )
 
   // Store the sorted and deduplicated list of FIDs in KV.
-  await kv.put(cacheKey, JSON.stringify(farcasterUsers), { expirationTtl })
+  try {
+    await kv.put(cacheKey, JSON.stringify(farcasterUsers), { expirationTtl })
+  } catch (error) {
+    logger.warn({ error }, 'Failed to cache Farcaster users; continuing.')
+  }
 }
 
 /**
@@ -209,14 +241,29 @@ async function fetchAndStoreFarcasterVoters(env: Env) {
   const threeMonthsAgo = now.minus({ months: 3 })
   const secondsInThreeMonths = now.diff(threeMonthsAgo, 'seconds').seconds
   const blocksInThreeMonths = secondsInThreeMonths / blockTimeInSeconds
-  const startBlock = (await getBlockNumber(env)) - blocksInThreeMonths
+
+  let startBlock: number
+  try {
+    const currentBlock = await getBlockNumber(env)
+    startBlock = currentBlock - blocksInThreeMonths
+  } catch (error) {
+    logger.error({ error }, 'Failed to compute start block for voters fetch.')
+    throw error
+  }
 
   logger.info('Fetching Farcaster voters from API...')
-  const { voters } = await fetchVoters(env, startBlock)
-  const addresses = pipe(
-    voters,
-    map((voter) => voter.id),
-  )
+  let votersAddresses: string[]
+  try {
+    const { voters } = await fetchVoters(env, startBlock)
+    votersAddresses = pipe(
+      voters,
+      map((voter) => voter.id),
+    )
+  } catch (error) {
+    logger.error({ error }, 'Failed to fetch voters from API.')
+    throw error
+  }
+  const addresses = votersAddresses
 
   const warpcastUsers = createWarpcastUserLookup({
     auth: () => env.WARPCAST_ACCESS_TOKEN,
@@ -294,7 +341,11 @@ async function fetchAndStoreFarcasterVoters(env: Env) {
   )
 
   // Store the sorted and deduplicated list of FIDs in KV.
-  await kv.put(cacheKey, JSON.stringify(farcasterVoters), { expirationTtl })
+  try {
+    await kv.put(cacheKey, JSON.stringify(farcasterVoters), { expirationTtl })
+  } catch (error) {
+    logger.warn({ error }, 'Failed to cache Farcaster voters; continuing.')
+  }
 }
 
 /**
@@ -303,8 +354,14 @@ async function fetchAndStoreFarcasterVoters(env: Env) {
  * @returns - A promise that resolves when caching is complete.
  */
 export async function cacheHandler(env: Env): Promise<void> {
-  await Promise.all([
-    fetchAndStoreFarcasterUsers(env),
-    fetchAndStoreFarcasterVoters(env),
-  ])
+  const tasks = [
+    fetchAndStoreFarcasterUsers(env).catch((error) => {
+      logger.error({ error }, 'Farcaster users cache task failed.')
+    }),
+    fetchAndStoreFarcasterVoters(env).catch((error) => {
+      logger.error({ error }, 'Farcaster voters cache task failed.')
+    }),
+  ]
+
+  await Promise.all(tasks)
 }
