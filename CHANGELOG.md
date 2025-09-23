@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.0.0-alpha.96] - 2025-09-23
+
+### 🚀 Features
+
+- *(warpcast)* Add `createWarpcastUserLookup` utility
+- *(cache)* Add error handling for cache operations
+- *(proposal-handler)* Add retry mechanism for user lookups
+
+### 🐛 Bug Fixes
+
+- *(warpcast)* Add `await` to recursive `runRequest` call
+
 ## [1.0.0-alpha.95] - 2025-09-23
 
 ### 🐛 Bug Fixes
