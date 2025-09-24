@@ -1,16 +1,8 @@
+import { getDirectCastConversations } from '@/services/warpcast/get-direct-cast-conversations'
+import { getMe } from '@/services/warpcast/get-me'
 import { logger } from '@/utilities/logger'
-import { getCurrentUser, getDirectCastInbox } from '@nekofar/warpcast'
-import {
-  chunk,
-  filter,
-  flat,
-  flatMap,
-  isNullish,
-  map,
-  pipe,
-  sort,
-  unique,
-} from 'remeda'
+import { createHash } from 'node:crypto'
+import { chunk, flat, pipe, sort, unique } from 'remeda'
 
 interface DirectCastBody {
   type: 'direct-cast'
@@ -30,7 +22,7 @@ interface DirectCastBody {
 async function handleSubscribers(env: Env) {
   const { KV: kv } = env
   const cacheKey = 'lilnouns-farcaster-subscribers'
-  const categories = ['default', 'requests']
+  const categories = ['default', 'request']
 
   logger.info('Fetching current subscribers from KV...')
   const subscribers: number[] =
@@ -42,36 +34,20 @@ async function handleSubscribers(env: Env) {
   )
 
   const newSubscribers = await Promise.all(
-    map(categories, async (category) => {
+    categories.map(async (category) => {
       logger.info({ category }, 'Fetching conversations for category.')
-      const { data, error } = await getDirectCastInbox({
-        auth: () => env.WARPCAST_ACCESS_TOKEN,
-        query: {
-          limit: 100,
-          category: category as 'default' | 'requests' | 'spam',
-        },
-      })
-
-      if (error) {
-        logger.error({ error, category }, 'Failed to fetch conversations')
-        return []
-      }
-
-      const conversations = data.result.conversations
+      const { conversations } = await getDirectCastConversations(
+        env,
+        100,
+        category as 'default' | 'request',
+      )
       logger.info(
         { category, conversationsCount: conversations.length },
         'Fetched conversations.',
       )
-
-      // Filter out conversations with no participants
-      const participantIds = pipe(
-        conversations,
-        flatMap(({ participants }) => participants),
-        map((p) => p?.fid),
-        filter((p) => !isNullish(p)),
+      return conversations.flatMap(({ participants }) =>
+        participants.map(({ fid }) => fid),
       )
-
-      return participantIds
     }),
   )
 
@@ -110,47 +86,28 @@ async function handleMessages(env: Env) {
   )
 
   logger.info('Fetching current user data...')
-  const { data: useData, error: userError } = await getCurrentUser({
-    auth: () => env.WARPCAST_ACCESS_TOKEN,
-  })
-
-  if (userError) {
-    logger.error({ error: userError }, 'Failed to get current user')
-    return
-  }
-
-  const user = useData.result.user
+  const { user } = await getMe(env)
 
   logger.info('Fetching unread conversations...')
-  const { data, error } = await getDirectCastInbox({
-    auth: () => env.WARPCAST_ACCESS_TOKEN,
-    query: {
-      limit: 100,
-      category: 'default',
-      filter: 'unread',
-    },
-  })
-
-  if (error) {
-    logger.error({ error }, 'Failed to fetch unread conversations')
-    return
-  }
+  const { conversations } = await getDirectCastConversations(
+    env,
+    100,
+    'default',
+    'unread',
+  )
 
   logger.info(
-    { conversationsCount: data.result.conversations.length },
+    { conversationsCount: conversations.length },
     'Fetched unread conversations.',
   )
 
-  const recipientFids = pipe(
-    data.result.conversations,
-    flatMap(({ participants }) => participants),
-    map((p) => p?.fid),
-    filter((p) => !isNullish(p)),
+  const participants = conversations.flatMap(({ participants }) =>
+    participants.map(({ fid }) => fid),
   )
 
   const batch: MessageSendRequest<DirectCastBody>[] = []
 
-  for (const recipientFid of recipientFids) {
+  for (const recipientFid of participants) {
     if (recipientFid === user.fid) {
       logger.debug({ recipientFid }, 'Skipping message for current user.')
       continue
@@ -164,7 +121,7 @@ async function handleMessages(env: Env) {
     const message =
       'This account runs on autopilot, so please don’t send messages directly here. ' +
       'If you have any issues or questions, just reach out to @nekofar! 😊'
-    const idempotencyKey = crypto.randomUUID()
+    const idempotencyKey = createHash('sha256').update(message).digest('hex')
 
     const task: MessageSendRequest<DirectCastBody> = {
       body: {
