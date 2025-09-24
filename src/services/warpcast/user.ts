@@ -1,7 +1,7 @@
 import { getUserByVerificationAddress as warpcastGetUserByVerificationAddress } from '@nekofar/warpcast'
 
 const RATE_LIMIT_ERROR_PREFIX = 'Farcaster client rate limit exceeded'
-const DEFAULT_MIN_REQUEST_INTERVAL_MS = 100
+const DEFAULT_MIN_REQUEST_INTERVAL_MS = 1_200
 const DEFAULT_RATE_LIMIT_RETRY_DELAY_MS = 60_000
 const DEFAULT_MAX_RATE_LIMIT_RETRIES = 3
 
