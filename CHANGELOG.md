@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.0.0-alpha.100] - 2025-09-24
+
+### 🚀 Features
+
+- *(warpcast)* Add warpcast service methods
+
+### 🐛 Bug Fixes
+
+- *(handlers)* Extend cache expiration to 7 days
+
+### 🚜 Refactor
+
+- *(handlers)* Streamline warpcast integration
+
 ## [1.0.0-alpha.99] - 2025-09-24
 
 ### ◀️ Revert

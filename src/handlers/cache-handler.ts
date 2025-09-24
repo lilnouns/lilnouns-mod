@@ -2,16 +2,16 @@ import { getBlockNumber } from '@/services/ethereum/get-block-number'
 import { fetchAccounts } from '@/services/lilnouns/fetch-accounts'
 import { fetchDelegates } from '@/services/lilnouns/fetch-delegates'
 import { fetchVoters } from '@/services/lilnouns/fetch-voters'
-import { createWarpcastUserLookup } from '@/services/warpcast/user'
+import { getUserByVerification } from '@/services/warpcast/get-user-by-verification'
 import { logger } from '@/utilities/logger'
 import { DateTime } from 'luxon'
-import { chunk, first, isNumber, map, pipe, sortBy, unique } from 'remeda'
+import { map, pipe, sortBy, unique } from 'remeda'
 
 const expirationTtl = 60 * 60 * 24 * 7
 
 /**
  * Fetches the holder addresses from the KV storage or, if not available,
- * from the account list, and stores them in the KV storage.
+ * from the accounts list, and stores them in the KV storage.
  * @param env - The environment object containing the KV storage.
  * @returns - A promise that resolves to an array of holder addresses.
  */
@@ -32,23 +32,14 @@ async function fetchHolderAddresses(env: Env): Promise<string[]> {
   }
 
   logger.info('Fetching holder addresses from API...')
-  try {
-    const { accounts } = await fetchAccounts(env)
-    holdersAddresses = accounts.map((account) => account.id)
-  } catch (error) {
-    logger.error({ error }, 'Failed to fetch holder addresses from API.')
-    throw error
-  }
+  const { accounts } = await fetchAccounts(env)
+  holdersAddresses = accounts.map((account) => account.id)
 
   logger.debug(
     { addresses: holdersAddresses },
     'Fetched holder addresses from API.',
   )
-  try {
-    await kv.put(cacheKey, JSON.stringify(holdersAddresses), { expirationTtl })
-  } catch (error) {
-    logger.warn({ error }, 'Failed to cache holder addresses; continuing.')
-  }
+  await kv.put(cacheKey, JSON.stringify(holdersAddresses), { expirationTtl })
 
   return holdersAddresses
 }
@@ -77,23 +68,14 @@ async function fetchDelegateAddresses(env: Env): Promise<string[]> {
   }
 
   logger.info('Fetching delegate addresses from API...')
-  try {
-    const { delegates } = await fetchDelegates(env)
-    delegatesAddresses = delegates.map((delegate) => delegate.id)
-  } catch (error) {
-    logger.error({ error }, 'Failed to fetch delegate addresses from API.')
-    throw error
-  }
+  const { delegates } = await fetchDelegates(env)
+  delegatesAddresses = delegates.map((delegate) => delegate.id)
 
   logger.debug(
     { addresses: delegatesAddresses },
     'Fetched delegate addresses from API.',
   )
-  try {
-    await kv.put(cacheKey, JSON.stringify(delegatesAddresses), { expirationTtl })
-  } catch (error) {
-    logger.warn({ error }, 'Failed to cache delegate addresses; continuing.')
-  }
+  await kv.put(cacheKey, JSON.stringify(delegatesAddresses), { expirationTtl })
 
   return delegatesAddresses
 }
@@ -121,97 +103,36 @@ async function fetchAndStoreFarcasterUsers(env: Env): Promise<void> {
   }
 
   logger.info('Fetching Farcaster users from API...')
-  let holdersAddresses: string[]
-  let delegatesAddresses: string[]
-  try {
-    holdersAddresses = await fetchHolderAddresses(env)
-    delegatesAddresses = await fetchDelegateAddresses(env)
-  } catch (error) {
-    logger.error(
-      { error },
-      'Aborting Farcaster users fetch due to missing source addresses.',
-    )
-    throw error
-  }
-
-  const warpcastUsers = createWarpcastUserLookup({
-    auth: () => env.WARPCAST_ACCESS_TOKEN,
-  })
+  const holdersAddresses = await fetchHolderAddresses(env)
+  const delegatesAddresses = await fetchDelegateAddresses(env)
 
   const addresses = pipe([...holdersAddresses, ...delegatesAddresses], unique())
 
-  // Process in parallel batches to control concurrency
-  const batchSize = 20
-  const addressBatches = pipe(addresses, chunk(batchSize))
-  const collectedFids: number[] = []
-
-  // Process each batch: concurrently fetch Farcaster users for addresses,
-  // map to FIDs (or null), then append numeric FIDs to collectedFids.
-  for (const group of addressBatches) {
-    const results = await Promise.all(
-      group.map(async (address) => {
-        logger.debug({ address }, 'Fetching Farcaster user for address.')
-        try {
-          const { data, error } = await warpcastUsers.getUserByVerificationAddress(
-            address,
-          )
-
-          const primaryError = first(error?.errors ?? [])
-          const isNoFIDError = primaryError?.message?.startsWith(
-            'No FID has connected',
-          )
-
-          if (isNoFIDError) {
-            logger.warn({ address }, 'No FID has connected')
-            return null
-          }
-
-          if (error) {
-            logger.error({ error, address }, 'Error fetching Farcaster user.')
-            return null
-          }
-
-          const fid = data?.result?.user?.fid
-          if (typeof fid === 'number') {
-            logger.debug({ fid, address }, 'Farcaster user fetched.')
-            return fid
-          }
-
-          logger.debug({ address }, 'No Farcaster user found for address.')
-          return null
-        } catch (caught) {
-          const err = caught instanceof Error ? caught : new Error(String(caught))
-          logger.error({ error: err, address }, 'Error fetching Farcaster user.')
-          return null
-        }
-      }),
-    )
-
-    // Filter out null values and add numeric FIDs to collectedFids.
-    for (const fid of results) {
-      if (isNumber(fid)) {
-        collectedFids.push(fid)
+  for (const address of addresses) {
+    try {
+      logger.debug({ address }, 'Fetching Farcaster user for address.')
+      const { user } = await getUserByVerification(env, address)
+      farcasterUsers = pipe(
+        [...farcasterUsers, user.fid],
+        unique(),
+        sortBy((fid) => fid),
+      )
+      logger.debug({ fid: user.fid, address }, 'Farcaster user fetched.')
+    } catch (error) {
+      if (
+        error instanceof Error &&
+        !error.message.startsWith('No FID has connected')
+      ) {
+        logger.error({ error }, 'Error fetching Farcaster user.')
       }
     }
   }
 
-  // Sort and deduplicate collectedFids, then store in KV.
-  farcasterUsers = pipe(
-    [...farcasterUsers, ...collectedFids],
-    unique(),
-    sortBy((x) => x),
-  )
   logger.debug(
     { users: farcasterUsers },
     'Fetched and processed Farcaster users.',
   )
-
-  // Store the sorted and deduplicated list of FIDs in KV.
-  try {
-    await kv.put(cacheKey, JSON.stringify(farcasterUsers), { expirationTtl })
-  } catch (error) {
-    logger.warn({ error }, 'Failed to cache Farcaster users; continuing.')
-  }
+  await kv.put(cacheKey, JSON.stringify(farcasterUsers), { expirationTtl })
 }
 
 /**
@@ -241,111 +162,43 @@ async function fetchAndStoreFarcasterVoters(env: Env) {
   const threeMonthsAgo = now.minus({ months: 3 })
   const secondsInThreeMonths = now.diff(threeMonthsAgo, 'seconds').seconds
   const blocksInThreeMonths = secondsInThreeMonths / blockTimeInSeconds
-
-  let startBlock: number
-  try {
-    const currentBlock = await getBlockNumber(env)
-    startBlock = currentBlock - blocksInThreeMonths
-  } catch (error) {
-    logger.error({ error }, 'Failed to compute start block for voters fetch.')
-    throw error
-  }
+  const startBlock = (await getBlockNumber(env)) - blocksInThreeMonths
 
   logger.info('Fetching Farcaster voters from API...')
-  let votersAddresses: string[]
-  try {
-    const { voters } = await fetchVoters(env, startBlock)
-    votersAddresses = pipe(
-      voters,
-      map((voter) => voter.id),
-    )
-  } catch (error) {
-    logger.error({ error }, 'Failed to fetch voters from API.')
-    throw error
-  }
-  const addresses = votersAddresses
+  const { voters } = await fetchVoters(env, startBlock)
+  const addresses = pipe(
+    voters,
+    map((voter) => voter.id),
+  )
 
-  const warpcastUsers = createWarpcastUserLookup({
-    auth: () => env.WARPCAST_ACCESS_TOKEN,
-  })
-
-  // Process in parallel batches to control concurrency
-  const batchSize = 20
-  const addressBatches = pipe(addresses, chunk(batchSize))
-  const collectedFids: number[] = []
-
-  // Process each batch: concurrently fetch Farcaster users for addresses,
-  // map to FIDs (or null), then append numeric FIDs to collectedFids.
-  for (const group of addressBatches) {
-    const results = await Promise.all(
-      group.map(async (address) => {
-        logger.debug({ address }, 'Fetching Farcaster user for voter address.')
-
-        try {
-          // Fetch Farcaster user data for the voter address.
-          const { data, error } =
-            await warpcastUsers.getUserByVerificationAddress(address)
-
-          // Handle error cases from Farcaster API: If error indicates no FID connection,
-          // log a warning since this is an expected case. For other errors, log them
-          // as errors. In both cases, skip processing this address by returning null.
-          if (error) {
-            const primaryError = first(error.errors ?? [])
-            const isNoFIDError = primaryError?.message?.startsWith(
-              'No FID has connected',
-            )
-            if (isNoFIDError) {
-              logger.warn({ address }, 'No FID has connected')
-            } else {
-              logger.error({ error, address }, 'Error fetching Farcaster user.')
-            }
-            return null
-          }
-
-          // Validate the API response: if a numeric FID exists, log and return it;
-          // otherwise log absence and return null.
-          const fid = data?.result?.user?.fid
-          if (typeof fid === 'number') {
-            logger.debug({ fid, address }, 'Farcaster user fetched for voter.')
-            return fid
-          } else {
-            logger.debug(
-              { address },
-              'No Farcaster user found for voter address.',
-            )
-            return null
-          }
-        } catch (error) {
-          logger.error({ error, address }, 'Error fetching Farcaster user.')
-          return null
-        }
-      }),
-    )
-
-    for (const fid of results) {
-      if (isNumber(fid)) {
-        collectedFids.push(fid)
+  for (const address of addresses) {
+    try {
+      logger.debug({ address }, 'Fetching Farcaster user for voter address.')
+      const { user } = await getUserByVerification(env, address)
+      farcasterVoters = pipe(
+        [...farcasterVoters, user.fid],
+        unique(),
+        sortBy((fid) => fid),
+      )
+      logger.debug(
+        { fid: user.fid, address },
+        'Farcaster user fetched for voter.',
+      )
+    } catch (error) {
+      if (
+        error instanceof Error &&
+        !error.message.startsWith('No FID has connected')
+      ) {
+        logger.error({ error }, 'Error fetching Farcaster voter.')
       }
     }
   }
 
-  // Sort and deduplicate collectedFids, then store in KV.
-  farcasterVoters = pipe(
-    [...farcasterVoters, ...collectedFids],
-    unique(),
-    sortBy((x) => x),
-  )
   logger.debug(
     { voters: farcasterVoters },
     'Fetched and processed Farcaster voters.',
   )
-
-  // Store the sorted and deduplicated list of FIDs in KV.
-  try {
-    await kv.put(cacheKey, JSON.stringify(farcasterVoters), { expirationTtl })
-  } catch (error) {
-    logger.warn({ error }, 'Failed to cache Farcaster voters; continuing.')
-  }
+  await kv.put(cacheKey, JSON.stringify(farcasterVoters), { expirationTtl })
 }
 
 /**
@@ -354,14 +207,8 @@ async function fetchAndStoreFarcasterVoters(env: Env) {
  * @returns - A promise that resolves when caching is complete.
  */
 export async function cacheHandler(env: Env): Promise<void> {
-  const tasks = [
-    fetchAndStoreFarcasterUsers(env).catch((error) => {
-      logger.error({ error }, 'Farcaster users cache task failed.')
-    }),
-    fetchAndStoreFarcasterVoters(env).catch((error) => {
-      logger.error({ error }, 'Farcaster voters cache task failed.')
-    }),
-  ]
-
-  await Promise.all(tasks)
+  await Promise.all([
+    fetchAndStoreFarcasterUsers(env),
+    fetchAndStoreFarcasterVoters(env),
+  ])
 }

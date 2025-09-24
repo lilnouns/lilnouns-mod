@@ -1,12 +1,10 @@
+import { likeCast } from '@/services/warpcast'
+import { getCastLikes } from '@/services/warpcast/get-cast-likes'
+import { getFeedItems } from '@/services/warpcast/get-feed-items'
+import { getMe } from '@/services/warpcast/get-me'
+import { recast } from '@/services/warpcast/recast'
 import { logger } from '@/utilities/logger'
-import {
-  getCastLikes,
-  getCurrentUser,
-  getFeedItems,
-  likeCast,
-  recastCast,
-} from '@nekofar/warpcast'
-import { filter, map, pipe } from 'remeda'
+import { map, pipe } from 'remeda'
 
 /**
  * Fetches recent feed items for a given feed key and type.
@@ -17,7 +15,7 @@ import { filter, map, pipe } from 'remeda'
  */
 async function getRecentFeedItems(env: Env, feedKey: string, feedType: string) {
   logger.debug({ feedKey }, `Fetching feed items`)
-  const allItems = []
+  const allItems: Awaited<ReturnType<typeof getFeedItems>>['items'] = []
   let fetchedItemsCount = 0
   const maxItems = 300
 
@@ -25,26 +23,12 @@ async function getRecentFeedItems(env: Env, feedKey: string, feedType: string) {
 
   while (fetchedItemsCount < maxItems) {
     logger.debug({ excludeItemIdPrefixes }, 'Fetching feed items')
-    const { data, error } = await getFeedItems({
-      auth: () => env.WARPCAST_ACCESS_TOKEN,
-      body: { feedKey, feedType, excludeItemIdPrefixes },
-    })
-
-    if (error) {
-      logger.error(
-        {
-          error,
-          feedKey,
-          feedType,
-          excludeItemIdPrefixes,
-        },
-        'Error fetching feed items',
-      )
-      return { items: [] }
-    }
-
-    // Normalize possibly-undefined to a safe default to avoid unsafe optional chaining.
-    const items = data.result.items
+    const { items } = await getFeedItems(
+      env,
+      feedKey,
+      feedType,
+      excludeItemIdPrefixes,
+    )
 
     // Add the new items to the total collection.
     allItems.push(...items)
@@ -69,7 +53,7 @@ async function getRecentFeedItems(env: Env, feedKey: string, feedType: string) {
 }
 
 /**
- * Handles the noun channel in the given environment.
+ * Handles the nouns channel in the given environment.
  * @param env - The environment object.
  * @returns - A promise that resolves with no value.
  */
@@ -79,21 +63,7 @@ export async function handleNounsChannel(env: Env) {
 
   // Fetch the current user
   logger.info('Fetching current user')
-  const { data, error } = await getCurrentUser({
-    auth: () => env.WARPCAST_ACCESS_TOKEN,
-  })
-
-  if (error) {
-    logger.error(
-      {
-        error,
-      },
-      'Failed to get current user',
-    )
-    return
-  }
-
-  const user = data.result.user
+  const { user } = await getMe(env)
 
   const farcasterUsers: number[] =
     (await kv.get('lilnouns-farcaster-users', { type: 'json' })) ?? []
@@ -111,29 +81,19 @@ export async function handleNounsChannel(env: Env) {
     logger.debug({ item }, 'Processing item')
 
     // Fetch likes for the cast item
-    const castHash = item.cast.hash
-    logger.debug({ hash: castHash }, 'Fetching likes for item')
-    const { data, error } = await getCastLikes({
-      auth: () => env.WARPCAST_ACCESS_TOKEN,
-      query: {
-        castHash,
-      },
-    })
-
-    if (error) {
-      logger.error({ error, castHash }, 'Error fetching cast likes')
-      continue
-    }
-
+    logger.debug({ hash: item.cast.hash }, 'Fetching likes for item')
+    const { likes } = await getCastLikes(env, item.cast.hash)
     const likerIds = pipe(
-      data.result?.likes ?? [],
-      map((like) => like.reactor?.fid),
-      filter((id): id is number => id !== undefined),
+      likes,
+      map((like) => like.reactor.fid),
     )
 
     // Skip if the current user already liked the item
     if (likerIds.includes(user.fid)) {
-      logger.debug({ hash: castHash }, 'Current user already liked the item:')
+      logger.debug(
+        { hash: item.cast.hash },
+        'Current user already liked the item:',
+      )
       continue
     }
 
@@ -145,13 +105,8 @@ export async function handleNounsChannel(env: Env) {
       continue
     }
 
-    await likeCast({
-      auth: () => env.WARPCAST_ACCESS_TOKEN,
-      body: {
-        castHash,
-      },
-    })
-    logger.debug({ hash: castHash }, 'Liked cast')
+    await likeCast(env, item.cast.hash)
+    logger.debug({ hash: item.cast.hash }, 'Liked cast')
   }
 }
 
@@ -166,43 +121,17 @@ async function handleLilNounsChannel(env: Env) {
   const { items } = await getRecentFeedItems(env, 'lilnouns', 'default')
 
   logger.info('Fetching current user')
-  const { data, error } = await getCurrentUser({
-    auth: () => env.WARPCAST_ACCESS_TOKEN,
-  })
-
-  if (error) {
-    logger.error(
-      {
-        error,
-      },
-      'Failed to get current user',
-    )
-    return
-  }
-
-  const user = data.result.user
+  const { user } = await getMe(env)
 
   for (const item of items) {
     logger.debug({ item }, 'Processing item')
     const hash = item.cast.hash
 
     logger.debug({ hash }, 'Fetching likes for item')
-    const { data, error } = await getCastLikes({
-      auth: () => env.WARPCAST_ACCESS_TOKEN,
-      query: {
-        castHash: hash,
-      },
-    })
-
-    if (error) {
-      logger.error({ error, hash }, 'Error fetching cast likes')
-      continue
-    }
-
+    const { likes } = await getCastLikes(env, hash)
     const likerIds = pipe(
-      data.result?.likes ?? [],
-      map((like) => like.reactor?.fid),
-      filter((id): id is number => id !== undefined),
+      likes,
+      map((like) => like.reactor.fid),
     )
 
     // Skip if the current user already liked the item
@@ -213,61 +142,31 @@ async function handleLilNounsChannel(env: Env) {
 
     // If the item's cast author is the owner
     if (item.cast.author.username == owner) {
-      await recastCast({
-        auth: () => env.WARPCAST_ACCESS_TOKEN,
-        body: {
-          castHash: hash,
-        },
-      })
-      logger.debug({ hash }, 'Re-casted by owner')
-      await likeCast({
-        auth: () => env.WARPCAST_ACCESS_TOKEN,
-        body: {
-          castHash: hash
-        }
-      })
+      await recast(env, hash)
+      logger.debug({ hash }, 'Recasted by owner')
+      await likeCast(env, hash)
       logger.debug({ hash }, 'Liked cast by owner')
     }
 
     // If the number of reactions on the item's cast is greater than 5
     else if (item.cast.reactions.count > 5) {
-      await recastCast({
-        auth: () => env.WARPCAST_ACCESS_TOKEN,
-        body: {
-          castHash: hash
-        }
-      })
+      await recast(env, hash)
       logger.debug({ hash }, 'Recast due to reactions > 5')
-      await likeCast({
-        auth: () => env.WARPCAST_ACCESS_TOKEN,
-        body: {
-          castHash: hash
-        }
-      })
+      await likeCast(env, hash)
       logger.debug({ hash }, 'Liked cast due to reactions > 5')
     }
 
     // If the item's cast has at least one reaction
     else if (item.cast.reactions.count > 0) {
-      for (const like of data.result?.likes ?? []) {
+      for (const like of likes) {
         // If the user who reacted is not the owner
-        if (like.reactor?.username != owner) {
+        if (like.reactor.username != owner) {
           continue
         }
 
-        await recastCast({
-          auth: () => env.WARPCAST_ACCESS_TOKEN,
-          body: {
-            castHash: hash
-          }
-        })
-        logger.debug({ hash }, 'Re-casted due to owner reaction')
-        await likeCast({
-          auth: () => env.WARPCAST_ACCESS_TOKEN,
-          body: {
-            castHash: hash
-          }
-        })
+        await recast(env, hash)
+        logger.debug({ hash }, 'Recasted due to owner reaction')
+        await likeCast(env, hash)
         logger.debug({ hash }, 'Liked cast due to owner reaction')
       }
     }
