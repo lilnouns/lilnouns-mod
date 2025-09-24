@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.0.0-alpha.99] - 2025-09-24
+
+### ◀️ Revert
+
+- *(warpcast)* Reduce `DEFAULT_MIN_REQUEST_INTERVAL_MS`
+
 ## [1.0.0-alpha.98] - 2025-09-23
 
 ### 🐛 Bug Fixes
