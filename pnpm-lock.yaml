@@ -14,8 +14,8 @@ importers:
   .:
     dependencies:
       '@nekofar/warpcast':
-        specifier: 2.0.0-alpha.66
-        version: 2.0.0-alpha.66(zod@4.1.11)
+        specifier: 2.0.0-alpha.72
+        version: 2.0.0-alpha.72(zod@4.1.11)
       cron-time-generator:
         specifier: 2.0.3
         version: 2.0.3
@@ -864,8 +864,8 @@ packages:
     resolution: {integrity: sha512-w8CVbdkDrVXFJbfBSlDfafDR6BAkpDmv1bC1UJVCoVny5tW2RKAdn9i68Xf7asYT4TnUhl/hN4zfUiKQq9II4g==}
     engines: {node: '>=16.0.0'}
 
-  '@nekofar/warpcast@2.0.0-alpha.66':
-    resolution: {integrity: sha512-DwLNrxPaf5zRGxgVDKSECKc4eT5NR5P06JUACXMLj4aEAfZYhTzTNrVtVtKPeLz767E75q133+bA+jqE600izA==}
+  '@nekofar/warpcast@2.0.0-alpha.72':
+    resolution: {integrity: sha512-AEY02amkEnomwsD2ssz+M9ELgj2A1p7WUNA5zKHg6fStJ2LUpk8vxgyZo69SB3lJsFbGK1/OTj1Bhl3xT38DuQ==}
     engines: {node: '>=20.0.0'}
     peerDependencies:
       zod: ^4.0.10
@@ -4377,7 +4377,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@nekofar/warpcast@2.0.0-alpha.66(zod@4.1.11)':
+  '@nekofar/warpcast@2.0.0-alpha.72(zod@4.1.11)':
     dependencies:
       zod: 4.1.11
 
