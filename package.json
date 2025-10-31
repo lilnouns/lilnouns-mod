@@ -33,7 +33,7 @@
     "zod": "4.1.12"
   },
   "devDependencies": {
-    "@cloudflare/vitest-pool-workers": "0.10.2",
+    "@cloudflare/vitest-pool-workers": "0.10.3",
     "@cloudflare/workers-types": "4.20251014.0",
     "@eslint/js": "9.38.0",
     "@types/eslint__js": "9.14.0",
