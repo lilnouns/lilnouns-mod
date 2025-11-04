@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.0.0-alpha.107] - 2025-11-04
+
+### ⚙️ Miscellaneous Tasks
+
+- *(github)* Use setup-node cache for pnpm and set node version
+- *(config)* Disable cron triggers
+
 ## [1.0.0-alpha.106] - 2025-10-11
 
 ### 🐛 Bug Fixes
