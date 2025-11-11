@@ -23,8 +23,8 @@ importers:
         specifier: 16.12.0
         version: 16.12.0
       graphql-request:
-        specifier: 7.3.1
-        version: 7.3.1(graphql@16.12.0)
+        specifier: 7.3.2
+        version: 7.3.2(graphql@16.12.0)
       luxon:
         specifier: 3.7.2
         version: 3.7.2
@@ -2550,8 +2550,8 @@ packages:
   graphemer@1.4.0:
     resolution: {integrity: sha512-EtKwoO6kxCL9WO5xipiHTZlSzBm7WLT627TqC/uVRd0HKmq8NXyebnNYxDoBi7wt8eTWrUrKXCOVaFq9x1kgag==}
 
-  graphql-request@7.3.1:
-    resolution: {integrity: sha512-GdinBsBVYrWzwEvOlzadrV5j8mdOc9ZT8In9QyRIZaxbhkTL08j35yNbPp96jAacYzjeD/hKKy2E2RGI7c7Yug==}
+  graphql-request@7.3.2:
+    resolution: {integrity: sha512-ZnONGa8imXXPOImZoSTrV4qtrCAOv/ulXMAMmFzttObjdILDmNwDEcnloZKOncG+ucWN1JKyjMG7lAzuYDZmlg==}
     peerDependencies:
       graphql: 14 - 16
 
@@ -7454,7 +7454,7 @@ snapshots:
 
   graphemer@1.4.0: {}
 
-  graphql-request@7.3.1(graphql@16.12.0):
+  graphql-request@7.3.2(graphql@16.12.0):
     dependencies:
       '@graphql-typed-document-node/core': 3.2.0(graphql@16.12.0)
       graphql: 16.12.0
