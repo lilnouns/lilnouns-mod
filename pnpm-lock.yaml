@@ -14,8 +14,8 @@ importers:
   .:
     dependencies:
       '@nekofar/warpcast':
-        specifier: 2.0.0-alpha.92
-        version: 2.0.0-alpha.92(ofetch@1.5.1)(zod@4.1.13)
+        specifier: 2.0.0-alpha.97
+        version: 2.0.0-alpha.97(ofetch@1.5.1)(zod@4.1.13)
       cron-time-generator:
         specifier: 2.0.3
         version: 2.0.3
@@ -858,8 +858,8 @@ packages:
     resolution: {integrity: sha512-w8CVbdkDrVXFJbfBSlDfafDR6BAkpDmv1bC1UJVCoVny5tW2RKAdn9i68Xf7asYT4TnUhl/hN4zfUiKQq9II4g==}
     engines: {node: '>=16.0.0'}
 
-  '@nekofar/warpcast@2.0.0-alpha.92':
-    resolution: {integrity: sha512-QHwDAsabNvi+56ecPgiSCfGpYyehtKGV5DK0pRnTCOkVaTyZDF9wHI9O/XFgQKST02JYHEzfPcB8bdhJ0D2pXg==}
+  '@nekofar/warpcast@2.0.0-alpha.97':
+    resolution: {integrity: sha512-lKZkPgHzWNifJsLpcPHIRVsMeDRLa5XrVsBLAtv1E43Kv5Mp+/Il30nf2m10TGu2wswko/PmyUTY2bJl7SshYA==}
     engines: {node: '>=20.0.0'}
     peerDependencies:
       ofetch: ^1.5.0
@@ -1882,8 +1882,8 @@ packages:
   borsh@0.7.0:
     resolution: {integrity: sha512-CLCsZGIBCFnPtkNnieW/a8wmreDmfUtjU2m9yHrzPXIlNbqVs0AQrSatSG6vdNYUqdc83tkQi2eHfF98ubzQLA==}
 
-  bowser@2.13.0:
-    resolution: {integrity: sha512-yHAbSRuT6LTeKi6k2aS40csueHqgAsFEgmrOsfRyFpJnFv5O2hl9FYmWEUZ97gZ/dG17U4IQQcTx4YAFYPuWRQ==}
+  bowser@2.13.1:
+    resolution: {integrity: sha512-OHawaAbjwx6rqICCKgSG0SAnT05bzd7ppyKLVUITZpANBaaMFBAsaNkto3LoQ31tyFP5kNujE8Cdx85G9VzOkw==}
 
   brace-expansion@1.1.12:
     resolution: {integrity: sha512-9T9UjW3r0UW5c1Q7GTwllptXwhvYmEzFhzMfZ9H7FQWt+uZePjZPjBP/W1ZEyZ1twGWom5/56TF4lPcqjnDHcg==}
@@ -4073,8 +4073,8 @@ packages:
       use-sync-external-store:
         optional: true
 
-  zustand@5.0.8:
-    resolution: {integrity: sha512-gyPKpIaxY9XcO2vSMrLbiER7QMAMGOQZVRdJ6Zi782jkbzZygq5GI9nG8g+sMgitRtndwaBSl7uiqC49o1SSiw==}
+  zustand@5.0.9:
+    resolution: {integrity: sha512-ALBtUj0AfjJt3uNRQoL1tL2tMvj6Gp/6e39dnfT6uzpelGru8v1tPOGBzayOWbPJvujM8JojDk3E1LxeFisBNg==}
     engines: {node: '>=12.20.0'}
     peerDependencies:
       '@types/react': '>=18.0.0'
@@ -4644,7 +4644,7 @@ snapshots:
 
   '@metamask/onboarding@1.0.1':
     dependencies:
-      bowser: 2.13.0
+      bowser: 2.13.1
     optional: true
 
   '@metamask/providers@16.1.0':
@@ -4720,7 +4720,7 @@ snapshots:
       '@metamask/sdk-communication-layer': 0.33.1(cross-fetch@4.1.0)(eciesjs@0.4.16)(eventemitter2@6.4.9)(readable-stream@3.6.2)(socket.io-client@4.8.1(bufferutil@4.0.9)(utf-8-validate@5.0.10))
       '@metamask/sdk-install-modal-web': 0.32.1
       '@paulmillr/qr': 0.2.1
-      bowser: 2.13.0
+      bowser: 2.13.1
       cross-fetch: 4.1.0
       debug: 4.3.4
       eciesjs: 0.4.16
@@ -4790,7 +4790,7 @@ snapshots:
       - supports-color
     optional: true
 
-  '@nekofar/warpcast@2.0.0-alpha.92(ofetch@1.5.1)(zod@4.1.13)':
+  '@nekofar/warpcast@2.0.0-alpha.97(ofetch@1.5.1)(zod@4.1.13)':
     dependencies:
       ofetch: 1.5.1
       zod: 4.1.13
@@ -6741,7 +6741,7 @@ snapshots:
       text-encoding-utf-8: 1.0.2
     optional: true
 
-  bowser@2.13.0:
+  bowser@2.13.1:
     optional: true
 
   brace-expansion@1.1.12:
@@ -8322,7 +8322,7 @@ snapshots:
       ox: 0.9.17(typescript@5.9.3)(zod@4.1.13)
       viem: 2.40.3(bufferutil@4.0.9)(typescript@5.9.3)(utf-8-validate@5.0.10)(zod@4.1.13)
       zod: 4.1.13
-      zustand: 5.0.8(react@18.3.1)(use-sync-external-store@1.4.0(react@18.3.1))
+      zustand: 5.0.9(react@18.3.1)(use-sync-external-store@1.4.0(react@18.3.1))
     optionalDependencies:
       '@tanstack/react-query': 5.84.1(react@18.3.1)
       react: 18.3.1
@@ -9283,7 +9283,7 @@ snapshots:
       use-sync-external-store: 1.4.0(react@18.3.1)
     optional: true
 
-  zustand@5.0.8(react@18.3.1)(use-sync-external-store@1.4.0(react@18.3.1)):
+  zustand@5.0.9(react@18.3.1)(use-sync-external-store@1.4.0(react@18.3.1)):
     optionalDependencies:
       react: 18.3.1
       use-sync-external-store: 1.4.0(react@18.3.1)
