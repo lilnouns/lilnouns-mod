@@ -44,8 +44,8 @@ importers:
         specifier: 2.41.2
         version: 2.41.2(bufferutil@4.0.9)(typescript@5.9.3)(utf-8-validate@5.0.10)(zod@4.1.13)
       wagmi:
-        specifier: 3.0.2
-        version: 3.0.2(f9f607d7b7c5e09abdc7fffb3ecf4957)
+        specifier: 3.1.0
+        version: 3.1.0(f9f607d7b7c5e09abdc7fffb3ecf4957)
       zod:
         specifier: 4.1.13
         version: 4.1.13
@@ -3918,8 +3918,8 @@ packages:
       jsdom:
         optional: true
 
-  wagmi@3.0.2:
-    resolution: {integrity: sha512-4V6uxi37OuDMkVh+k5HeS71jBHEfOE/livbbNkvOpmdVEMsLV6Djk4nNkA+W9n78MniwFIK/Y1tSGNQ/IcVS0Q==}
+  wagmi@3.1.0:
+    resolution: {integrity: sha512-7194n7C4HqCSOwjH6InHhaDBRHyBAVsyI5gD+52a+erFQwGHpJip/c33a2nhhB3UAZ+nx90m+z00X3CbGqoiWw==}
     peerDependencies:
       '@tanstack/react-query': '>=5.0.0'
       react: '>=18'
@@ -6055,7 +6055,7 @@ snapshots:
       '@safe-global/safe-apps-provider': 0.18.6(bufferutil@4.0.9)(typescript@5.9.3)(utf-8-validate@5.0.10)(zod@4.1.13)
       '@safe-global/safe-apps-sdk': 9.1.0(bufferutil@4.0.9)(typescript@5.9.3)(utf-8-validate@5.0.10)(zod@4.1.13)
       '@walletconnect/ethereum-provider': 2.21.1(bufferutil@4.0.9)(react@18.3.1)(typescript@5.9.3)(utf-8-validate@5.0.10)(zod@4.1.13)
-      porto: 0.2.35(@tanstack/react-query@5.84.1(react@18.3.1))(@wagmi/core@3.0.0(@tanstack/query-core@5.83.1)(react@18.3.1)(typescript@5.9.3)(use-sync-external-store@1.4.0(react@18.3.1))(viem@2.41.2(bufferutil@4.0.9)(typescript@5.9.3)(utf-8-validate@5.0.10)(zod@4.1.13)))(react@18.3.1)(typescript@5.9.3)(use-sync-external-store@1.4.0(react@18.3.1))(viem@2.41.2(bufferutil@4.0.9)(typescript@5.9.3)(utf-8-validate@5.0.10)(zod@4.1.13))(wagmi@3.0.2)
+      porto: 0.2.35(@tanstack/react-query@5.84.1(react@18.3.1))(@wagmi/core@3.0.0(@tanstack/query-core@5.83.1)(react@18.3.1)(typescript@5.9.3)(use-sync-external-store@1.4.0(react@18.3.1))(viem@2.41.2(bufferutil@4.0.9)(typescript@5.9.3)(utf-8-validate@5.0.10)(zod@4.1.13)))(react@18.3.1)(typescript@5.9.3)(use-sync-external-store@1.4.0(react@18.3.1))(viem@2.41.2(bufferutil@4.0.9)(typescript@5.9.3)(utf-8-validate@5.0.10)(zod@4.1.13))(wagmi@3.1.0)
       typescript: 5.9.3
 
   '@wagmi/core@3.0.0(@tanstack/query-core@5.83.1)(react@18.3.1)(typescript@5.9.3)(use-sync-external-store@1.4.0(react@18.3.1))(viem@2.41.2(bufferutil@4.0.9)(typescript@5.9.3)(utf-8-validate@5.0.10)(zod@4.1.13))':
@@ -8369,7 +8369,7 @@ snapshots:
   pony-cause@2.1.11:
     optional: true
 
-  porto@0.2.35(@tanstack/react-query@5.84.1(react@18.3.1))(@wagmi/core@3.0.0(@tanstack/query-core@5.83.1)(react@18.3.1)(typescript@5.9.3)(use-sync-external-store@1.4.0(react@18.3.1))(viem@2.41.2(bufferutil@4.0.9)(typescript@5.9.3)(utf-8-validate@5.0.10)(zod@4.1.13)))(react@18.3.1)(typescript@5.9.3)(use-sync-external-store@1.4.0(react@18.3.1))(viem@2.41.2(bufferutil@4.0.9)(typescript@5.9.3)(utf-8-validate@5.0.10)(zod@4.1.13))(wagmi@3.0.2):
+  porto@0.2.35(@tanstack/react-query@5.84.1(react@18.3.1))(@wagmi/core@3.0.0(@tanstack/query-core@5.83.1)(react@18.3.1)(typescript@5.9.3)(use-sync-external-store@1.4.0(react@18.3.1))(viem@2.41.2(bufferutil@4.0.9)(typescript@5.9.3)(utf-8-validate@5.0.10)(zod@4.1.13)))(react@18.3.1)(typescript@5.9.3)(use-sync-external-store@1.4.0(react@18.3.1))(viem@2.41.2(bufferutil@4.0.9)(typescript@5.9.3)(utf-8-validate@5.0.10)(zod@4.1.13))(wagmi@3.1.0):
     dependencies:
       '@wagmi/core': 3.0.0(@tanstack/query-core@5.83.1)(react@18.3.1)(typescript@5.9.3)(use-sync-external-store@1.4.0(react@18.3.1))(viem@2.41.2(bufferutil@4.0.9)(typescript@5.9.3)(utf-8-validate@5.0.10)(zod@4.1.13))
       hono: 4.10.7
@@ -8383,7 +8383,7 @@ snapshots:
       '@tanstack/react-query': 5.84.1(react@18.3.1)
       react: 18.3.1
       typescript: 5.9.3
-      wagmi: 3.0.2(f9f607d7b7c5e09abdc7fffb3ecf4957)
+      wagmi: 3.1.0(f9f607d7b7c5e09abdc7fffb3ecf4957)
     transitivePeerDependencies:
       - '@types/react'
       - immer
@@ -9143,7 +9143,7 @@ snapshots:
       - tsx
       - yaml
 
-  wagmi@3.0.2(f9f607d7b7c5e09abdc7fffb3ecf4957):
+  wagmi@3.1.0(f9f607d7b7c5e09abdc7fffb3ecf4957):
     dependencies:
       '@tanstack/react-query': 5.84.1(react@18.3.1)
       '@wagmi/connectors': 7.0.2(9029ebb70ed2cbdaa59e3ad7c1d20b62)
