@@ -14,8 +14,8 @@ importers:
   .:
     dependencies:
       '@nekofar/warpcast':
-        specifier: 2.0.0-alpha.101
-        version: 2.0.0-alpha.101(ofetch@1.5.1)(zod@4.1.13)
+        specifier: 2.0.0-alpha.105
+        version: 2.0.0-alpha.105(ofetch@1.5.1)(zod@4.1.13)
       cron-time-generator:
         specifier: 2.0.3
         version: 2.0.3
@@ -862,8 +862,8 @@ packages:
     resolution: {integrity: sha512-w8CVbdkDrVXFJbfBSlDfafDR6BAkpDmv1bC1UJVCoVny5tW2RKAdn9i68Xf7asYT4TnUhl/hN4zfUiKQq9II4g==}
     engines: {node: '>=16.0.0'}
 
-  '@nekofar/warpcast@2.0.0-alpha.101':
-    resolution: {integrity: sha512-QTLV+Q+A2JxaHW3gagar5p2dihDAURuvqENulUsKvLo9Jhv3w7lIT6eyT/9S5V2gdCHkpcsEJ11ny1MZGvyt4Q==}
+  '@nekofar/warpcast@2.0.0-alpha.105':
+    resolution: {integrity: sha512-OPMQIsJKh6iuI1ZYodKuMOaJntT+LspybnFk7Kf3yKGkaS2lJzg0tdA5l7/zjSL/yNkgH8wB5t/iqXCD1HTaqA==}
     engines: {node: '>=20.0.0'}
     peerDependencies:
       ofetch: ^1.5.0
@@ -4805,7 +4805,7 @@ snapshots:
       - supports-color
     optional: true
 
-  '@nekofar/warpcast@2.0.0-alpha.101(ofetch@1.5.1)(zod@4.1.13)':
+  '@nekofar/warpcast@2.0.0-alpha.105(ofetch@1.5.1)(zod@4.1.13)':
     dependencies:
       ofetch: 1.5.1
       zod: 4.1.13
