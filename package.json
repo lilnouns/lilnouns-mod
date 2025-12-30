@@ -1,6 +1,6 @@
 {
   "name": "lilnouns-mod",
-  "version": "1.0.0-alpha.116",
+  "version": "1.0.0-alpha.117",
   "private": true,
   "type": "module",
   "scripts": {
@@ -60,5 +60,9 @@
     "vitest": "3.2.4",
     "wrangler": "4.16.1"
   },
-  "packageManager": "pnpm@10.14.0"
+  "packageManager": "pnpm@10.14.0",
+  "engines": {
+    "node": "^24",
+    "pnpm": "^10"
+  }
 }
