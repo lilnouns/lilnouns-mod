@@ -62,6 +62,9 @@ updates:
           - '@typescript-eslint/parser'
     # List of packages to ignore for specific update types
     ignore:
+      - dependency-name: '*'
+        update-types:
+          - 'version-update:semver-major'
       - dependency-name: 'wrangler'
         update-types:
           - 'version-update:semver-major'
