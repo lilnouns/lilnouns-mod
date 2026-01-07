@@ -44,8 +44,8 @@ importers:
         specifier: 2.43.4
         version: 2.43.4(typescript@5.9.3)(zod@4.3.4)
       wagmi:
-        specifier: 3.1.4
-        version: 3.1.4(@tanstack/query-core@5.90.15)(@tanstack/react-query@5.90.15(react@19.2.3))(react@19.2.3)(typescript@5.9.3)(viem@2.43.4(typescript@5.9.3)(zod@4.3.4))
+        specifier: 3.2.0
+        version: 3.2.0(@tanstack/query-core@5.90.15)(@tanstack/react-query@5.90.15(react@19.2.3))(ox@0.11.1(typescript@5.9.3)(zod@4.3.4))(react@19.2.3)(typescript@5.9.3)(viem@2.43.4(typescript@5.9.3)(zod@4.3.4))
       zod:
         specifier: 4.3.4
         version: 4.3.4
@@ -1091,6 +1091,7 @@ packages:
 
   '@types/eslint__js@9.14.0':
     resolution: {integrity: sha512-s0jepCjOJWB/GKcuba4jISaVpBudw3ClXJ3fUK4tugChUMQsp6kSwuA8Dcx6wFd/JsJqcY8n4rEpa5RTHs5ypA==}
+    deprecated: This is a stub types definition. @eslint/js provides its own type definitions, so you do not need this installed.
 
   '@types/estree@1.0.8':
     resolution: {integrity: sha512-dWHzHa2WqEXI/O1E9OjrocMTKJl2mSrEolh1Iomrv6U+JuNwaHXsXx9bLu5gG7BUWFIN0skIQJQ/L1rIex4X6w==}
@@ -1228,17 +1229,17 @@ packages:
   '@vitest/utils@3.2.4':
     resolution: {integrity: sha512-fB2V0JFrQSMsCo9HiSq3Ezpdv4iYaXRG1Sx8edX3MwxfyNn83mKiGzOcH+Fkxt4MHxr3y42fQi1oeAInqgX2QA==}
 
-  '@wagmi/connectors@7.0.6':
-    resolution: {integrity: sha512-iVno/MLORNd4eHAMCrxKsjqrU38Ccm7vwcZpWAMzQB4J+JOIlZHFALIoV9OruDF6sEGEECWQeaNpqkED0XTPYw==}
+  '@wagmi/connectors@7.0.7':
+    resolution: {integrity: sha512-aJ+Ktjm31htgeIUXWjsomn0KyZUNF3MUT1WSaNKE6h0GZA3zwhiFwk3IbhuYi4qaBnaqEuHkWw6TgRtVqSfCfw==}
     peerDependencies:
-      '@base-org/account': ~2.4.0
-      '@coinbase/wallet-sdk': ~4.3.6
+      '@base-org/account': ^2.5.1
+      '@coinbase/wallet-sdk': ^4.3.6
       '@gemini-wallet/core': ~0.3.1
       '@metamask/sdk': ~0.33.1
       '@safe-global/safe-apps-provider': ~0.18.6
-      '@safe-global/safe-apps-sdk': ~9.1.0
-      '@wagmi/core': 3.0.2
-      '@walletconnect/ethereum-provider': ~2.21.1
+      '@safe-global/safe-apps-sdk': ^9.1.0
+      '@wagmi/core': 3.1.0
+      '@walletconnect/ethereum-provider': ^2.21.1
       porto: ~0.2.35
       typescript: '>=5.7.3'
       viem: 2.x
@@ -1262,14 +1263,17 @@ packages:
       typescript:
         optional: true
 
-  '@wagmi/core@3.0.2':
-    resolution: {integrity: sha512-Aj5AI3M7XXRQZ9eAO6WWZ/A1yZoNAj46ZcPAwZSsKGa84LpX3Ff30s73RJhi8hSSVvaot9+yCeneLXMLRh63hw==}
+  '@wagmi/core@3.1.0':
+    resolution: {integrity: sha512-+lp2NO3pTP7Rk2y7ZsVZTOAo03ohtdg7epmAtlSMw+MGi83Ylss+6sNMfVetKTyhAh7QofcHxlHP1VgKCev8MA==}
     peerDependencies:
       '@tanstack/query-core': '>=5.0.0'
+      ox: '>=0.11.1'
       typescript: '>=5.7.3'
       viem: 2.x
     peerDependenciesMeta:
       '@tanstack/query-core':
+        optional: true
+      ox:
         optional: true
       typescript:
         optional: true
@@ -2466,6 +2470,9 @@ packages:
   ufo@1.6.1:
     resolution: {integrity: sha512-9a4/uxlTWJ4+a5i0ooc1rU7C7YOw3wT+UGqdeNNHWnOF9qcMBgLRS+4IYUqbczewFx4mLEig6gawh7X6mFlEkA==}
 
+  ufo@1.6.2:
+    resolution: {integrity: sha512-heMioaxBcG9+Znsda5Q8sQbWnLJSl98AFDXTO80wELWEzX3hordXsTdxrIfMQoO9IY1MEnoGoPjpoKpMj+Yx0Q==}
+
   undici-types@7.16.0:
     resolution: {integrity: sha512-Zz+aZWSj8LE6zoxD+xrjh4VfkIG8Ya6LvYkZqtUQGJPZjYl53ypCaUwWqo7eI0x66KBGeRo+mlBEkMSeSZ38Nw==}
 
@@ -2585,8 +2592,8 @@ packages:
       jsdom:
         optional: true
 
-  wagmi@3.1.4:
-    resolution: {integrity: sha512-fBHInuby622mCHUJqRF/gOb0ZD4dZ0VQvKh2yXdkayo/7och7B9GavXs5XBPUgwb8fIjQZYeo8VlNtA7jjeu+Q==}
+  wagmi@3.2.0:
+    resolution: {integrity: sha512-rSaMjiSc9zmBEt2CrTnhhbCJZOf+5c4hkDFlChAq8xUEHb4Av13nQ5/cCLVh2WtvFS1H2OK1FcZ64T6+J4bgHQ==}
     peerDependencies:
       '@tanstack/react-query': '>=5.0.0'
       react: '>=18'
@@ -2633,6 +2640,7 @@ packages:
   wrangler@4.56.0:
     resolution: {integrity: sha512-Nqi8duQeRbA+31QrD6QlWHW3IZVnuuRxMy7DEg46deUzywivmaRV/euBN5KKXDPtA24VyhYsK7I0tkb7P5DM2w==}
     engines: {node: '>=20.0.0'}
+    deprecated: Version 4.55.0 and 4.56.0 can incorrectly automatically delegate 'wrangler deploy' to 'opennextjs-cloudflare'. Use an older or newer version.
     hasBin: true
     peerDependencies:
       '@cloudflare/workers-types': ^4.20251217.0
@@ -3529,14 +3537,14 @@ snapshots:
       loupe: 3.2.1
       tinyrainbow: 2.0.0
 
-  '@wagmi/connectors@7.0.6(@wagmi/core@3.0.2(@tanstack/query-core@5.90.15)(react@19.2.3)(typescript@5.9.3)(use-sync-external-store@1.4.0(react@19.2.3))(viem@2.43.4(typescript@5.9.3)(zod@4.3.4)))(typescript@5.9.3)(viem@2.43.4(typescript@5.9.3)(zod@4.3.4))':
+  '@wagmi/connectors@7.0.7(@wagmi/core@3.1.0(@tanstack/query-core@5.90.15)(ox@0.11.1(typescript@5.9.3)(zod@4.3.4))(react@19.2.3)(typescript@5.9.3)(use-sync-external-store@1.4.0(react@19.2.3))(viem@2.43.4(typescript@5.9.3)(zod@4.3.4)))(typescript@5.9.3)(viem@2.43.4(typescript@5.9.3)(zod@4.3.4))':
     dependencies:
-      '@wagmi/core': 3.0.2(@tanstack/query-core@5.90.15)(react@19.2.3)(typescript@5.9.3)(use-sync-external-store@1.4.0(react@19.2.3))(viem@2.43.4(typescript@5.9.3)(zod@4.3.4))
+      '@wagmi/core': 3.1.0(@tanstack/query-core@5.90.15)(ox@0.11.1(typescript@5.9.3)(zod@4.3.4))(react@19.2.3)(typescript@5.9.3)(use-sync-external-store@1.4.0(react@19.2.3))(viem@2.43.4(typescript@5.9.3)(zod@4.3.4))
       viem: 2.43.4(typescript@5.9.3)(zod@4.3.4)
     optionalDependencies:
       typescript: 5.9.3
 
-  '@wagmi/core@3.0.2(@tanstack/query-core@5.90.15)(react@19.2.3)(typescript@5.9.3)(use-sync-external-store@1.4.0(react@19.2.3))(viem@2.43.4(typescript@5.9.3)(zod@4.3.4))':
+  '@wagmi/core@3.1.0(@tanstack/query-core@5.90.15)(ox@0.11.1(typescript@5.9.3)(zod@4.3.4))(react@19.2.3)(typescript@5.9.3)(use-sync-external-store@1.4.0(react@19.2.3))(viem@2.43.4(typescript@5.9.3)(zod@4.3.4))':
     dependencies:
       eventemitter3: 5.0.1
       mipd: 0.0.7(typescript@5.9.3)
@@ -3544,6 +3552,7 @@ snapshots:
       zustand: 5.0.0(react@19.2.3)(use-sync-external-store@1.4.0(react@19.2.3))
     optionalDependencies:
       '@tanstack/query-core': 5.90.15
+      ox: 0.11.1(typescript@5.9.3)(zod@4.3.4)
       typescript: 5.9.3
     transitivePeerDependencies:
       - '@types/react'
@@ -4440,7 +4449,7 @@ snapshots:
     dependencies:
       destr: 2.0.5
       node-fetch-native: 1.6.7
-      ufo: 1.6.1
+      ufo: 1.6.2
 
   ohash@2.0.11: {}
 
@@ -4848,6 +4857,8 @@ snapshots:
 
   ufo@1.6.1: {}
 
+  ufo@1.6.2: {}
+
   undici-types@7.16.0: {}
 
   undici@5.29.0:
@@ -4981,11 +4992,11 @@ snapshots:
       - tsx
       - yaml
 
-  wagmi@3.1.4(@tanstack/query-core@5.90.15)(@tanstack/react-query@5.90.15(react@19.2.3))(react@19.2.3)(typescript@5.9.3)(viem@2.43.4(typescript@5.9.3)(zod@4.3.4)):
+  wagmi@3.2.0(@tanstack/query-core@5.90.15)(@tanstack/react-query@5.90.15(react@19.2.3))(ox@0.11.1(typescript@5.9.3)(zod@4.3.4))(react@19.2.3)(typescript@5.9.3)(viem@2.43.4(typescript@5.9.3)(zod@4.3.4)):
     dependencies:
       '@tanstack/react-query': 5.90.15(react@19.2.3)
-      '@wagmi/connectors': 7.0.6(@wagmi/core@3.0.2(@tanstack/query-core@5.90.15)(react@19.2.3)(typescript@5.9.3)(use-sync-external-store@1.4.0(react@19.2.3))(viem@2.43.4(typescript@5.9.3)(zod@4.3.4)))(typescript@5.9.3)(viem@2.43.4(typescript@5.9.3)(zod@4.3.4))
-      '@wagmi/core': 3.0.2(@tanstack/query-core@5.90.15)(react@19.2.3)(typescript@5.9.3)(use-sync-external-store@1.4.0(react@19.2.3))(viem@2.43.4(typescript@5.9.3)(zod@4.3.4))
+      '@wagmi/connectors': 7.0.7(@wagmi/core@3.1.0(@tanstack/query-core@5.90.15)(ox@0.11.1(typescript@5.9.3)(zod@4.3.4))(react@19.2.3)(typescript@5.9.3)(use-sync-external-store@1.4.0(react@19.2.3))(viem@2.43.4(typescript@5.9.3)(zod@4.3.4)))(typescript@5.9.3)(viem@2.43.4(typescript@5.9.3)(zod@4.3.4))
+      '@wagmi/core': 3.1.0(@tanstack/query-core@5.90.15)(ox@0.11.1(typescript@5.9.3)(zod@4.3.4))(react@19.2.3)(typescript@5.9.3)(use-sync-external-store@1.4.0(react@19.2.3))(viem@2.43.4(typescript@5.9.3)(zod@4.3.4))
       react: 19.2.3
       use-sync-external-store: 1.4.0(react@19.2.3)
       viem: 2.43.4(typescript@5.9.3)(zod@4.3.4)
@@ -5002,6 +5013,7 @@ snapshots:
       - '@types/react'
       - '@walletconnect/ethereum-provider'
       - immer
+      - ox
       - porto
 
   which@2.0.2:
