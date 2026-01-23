@@ -78,8 +78,8 @@ importers:
         specifier: 10.1.8
         version: 10.1.8(eslint@9.39.2)
       eslint-plugin-jsdoc:
-        specifier: 62.3.0
-        version: 62.3.0(eslint@9.39.2)
+        specifier: 62.4.0
+        version: 62.4.0(eslint@9.39.2)
       eslint-plugin-prettier:
         specifier: 5.5.5
         version: 5.5.5(eslint-config-prettier@10.1.8(eslint@9.39.2))(eslint@9.39.2)(prettier@3.8.0)
@@ -932,6 +932,7 @@ packages:
 
   '@types/eslint__js@9.14.0':
     resolution: {integrity: sha512-s0jepCjOJWB/GKcuba4jISaVpBudw3ClXJ3fUK4tugChUMQsp6kSwuA8Dcx6wFd/JsJqcY8n4rEpa5RTHs5ypA==}
+    deprecated: This is a stub types definition. @eslint/js provides its own type definitions, so you do not need this installed.
 
   '@types/estree@1.0.8':
     resolution: {integrity: sha512-dWHzHa2WqEXI/O1E9OjrocMTKJl2mSrEolh1Iomrv6U+JuNwaHXsXx9bLu5gG7BUWFIN0skIQJQ/L1rIex4X6w==}
@@ -1276,6 +1277,10 @@ packages:
     resolution: {integrity: sha512-0D6qSQ5IkeRrGJFHRClzaMOenMeT0gErz3zIw3AprKMqhRN6LNU2jQOdkPG/FZ+8bCgXE1VidrgSzlBBDZRr8A==}
     engines: {node: '>= 12.0.0'}
 
+  comment-parser@1.4.5:
+    resolution: {integrity: sha512-aRDkn3uyIlCFfk5NUA+VdwMmMsh8JGhc4hapfV4yxymHGQ3BVskMQfoXGpCo5IoBuQ9tS5iiVKhCpTcB4pW4qw==}
+    engines: {node: '>= 12.0.0'}
+
   concat-map@0.0.1:
     resolution: {integrity: sha512-/Srv4dswyQNBfohGpz9o6Yb3Gz3SrUDqBH5rTuhGR7ahtlbYKnVxw2bCFMRljaA7EXHaXZ8wsHdodFvbkhKmqg==}
 
@@ -1382,8 +1387,8 @@ packages:
     peerDependencies:
       eslint: '>=7.0.0'
 
-  eslint-plugin-jsdoc@62.3.0:
-    resolution: {integrity: sha512-Gc5Ls5qQC6NwqtQTtJ2JE5BwvX348ZCZ+4+QiZ9RpoQ1TCcxFF8Z0E5jaLkTyYNqyhx+uKAvljNHE0B7PBw+iw==}
+  eslint-plugin-jsdoc@62.4.0:
+    resolution: {integrity: sha512-SmwVS4QCSsBRmOfAn1J2CyCO4chqZtSU5olBCiHZ0RnxZVjIBTgm/1ZBFwFDUiV5/llFZcuSHEJK5DjHCDcGPw==}
     engines: {node: ^20.19.0 || ^22.13.0 || >=24}
     peerDependencies:
       eslint: ^7.0.0 || ^8.0.0 || ^9.0.0
@@ -2238,8 +2243,8 @@ packages:
     engines: {node: '>=14.17'}
     hasBin: true
 
-  ufo@1.6.1:
-    resolution: {integrity: sha512-9a4/uxlTWJ4+a5i0ooc1rU7C7YOw3wT+UGqdeNNHWnOF9qcMBgLRS+4IYUqbczewFx4mLEig6gawh7X6mFlEkA==}
+  ufo@1.6.3:
+    resolution: {integrity: sha512-yDJTmhydvl5lJzBmy/hyOAA0d+aqCBuwl818haVdYCRrWV84o7YyeVm4QlVHStqNrrJSTb6jKuFAVqAFsr+K3Q==}
 
   undici-types@7.16.0:
     resolution: {integrity: sha512-Zz+aZWSj8LE6zoxD+xrjh4VfkIG8Ya6LvYkZqtUQGJPZjYl53ypCaUwWqo7eI0x66KBGeRo+mlBEkMSeSZ38Nw==}
@@ -3344,6 +3349,8 @@ snapshots:
 
   comment-parser@1.4.4: {}
 
+  comment-parser@1.4.5: {}
+
   concat-map@0.0.1: {}
 
   cookie@1.1.1: {}
@@ -3468,12 +3475,12 @@ snapshots:
     dependencies:
       eslint: 9.39.2
 
-  eslint-plugin-jsdoc@62.3.0(eslint@9.39.2):
+  eslint-plugin-jsdoc@62.4.0(eslint@9.39.2):
     dependencies:
       '@es-joy/jsdoccomment': 0.82.0
       '@es-joy/resolve.exports': 1.2.0
       are-docs-informative: 0.0.2
-      comment-parser: 1.4.4
+      comment-parser: 1.4.5
       debug: 4.4.3
       escape-string-regexp: 4.0.0
       eslint: 9.39.2
@@ -4028,7 +4035,7 @@ snapshots:
     dependencies:
       destr: 2.0.5
       node-fetch-native: 1.6.7
-      ufo: 1.6.1
+      ufo: 1.6.3
 
   on-exit-leak-free@2.1.2: {}
 
@@ -4421,7 +4428,7 @@ snapshots:
 
   typescript@5.9.3: {}
 
-  ufo@1.6.1: {}
+  ufo@1.6.3: {}
 
   undici-types@7.16.0: {}
 
