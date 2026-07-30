@@ -29,7 +29,7 @@
     "type-fest": "5.8.0",
     "unicorn-magic": "0.4.0",
     "viem": "2.55.8",
-    "wagmi": "3.7.4",
+    "wagmi": "3.7.5",
     "zod": "4.3.4"
   },
   "devDependencies": {
